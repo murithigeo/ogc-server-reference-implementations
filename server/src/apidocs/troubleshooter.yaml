@@ -10,3 +10,10 @@ paths:
       responses:
         "200":
           description: Successful
+  /:
+    x-exegesis-controller: serverRoot
+    get:
+      x-exegesis-operationId: getServerRoot
+      responses:
+        "200":
+          description: Successful

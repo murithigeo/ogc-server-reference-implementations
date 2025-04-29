@@ -1962,3 +1962,7 @@
  GET http://localhost:3000/collections/isd-2025
 ### 2025-04-29T18:26:16.546Z status 200 - ms - application/json - 
  GET http://localhost:3000/edr/collections/isd-2025
+### 2025-04-29T18:26:30.475Z status 200 - ms - application/json - 
+ GET http://localhost:3000/edr/collections/isd-2025/instances
+### 2025-04-29T18:56:05.193Z status 200 - ms - application/json - 
+ GET http://localhost:3000/

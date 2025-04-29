@@ -1,13 +1,33 @@
-import { middleware, type ExegesisContext } from 'exegesis-express';
-import { apidocs } from './apidocs/index.js';
+import { middleware, type ExegesisContext } from "exegesis-express";
+import { apidocs } from "./apidocs/index.js";
 
 const doc = apidocs.troubleshooter;
 
-const troubleshooterApi = middleware(doc, { controllers: { helloController: { sayHello } } });
+const troubleshooterApi = middleware(doc, {
+  controllers: { helloController: { sayHello }, serverRoot: { getServerRoot } },
+});
 
-async function sayHello(ctx: ExegesisContext) {
-	return ctx.res.status(200).json({ message: 'Hello!' });
+function sayHello(ctx: ExegesisContext) {
+  return ctx.res.status(200).json({ message: "Hello!" });
 }
 
+function getServerRoot(ctx: ExegesisContext) {
+  return ctx.res.status(200).json({
+    links: [
+      {
+        rel: "data",
+        href: ctx.api.serverObject?.url! + `/fetures/`,
+        type: "application/json",
+        title: `OGCAPI: Features Implementation`,
+      },
+      {
+        rel: "data",
+        href: ctx.api.serverObject?.url! + `/edr/`,
+        type: "application/json",
+        title: `OGCAPI: EDR Implementation`,
+      },
+    ],
+  });
+}
 
-export default troubleshooterApi
+export default troubleshooterApi;
