@@ -22,11 +22,11 @@ export class LanHostGenerator {
   /**
    * @returns number|string. If no address is found, then returns 0
    */
-  lanAddress():string|number {
-    let processArgv = process.argv;
-    let ips: number | string = 0,
-      ifaces = os.networkInterfaces();
-    if (processArgv.includes("--host")) {
+  lanAddress(): string | number {
+    let ips: number | string = 0;
+    if (process.argv.includes("--host")) {
+      const ifaces = os.networkInterfaces();
+
       Object.keys(ifaces).forEach((dev) => {
         //!Reevaluate why we are ignoring wsl especially if some services consume the APIs over there
         if (!dev.toLowerCase().includes("wsl")) {
@@ -40,6 +40,5 @@ export class LanHostGenerator {
       });
     }
     return ips;
-
   }
 }
