@@ -25,7 +25,7 @@ doc = {
 };
 const options: ExegesisOptions = {
   plugins: [postToGetEdrPlugin()],
-  //lazyCompileValidationSchemas: true,
+  lazyCompileValidationSchemas: true,
   //customFormats: { datetimeRegex },
   controllers: {
     rootController,

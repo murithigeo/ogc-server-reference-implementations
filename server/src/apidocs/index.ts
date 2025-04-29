@@ -40,16 +40,12 @@ export const apidocs: {
     );
   })
   .reduce((acc, current) => {
-    console.log(`started loading file: ${current}`);
-    const doc = {
-      ...(YAML.load(
-        fs.readFileSync(
-          path.join(process.cwd(), `/src/apidocs/${current}`),
-          "utf-8"
-        )
-      ) as oas3.OpenAPIObject),servers
-    } as oas3.OpenAPIObject;
-    acc[current.split(".")[0]] = doc;
-    console.log(servers)
+    const uri = path.join(process.cwd(), `/src/apidocs/${current}`);
+    console.log(uri);
+    acc[current.split(".")[0]] = {
+      ...(YAML.load(fs.readFileSync(uri, "utf-8")) as oas3.OpenAPIObject),
+      servers,
+    };
+
     return acc;
   }, {});
