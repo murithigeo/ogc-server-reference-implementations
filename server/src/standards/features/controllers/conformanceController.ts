@@ -1,8 +1,8 @@
-import type { ExegesisContext, ExegesisResponse } from "exegesis-express";
-import { LinkManager } from "../../../common/utils/linkManager.ts";
+import type { ExegesisContext } from "exegesis-express";
 import { FeaturesLinksManager, FeaturesRqManager } from "../features.utils.ts";
-import YAML from "js-yaml";
-async function getConformance(ctx: ExegesisContext): Promise<void> {
+import { jsonlikeToYAML } from "../../../common/common.utils.ts";
+
+function getConformance(ctx: ExegesisContext): void {
   const { f, contentTypeHeader, output_formats } = new FeaturesRqManager({
     ctx,
   }).outputFormatParser("JSON", ["JSON", "YAML"]);
@@ -26,7 +26,7 @@ async function getConformance(ctx: ExegesisContext): Promise<void> {
       ctx.res.setBody(doc);
       break;
     case "yaml":
-      ctx.res.setBody(YAML.dump(doc));
+      ctx.res.setBody(jsonlikeToYAML(doc));
       break;
   }
   ctx.res.end();

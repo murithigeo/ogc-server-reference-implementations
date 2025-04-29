@@ -2,10 +2,10 @@ import type { ExegesisContext } from "exegesis-express";
 import { FeaturesLinksManager, FeaturesRqManager } from "../features.utils.ts";
 import { jsonlikeToYAML } from "../../../common/common.utils.ts";
 
-async function getRoot(ctx: ExegesisContext): Promise<void> {
+function getRoot(ctx: ExegesisContext): void {
   const { f, output_formats, contentTypeHeader } = new FeaturesRqManager({
     ctx,
-  }).outputFormatParser("json", ["json", "yaml","html"]);
+  }).outputFormatParser("json", ["json", "yaml", "html"]);
   const { links } = new FeaturesLinksManager({
     ctx,
     f,
@@ -13,9 +13,9 @@ async function getRoot(ctx: ExegesisContext): Promise<void> {
   })
     .self()
     .alternates()
-    .override_output_formats(["json","yaml"])
+    .override_output_formats(["json", "yaml"])
     .conformance()
-    .override_output_formats(["json","yaml"])
+    .override_output_formats(["json", "yaml"])
     .collections()
     .override_output_formats(["json", "yaml", "html"])
     .serviceDesc()
@@ -36,11 +36,6 @@ async function getRoot(ctx: ExegesisContext): Promise<void> {
     case "yaml":
       ctx.res.setBody(jsonlikeToYAML(doc));
       break;
-    case "html":
-      ctx.res.setBody(Root({ doc }));
-      break;
-    default:
-      throw ctx.makeError(503, "content-type not implemented yet.");
   }
 }
 

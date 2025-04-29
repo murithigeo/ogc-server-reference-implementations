@@ -5,7 +5,7 @@ type Row = {
 };
 export class CoverageJsonParser {
   crs: CommonTypes.CrsConfig;
-  covjsonDoc: CoverageJSON.CoverageJSON;
+  covjsonDoc: CoverageJSON.CoverageJSON = {};
   parameters: EdrCollection["parameters"];
   rows: Row[];
   constructor({
@@ -21,6 +21,7 @@ export class CoverageJsonParser {
     this.parameters = parameters;
     this.rows = rows;
   }
+
   _prepareDatetime(row: Row) {
     let datetime = row["datetime"];
     datetime = datetime

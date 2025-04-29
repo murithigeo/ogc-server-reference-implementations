@@ -1,16 +1,12 @@
-import { NoResultError, sql, type ExpressionWrapper } from "kysely";
+import { sql, type ExpressionWrapper } from "kysely";
 import { bboxToPolygon } from "../common/common.utils.ts";
-import { fromUrl } from "geotiff";
-import type { Database, RefExpression } from "../models/db.ts";
-import {
-  stf as _stf,
-  flipCoordinates,
-} from "../models/kysely-postgis/functions.ts";
-import type { QueryNode, SqlBool } from "kysely";
+import type { Database } from "../models/db.ts";
+import { stf as _stf } from "../models/kysely-postgis/functions.ts";
+import type { SqlBool } from "kysely";
 import type { ReferenceExpression } from "kysely";
 import type { ExpressionBuilder } from "kysely";
 import type { EdrRqManager } from "../standards/edr/edr.utils.ts";
-import type { ExegesisContext } from "exegesis-express";
+
 /**
  * Returns an array of boolean conditions of geometries inside a 2D space
  */
@@ -22,7 +18,7 @@ export function bboxFilter<DB extends Database, TB extends keyof DB>(
   bbox?: CommonTypes.Bbox
 ) {
   //if (!bbox) return;
-  let conditions: ExpressionWrapper<DB, TB, SqlBool>[] = [];
+  const conditions: ExpressionWrapper<DB, TB, SqlBool>[] = [];
   if (bbox) {
     const stf = _stf(eb);
     const step1 = bboxToPolygon(bbox);
@@ -79,7 +75,7 @@ export function paramValueFromColumn<DB extends Database, TB extends keyof DB>(
   index?: number
 ) {
   return eb.cast<string | null | number>(
-    //@ts-expect-error
+    //@ts-expect-error: <kysely does not like this>
     sql<string | null | number>(index ? `${column}[${index}]` : column),
     dataType === "string"
       ? "varchar"
@@ -130,10 +126,10 @@ export function zFilter<DB extends Database, TB extends keyof DB>(
   //create an instance of stf
   const { z: zAttr, force3d } = _stf(eb);
   //If zfilter is specified, then force the column to 3D
-  let geomRef = zAttr(force3d(geomColumn));
+  const geomRef = zAttr(force3d(geomColumn));
   // Get the height dimension of the column
 
-  let conditions: ExpressionWrapper<Database, keyof Database, SqlBool>[] = [];
+  const conditions: ExpressionWrapper<Database, keyof Database, SqlBool>[] = [];
   if (!z) return conditions;
   //If levels, return geometries whose z value is in requested array
   z.levels ? conditions.push(eb(geomRef, "in", z.levels)) : undefined;
@@ -213,7 +209,7 @@ export function corridorFilter<DB extends Database, TB extends keyof DB>(
 
   //!Remember that linestrings can have z and m axis
   //Reuse the zFilter for the height filter
-  let heightQuery = zFilter(eb, geomColumn, {
+  const heightQuery = zFilter(eb, geomColumn, {
     max: corridor.height,
     min: undefined,
     levels: undefined,
@@ -233,14 +229,8 @@ export function positionFilter<DB extends Database, TB extends keyof DB>(
   crs: CommonTypes.CrsConfig,
   srid: number
 ) {
-  const {
-    transform,
-    geomFromText,
-    setSRID,
-    intersects,
-    intersects3d,
-    flipCoordinates,
-  } = _stf(eb);
+  const { transform, geomFromText, setSRID, intersects, flipCoordinates } =
+    _stf(eb);
   //wkt->geometry
   const step1 = geomFromText(coords.wkt, { srid: crs.srid });
   //POSTGIS uses x,y thus non-xy crs must be accounted for
@@ -381,7 +371,7 @@ export function geomBounds<DB extends Database, TB extends keyof DB>(
     stf.yMax(geomBounds).as("ymax"),
   ];
 }
-
+/*
 class RasterHandler {
   url: string;
   samplingPoints:GeoJSON.Point
@@ -392,3 +382,4 @@ class RasterHandler {
   raster=fromUrl(this.url)
 
 }
+*/

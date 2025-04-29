@@ -1,29 +1,27 @@
-import type{
+import type {
   ExpressionBuilder,
-  
   RawBuilder,
   ReferenceExpression,
-  
-} from 'kysely';
-import {sql,ValueNode,ExpressionWrapper} from "kysely"
-import * as wkx from 'wkx';
-import { isGeometryObject as isGeometryObjectValidator } from 'geojson-validation';
-import { type Geometry } from 'npm:geojson';
-import { defaultOptions, type Options } from './index.ts';
-import { geomFromGeoJSON } from './functions.ts';
+} from "kysely";
+import { sql, ValueNode, ExpressionWrapper } from "kysely";
+import * as wkx from "wkx";
+import { isGeometryObject as isGeometryObjectValidator } from "geojson-validation";
+import { type Geometry } from "geojson";
+import { defaultOptions, type Options } from "./index.ts";
+import { geomFromGeoJSON } from "./functions.ts";
 
 export function withDefaultOptions<T>(options: T) {
   return Object.assign({}, defaultOptions, options);
 }
 
 export function isNil<T>(
-  value: T | null | undefined,
+  value: T | null | undefined
 ): value is null | undefined {
   return value === null || value === undefined;
 }
 
 export function isString(obj: unknown): obj is string {
-  return typeof obj === 'string';
+  return typeof obj === "string";
 }
 
 export function isRawBuilder(value: any): value is RawBuilder<unknown> {
@@ -40,10 +38,10 @@ export function throwOnInvalidGeometry(value: any) {
       ? isGeometryObjectValidator(JSON.parse(value), true)
       : isGeometryObjectValidator(value, true);
     if (isValid.length > 0) {
-      throw new Error('Invalid GeoJSON geometry', { cause: isValid });
+      throw new Error("Invalid GeoJSON geometry", { cause: isValid });
     }
   } catch (err) {
-    throw new Error('Invalid GeoJSON geometry', { cause: err });
+    throw new Error("Invalid GeoJSON geometry", { cause: err });
   }
 }
 
@@ -51,16 +49,16 @@ export function throwOnInvalidWKT(value: any) {
   try {
     const geometry = wkx.Geometry.parse(value);
     if (!geometry) {
-      throw new Error('Invalid WKT');
+      throw new Error("Invalid WKT");
     }
   } catch (err) {
-    throw new Error('Invalid WKT', { cause: err });
+    throw new Error("Invalid WKT", { cause: err });
   }
 }
 
 export function isGeoJSON<DB, TB extends keyof DB>(
   value: Geometry | ReferenceExpression<DB, TB>,
-  options: Partial<Options> = {},
+  options: Partial<Options> = {}
 ): value is Geometry {
   const optionsWithDefault = withDefaultOptions(options);
   if (isString(value) || isRawBuilder(value)) {
@@ -83,7 +81,7 @@ export function isGeoJSON<DB, TB extends keyof DB>(
 export function transformGeoJSON<DB, TB extends keyof DB>(
   eb: ExpressionBuilder<DB, TB>,
   value: Geometry | ReferenceExpression<DB, TB>,
-  options: Partial<Options> = {},
+  options: Partial<Options> = {}
 ) {
   const isGeo = isGeoJSON(value, options);
   return isGeo ? geomFromGeoJSON(eb, value, options) : value;
@@ -91,7 +89,7 @@ export function transformGeoJSON<DB, TB extends keyof DB>(
 
 export function valueForGeoJSON<DB, TB extends keyof DB>(
   value: Geometry | ReferenceExpression<DB, TB>,
-  options: Partial<Options> = {},
+  options: Partial<Options> = {}
 ) {
   const optionsWithDefault = withDefaultOptions(options);
   if (isString(value) || isRawBuilder(value)) {
@@ -112,7 +110,7 @@ export function valueForGeoJSON<DB, TB extends keyof DB>(
 
 export function valueForWKT<DB, TB extends keyof DB>(
   value: string,
-  options: Partial<Options> = {},
+  options: Partial<Options> = {}
 ) {
   const optionsWithDefault = withDefaultOptions(options);
   optionsWithDefault.validate && throwOnInvalidWKT(value);
@@ -123,7 +121,7 @@ export function fnWithAdditionalParameters<DB, TB extends keyof DB, T = string>(
   eb: ExpressionBuilder<DB, TB>,
   fnName: string,
   args: any[],
-  options: Pick<Options, 'additionalParameters'>,
+  options: Pick<Options, "additionalParameters">
 ) {
   return eb.fn<T>(fnName, [...args, ...options.additionalParameters]);
 }
@@ -134,7 +132,7 @@ export function fnCompare<DB, TB extends keyof DB>(
   geomA: Geometry | ReferenceExpression<DB, TB>,
   geomB: Geometry | ReferenceExpression<DB, TB>,
   additionalParameters: any[] = [],
-  options: Partial<Options> = {},
+  options: Partial<Options> = {}
 ) {
   const optionsWithDefault = withDefaultOptions(options);
 
@@ -146,6 +144,6 @@ export function fnCompare<DB, TB extends keyof DB>(
       transformGeoJSON(eb, geomB, optionsWithDefault),
       ...additionalParameters,
     ],
-    optionsWithDefault,
+    optionsWithDefault
   );
 }

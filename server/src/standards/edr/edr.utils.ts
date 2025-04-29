@@ -524,6 +524,7 @@ export function edrCollectionDocGenerator({
       ) => {
         const x = new EdrLinksManager({
           ctx,
+          //@ts-expect-error: <default_output_format is not a typeof keyof contenttypes>
           f: default_output_format,
           output_formats,
         });
