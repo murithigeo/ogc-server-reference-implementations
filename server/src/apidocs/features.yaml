@@ -1,0 +1,854 @@
+openapi: 3.0.3
+info:
+  title: OGC Features API Reference Implementation
+  version: 0.1.0
+paths:
+  "/":
+    x-exegesis-controller: rootController
+    get:
+      x-exegesis-operationId: getRoot
+      parameters:
+        - $ref: "#/components/parameters/f"
+      responses:
+        "200":
+          description: Ok.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Landing"
+            text/yaml:
+              schema:
+                type: string
+  "/conformance":
+    x-exegesis-controller: conformanceController
+    description: >
+      Access the conformance classes of this server (endpoint root)
+    get:
+      x-exegesis-operationId: getConformance
+      parameters:
+        - $ref: "#/components/parameters/f"
+      responses:
+        "200":
+          description: Ok.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Conformance"
+            text/yaml:
+              schema:
+                type: string
+  "/api":
+    x-exegesis-controller: apiController
+    get:
+      parameters:
+        - $ref: "#/components/parameters/f"
+      x-exegesis-operationId: getServiceDesc
+      description: >
+        Access the OpenAPI document describing the functionalities of this server.
+        While the advanced approach would be to use Scalar modules directly in source code, a CSR page is better.
+        The schema is also [Object] since this document is dynamic.
+      responses:
+        "200":
+          description: Ok.
+          content:
+            application/vnd.oai.openapi+json;version=3.0:
+              schema:
+                type: object
+  "/api.html":
+    x-exegesis-controller: apiController
+    get:
+      x-exegesis-operationId: getServiceDoc
+      description: >
+        Access an Interactive Web Console to test the functionalities of this server.
+      responses:
+        "200":
+          description: Ok.
+          content:
+            text/yaml:
+              schema:
+                type: string
+  "/collections":
+    x-exegesis-controller: collectionsController
+    get:
+      x-exegesis-operationId: getCollections
+      description: >
+        Get all collections/datasets currently available in the server.
+      parameters:
+        - $ref: "#/components/parameters/f"
+      responses:
+        "200":
+          description: Ok.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - links
+                  - collections
+                properties:
+                  links:
+                    $ref: "#/components/schemas/Links"
+                  collections:
+                    type: array
+                    minItems: 1
+                    items:
+                      $ref: "#/components/schemas/Collection"
+  "/collections/{collectionId}":
+    x-exegesis-controller: collectionsController
+    parameters:
+      - $ref: "#/components/parameters/collectionId"
+    get:
+      x-exegesis-operationId: getCollection
+      parameters:
+        - $ref: "#/components/parameters/f"
+      responses:
+        "200":
+          description: >
+            Retrieve Metadata about a specific collection.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Collection"
+            text/yaml:
+              schema:
+                type: string
+  "/collections/{collectionId}/items":
+    x-exegesis-controller: itemsController
+    get:
+      #security:
+        #- ApiKeyAuth: []
+      x-exegesis-operationId: getItems
+      description: >
+        Retrieve all items in a collection. Number returned is subject to query parameters invoked
+      parameters:
+        - $ref: "#/components/parameters/collectionId"
+        - $ref: "#/components/parameters/bbox"
+        - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/offset"
+        - $ref: "#/components/parameters/datetime"
+        - $ref: "#/components/parameters/crs"
+        - $ref: "#/components/parameters/bbox-crs"
+        - $ref: "#/components/parameters/f"
+      responses:
+        "200":
+          description: Ok.
+          content:
+            application/geo+json:
+              schema:
+                $ref: "#/components/schemas/genericFeatureCollection"
+            text/yaml:
+              schema:
+                type: string
+  "/collections/{collectionId}/items/{featureId}":
+    x-exegesis-controller: itemsController
+    get:
+      #security:
+        #- ApiKeyAuth: []
+      x-exegesis-operationId: getItem
+      description: >
+        Retrieve all items in a collection. Number returned is subject to query parameters invoked
+      parameters:
+        - $ref: "#/components/parameters/collectionId"
+        - $ref: "#/components/parameters/featureId"
+        - $ref: "#/components/parameters/crs"
+        - $ref: "#/components/parameters/f"
+      responses:
+        "200":
+          description: Ok.
+          content:
+            application/geo+json:
+              schema:
+                $ref: "#/components/schemas/genericFeature"
+            text/yaml:
+              schema:
+                type: string
+components:
+  schemas:
+    Links:
+      type: array
+      items:
+        type: object
+        required:
+          - href
+          - rel
+        properties:
+          href:
+            type: string
+            example: http://data.example.com/buildings/123
+          rel:
+            type: string
+            example: alternate
+          type:
+            type: string
+            example: application/geo+json
+          hreflang:
+            type: string
+            example: en
+          title:
+            type: string
+            example: Trierer Strasse 70, 53115 Bonn
+          length:
+            type: integer
+    GeoJsonObject:
+      description: >
+        GeoJSon object
+
+        The coordinate reference system for all GeoJSON coordinates is a
+        geographic coordinate reference system, using the World Geodetic System
+        1984 (WGS 84) datum, with longitude and latitude units of decimal
+        degrees. This is equivalent to the coordinate reference system
+        identified by the Open Geospatial Consortium (OGC) URN An OPTIONAL
+        third-position element SHALL be the height in meters above or below the
+        WGS 84 reference ellipsoid. In the absence of elevation values,
+        applications sensitive to height or depth SHOULD interpret positions as
+        being at local ground or sea level.
+      externalDocs:
+        url: https://tools.ietf.org/html/rfc7946#section-3
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - Feature
+            - FeatureCollection
+            - Point
+            - MultiPoint
+            - LineString
+            - MultiLineString
+            - Polygon
+            - MultiPolygon
+            - GeometryCollection
+    Geometry:
+      description: >
+        Abstract type for all GeoJSon object except Feature and
+        FeatureCollection
+      externalDocs:
+        url: https://tools.ietf.org/html/rfc7946#section-3
+      allOf:
+        - $ref: "#/components/schemas/GeoJsonObject"
+        - type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - Point
+                - MultiPoint
+                - LineString
+                - MultiLineString
+                - Polygon
+                - MultiPolygon
+                - GeometryCollection
+          required:
+            - type
+          discriminator:
+            propertyName: type
+    GeometryElement:
+      description: >
+        Abstract type for all GeoJSon 'Geometry' object the type of which is not
+        'GeometryCollection'
+      externalDocs:
+        url: https://tools.ietf.org/html/rfc7946#section-3
+      allOf:
+        - $ref: "#/components/schemas/Geometry"
+        - type: object
+          properties:
+            type:
+              type: string
+              enum:
+                - Point
+                - MultiPoint
+                - LineString
+                - MultiLineString
+                - Polygon
+                - MultiPolygon
+          required:
+            - type
+          discriminator:
+            propertyName: type
+    Feature:
+      description: GeoJSon 'Feature' object
+      externalDocs:
+        url: https://tools.ietf.org/html/rfc7946#section-3.2
+      allOf:
+        - $ref: "#/components/schemas/GeoJsonObject"
+        - type: object
+          required:
+            - geometry
+            - properties
+          properties:
+            geometry:
+              allOf:
+                - nullable: true
+                - $ref: "#/components/schemas/Geometry"
+            properties:
+              type: object
+              nullable: true
+            id:
+              oneOf:
+                - type: number
+                - type: string
+    FeatureCollection:
+      description: GeoJSon 'FeatureCollection' object
+      externalDocs:
+        url: https://tools.ietf.org/html/rfc7946#section-3.3
+      allOf:
+        - $ref: "#/components/schemas/GeoJsonObject"
+        - type: object
+          required:
+            - features
+          properties:
+            features:
+              type: array
+              items:
+                $ref: "#/components/schemas/Feature"
+    Position:
+      description: >
+        GeoJSon fundamental geometry construct.
+
+        A position is an array of numbers. There MUST be two or more elements.
+        The first two elements are longitude and latitude, or easting and
+        northing, precisely in that order and using decimal numbers. Altitude or
+        elevation MAY be included as an optional third element.
+
+        Implementations SHOULD NOT extend positions beyond three elements
+        because the semantics of extra elements are unspecified and ambiguous.
+        Historically, some implementations have used a fourth element to carry a
+        linear referencing measure (sometimes denoted as "M") or a numerical
+        timestamp, but in most situations a parser will not be able to properly
+        interpret these values. The interpretation and meaning of additional
+        elements is beyond the scope of this specification, and additional
+        elements MAY be ignored by parsers.
+      externalDocs:
+        url: https://tools.ietf.org/html/rfc7946#section-3.1.1
+      type: array
+      minItems: 2
+      maxItems: 3
+      items:
+        type: number
+    LineStringCoordinates:
+      description: |
+        GeoJSon fundamental geometry construct, array of two or more positions.
+      externalDocs:
+        url: https://tools.ietf.org/html/rfc7946#section-3.1.4
+      type: array
+      items:
+        $ref: "#/components/schemas/Position"
+      minItems: 2
+    LinearRing:
+      description: >
+        A linear ring is a closed LineString with four or more positions
+        The first and last positions are equivalent, and they MUST contain
+        identical values; their representation SHOULD also be identical.
+
+        A linear ring is the boundary of a surface or the boundary of a hole in
+        a surface.
+
+        A linear ring MUST follow the right-hand rule with respect to the area
+        it bounds, i.e., exterior rings are counterclockwise, and holes are
+        clockwise.
+      externalDocs:
+        url: https://tools.ietf.org/html/rfc7946#section-3.1.6
+      type: array
+      items:
+        $ref: "#/components/schemas/Position"
+      minItems: 4
+    Point:
+      description: GeoJSon geometry
+      externalDocs:
+        url: https://tools.ietf.org/html/rfc7946#section-3.1.2
+      allOf:
+        - $ref: "#/components/schemas/GeometryElement"
+        - type: object
+          required:
+            - type
+            - coordinates
+          properties:
+            type:
+              type: string
+              enum:
+                - Point
+            coordinates:
+              $ref: "#/components/schemas/Position"
+    MultiPoint:
+      description: GeoJSon geometry
+      externalDocs:
+        url: https://tools.ietf.org/html/rfc7946#section-3.1.3
+      allOf:
+        - $ref: "#/components/schemas/GeometryElement"
+        - type: object
+          required:
+            - coordinates
+          properties:
+            coordinates:
+              type: array
+              items:
+                $ref: "#/components/schemas/Position"
+    LineString:
+      description: GeoJSon geometry
+      externalDocs:
+        url: https://tools.ietf.org/html/rfc7946#section-3.1.4
+      allOf:
+        - $ref: "#/components/schemas/GeometryElement"
+        - type: object
+          required:
+            - coordinates
+          properties:
+            coordinates:
+              $ref: "#/components/schemas/LineStringCoordinates"
+    MultiLineString:
+      description: GeoJSon geometry
+      externalDocs:
+        url: https://tools.ietf.org/html/rfc7946#section-3.1.5
+      allOf:
+        - $ref: "#/components/schemas/GeometryElement"
+        - type: object
+          required:
+            - coordinates
+          properties:
+            coordinates:
+              type: array
+              items:
+                $ref: "#/components/schemas/LineStringCoordinates"
+    Polygon:
+      description: GeoJSon geometry
+      externalDocs:
+        url: https://tools.ietf.org/html/rfc7946#section-3.1.6
+      allOf:
+        - $ref: "#/components/schemas/GeometryElement"
+        - type: object
+          required:
+            - coordinates
+          properties:
+            coordinates:
+              type: array
+              items:
+                $ref: "#/components/schemas/LinearRing"
+    MultiPolygon:
+      description: GeoJSon geometry
+      externalDocs:
+        url: https://tools.ietf.org/html/rfc7946#section-3.1.7
+      allOf:
+        - $ref: "#/components/schemas/GeometryElement"
+        - type: object
+          required:
+            - coordinates
+          properties:
+            coordinates:
+              type: array
+              items:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LinearRing"
+    GeometryCollection:
+      type: object
+      description: >
+        GeoJSon geometry collection
+
+        GeometryCollections composed of a single part or a number of parts of a
+        single type SHOULD be avoided when that single part or a single object
+        of multipart type (MultiPoint, MultiLineString, or MultiPolygon) could
+        be used instead.
+      externalDocs:
+        url: https://tools.ietf.org/html/rfc7946#section-3.1.8
+      allOf:
+        - $ref: "#/components/schemas/Geometry"
+        - type: object
+          required:
+            - geometries
+          properties:
+            geometries:
+              type: array
+              items:
+                $ref: "#/components/schemas/GeometryElement"
+              minItems: 0
+    Conformance:
+      type: object
+      required:
+        - conformsTo
+      properties:
+        conformsTo:
+          type: array
+          items:
+            type: string
+        links:
+          type: array
+          items:
+            $ref: "#/components/schemas/Links"
+    Landing:
+      type: object
+      required:
+        - title
+        - description
+        - links
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        links:
+          type: array
+          items:
+            $ref: "#/components/schemas/Links"
+    Collection:
+      type: object
+      required:
+        - id
+        - title
+        - crs
+        - storageCrs
+        - description
+        - links
+        - extent
+      properties:
+        id:
+          type: string
+          example: buildings
+        title:
+          type: string
+          example: Buildings
+        description:
+          type: string
+          example: Buildings in Bonn
+        extent:
+          $ref: "#/components/schemas/extent"
+        crs:
+          type: array
+          items:
+            type: string
+          default: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        storageCrs:
+          type: string
+          default: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+        links:
+          type: array
+          items:
+            $ref: "#/components/schemas/Links"
+    bbox:
+      type: array
+      minItems: 1
+      items:
+        type: array
+        oneOf:
+          - minItems: 4
+            maxItems: 4
+          - minItems: 6
+            maxItems: 6
+        items:
+          type: number
+    crs:
+      description: >-
+        Coordinate reference system of the coordinates in the spatial extent
+        (property `bbox`). The default reference system is WGS 84
+        longitude/latitude. In the OGC the only other supported coordinate
+        reference system is WGS 84 longitude/latitude/ellipsoidal height for
+        coordinates with height. Extensions may support additional coordinate
+        reference systems and add additional enum values.
+      type: string
+      #enum:
+      #- http://www.opengis.net/def/crs/OGC/1.3/CRS84
+      #- http://www.opengis.net/def/crs/OGC/0/CRS84h
+      default: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+    interval:
+      type: array
+      description: |
+        Temporal bounds for the dataset or query
+      minItems: 1
+      items:
+        type: array
+        minItems: 2
+        maxItems: 2
+        items:
+          type: string
+          format: date-time
+    extent:
+      type: object
+      description: |
+        spatial-temporal properties of the dataset
+      properties:
+        spatial:
+          description: |
+            spatial properties
+          type: object
+          properties:
+            bbox:
+              $ref: "#/components/schemas/bbox"
+            crs:
+              $ref: "#/components/schemas/crs"
+        temporal:
+          type: object
+          description: |
+            Temporal characteristics of dataset
+          properties:
+            interval:
+              $ref: "#/components/schemas/interval"
+            trs:
+              type: string
+              enum:
+                - http://www.opengis.net/def/uom/ISO-8601/0/Gregorian
+              default: http://www.opengis.net/def/uom/ISO-8601/0/Gregorian
+    numberMatched:
+      type: integer
+      description: |
+        The number of features matched by the query
+    numberReturned:
+      type: integer
+      description: |
+        The number of features returned by the query
+    timeStamp:
+      type: string
+      format: date-time
+      description: |
+        The time the response was generated
+    featureId:
+      type: string
+    collectionId:
+      type: string
+    genericFeature:
+      type: object
+      required:
+        - type
+        - id
+        - geometry
+        - properties
+      properties:
+        type:
+          type: string
+          enum: [Feature]
+        geometry:
+          $ref: "#/components/schemas/Geometry"
+        properties:
+          type: object
+        id:
+          $ref: "#/components/schemas/featureId"
+    genericFeatureCollection:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [FeatureCollection]
+        numberReturned:
+          $ref: "#/components/schemas/numberReturned"
+        numberMatched:
+          $ref: "#/components/schemas/numberMatched"
+        timeStamp:
+          $ref: "#/components/schemas/timeStamp"
+        features:
+          type: array
+          minItems: 0
+          items:
+            $ref: "#/components/schemas/genericFeature"
+  parameters:
+    bbox:
+      name: bbox
+      in: query
+      description: >-
+        Only features that have a geometry that intersects the bounding box are
+        selected.
+
+        The bounding box is provided as four or six numbers, depending on
+        whether the
+
+        coordinate reference system includes a vertical axis (height or depth):
+
+
+        * Lower left corner, coordinate axis 1
+
+        * Lower left corner, coordinate axis 2
+
+        * Minimum value, coordinate axis 3 (optional)
+
+        * Upper right corner, coordinate axis 1
+
+        * Upper right corner, coordinate axis 2
+
+        * Maximum value, coordinate axis 3 (optional)
+
+
+        If the value consists of four numbers, the coordinate reference system
+        is
+
+        WGS 84 longitude/latitude (http://www.opengis.net/def/crs/OGC/1.3/CRS84)
+
+        unless a different coordinate reference system is specified in the
+        parameter `bbox-crs`.
+
+
+        If the value consists of six numbers, the coordinate reference system is
+        WGS 84
+
+        longitude/latitude/ellipsoidal height
+        (http://www.opengis.net/def/crs/OGC/0/CRS84h)
+
+        unless a different coordinate reference system is specified in the
+        parameter `bbox-crs`.
+
+
+        The query parameter `bbox-crs` is specified in OGC API - Features - Part
+        2: Coordinate
+
+        Reference Systems by Reference.
+
+
+        For WGS 84 longitude/latitude the values are in most cases the sequence
+        of
+
+        minimum longitude, minimum latitude, maximum longitude and maximum
+        latitude.
+
+        However, in cases where the box spans the antimeridian the first value
+
+        (west-most box edge) is larger than the third value (east-most box
+        edge).
+
+
+        If the vertical axis is included, the third and the sixth number are the
+
+        bottom and the top of the 3-dimensional bounding box.
+
+
+        If a feature has multiple spatial geometry properties, it is the
+        decision of the
+
+        server whether only a single spatial geometry property is used to
+        determine
+
+        the extent or all relevant geometries.
+      required: false
+      schema:
+        type: array
+        minItems: 4
+        maxItems: 6
+        items:
+          type: number
+      style: form
+      explode: false
+    datetime:
+      name: datetime
+      in: query
+      description: >-
+        Either a date-time or an interval. Date and time expressions adhere to
+        RFC 3339.
+
+        Intervals may be bounded or half-bounded (double-dots at start or end).
+
+
+        Examples:
+
+
+        * A date-time: "2018-02-12T23:20:50Z"
+
+        * A bounded interval: "2018-02-12T00:00:00Z/2018-03-18T12:31:12Z"
+
+        * Half-bounded intervals: "2018-02-12T00:00:00Z/.." or
+        "../2018-03-18T12:31:12Z"
+
+
+        Only features that have a temporal property that intersects the value of
+
+        `datetime` are selected.
+
+
+        If a feature has multiple temporal properties, it is the decision of the
+
+        server whether only a single temporal property is used to determine
+
+        the extent or all relevant temporal properties.
+
+
+        The only currently supported intervals are those provided as an example.
+        If they 
+
+        do not `..` for unbounded or / for bounded intervals, `error(500)` `as
+        of now`
+      required: false
+      schema:
+        type: string
+      style: form
+      explode: false
+    limit:
+      name: limit
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        maximum: 100
+        default: 100
+      style: form
+      explode: false
+    offset:
+      in: query
+      name: offset
+      required: false
+      schema:
+        oneOf:
+          - type: string
+            enum:
+              - NaN
+          - type: integer
+            minimum: 0
+      style: form
+      explode: false
+    f:
+      in: query
+      name: f
+      required: false
+      schema:
+        type: string
+        default: json
+      style: form
+      explode: false
+    crs:
+      name: crs
+      description: >
+        The default CRS is http://www.opengis.net/def/crs/OGC/1.3/CRS84 which is
+        parsed as http://www.opengis.net/def/crs/EPSG/0/4326. All the coordinate
+        reference systems supported by PostGIS v3.4.0 are supported by this API.
+        They are all listed here and also otherible at the
+        {baseURL}/spatial_ref_sys endpoint.
+      in: query
+      required: false
+      schema:
+        type: string
+        default: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+      style: form
+      explode: false
+    bbox-crs:
+      description: >
+        The default CRS is http://www.opengis.net/def/crs/OGC/1.3/CRS84 which is
+        parsed as http://www.opengis.net/def/crs/EPSG/0/4326. All the coordinate
+        reference systems supported by PostGIS v3.4.0 are supported by this API.
+        They are all listed here and also otherible at the
+        {baseURL}/spatial_ref_sys endpoint.
+      name: bbox-crs
+      in: query
+      required: false
+      schema:
+        type: string
+        default: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+      style: form
+      explode: false
+    collectionId:
+      name: collectionId
+      in: path
+      description: |
+        The identifier of the collection to be retrieved.
+      required: true
+      schema:
+        $ref: "#/components/schemas/collectionId"
+    featureId:
+      name: featureId
+      in: path
+      description: |
+        The identifier of the feature to be retrieved.
+      required: true
+      schema:
+        $ref: "#/components/schemas/featureId"
+    downloadmode:
+      name: download
+      in: query
+      description: >
+        Access the dataset as a downloadable file. Currently supports only geojson.
+      schema:
+        type: boolean
+        default: false

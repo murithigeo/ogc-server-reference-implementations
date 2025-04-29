@@ -1,0 +1,26 @@
+@lAN=http://192.168.160.109:3000/features
+
+### Root
+{{lAN}}/?f=html
+
+### conformance
+{{lAN}}/conformance
+
+###
+GET {{lAN}}/api?f=html
+
+### API html
+GET {{lAN}}/api.html HTTP/1.1
+
+
+###
+GET {{lAN}}/collections
+
+###
+GET {{lAN}}/collections/mountains
+
+####
+GET {{lAN}}/collections/mountains/items?f=geojson&bbox=33,-5,42,5
+
+###
+GET {{lAN}}/collections/mountains/items/T
