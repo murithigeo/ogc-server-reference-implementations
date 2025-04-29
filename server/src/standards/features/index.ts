@@ -7,11 +7,14 @@ import rootController from "./controllers/rootController.js";
 import { apidocs, servers } from "../../apidocs/index.js";
 import { unexpectedQueryParamInvalidatorPlugin } from "../../common/common.utils.js";
 
-const doc = apidocs.features;
-doc.servers = servers.map(({ url, description }) => ({
-  url: `${url}/features`,
-  description,
-}));
+let doc = apidocs.features;
+doc = {
+  servers: servers.map(({ url, description }) => ({
+	url: `${url}/edr`,
+	description,
+  })),
+  ...doc,
+};
 const options: ExegesisOptions = {
   controllers: {
     apiController,
