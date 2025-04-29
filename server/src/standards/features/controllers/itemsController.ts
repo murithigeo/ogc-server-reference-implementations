@@ -1,6 +1,6 @@
 import type { ExegesisContext } from "exegesis-express";
-import { FeaturesLinksManager, FeaturesRqManager } from "../features.utils.ts";
-//import { jsonlikeToYAML } from "../../../common/common.utils.ts";
+import { FeaturesLinksManager, FeaturesRqManager } from "../features.utils.js";
+//import { jsonlikeToYAML } from "../../../common/common.utils.js";
 
 async function getItem(ctx: ExegesisContext): Promise<void> {
   const { featureId: itemId } = ctx.params.path;

@@ -1,5 +1,5 @@
 import type { ExegesisContext } from "exegesis-express";
-import { EdrLinksManager, EdrRqManager } from "../edr.utils.ts";
+import { EdrLinksManager, EdrRqManager } from "../edr.utils.js";
 
 //IDEA: Use a different table for locations or get the extents of each unique locationId value
 

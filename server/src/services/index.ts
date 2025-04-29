@@ -1,9 +1,9 @@
-import { isdCollection } from "./isd.service.ts";
+import { isdCollection } from "./isd.service.js";
 import {
   mountainsCollection,
   mountainsEdrCollection,
-} from "./mountains.service.ts";
-import type { EdrCollection, FeaturesCollection } from "./services.d.ts";
+} from "./mountains.service.js";
+import type { EdrCollection, FeaturesCollection } from "./services.d.js";
 
 export const services: {
   edr: EdrCollection[];

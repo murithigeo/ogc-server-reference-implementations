@@ -2,14 +2,14 @@ import type { ExegesisContext, ExegesisResponse } from "exegesis-express";
 import {
   featuresCollectionDocGenerator,
   FeaturesRqManager,
-} from "../features.utils.ts";
+} from "../features.utils.js";
 import {
   filterCollectionByBbox,
   filterCollectionByDatetime,
   jsonlikeToYAML,
-} from "../../../common/common.utils.ts";
-import { FeaturesLinksManager } from "../features.utils.ts";
-import { CRS84 } from "../../../common/utils/CrsManager.ts";
+} from "../../../common/common.utils.js";
+import { FeaturesLinksManager } from "../features.utils.js";
+import { CRS84 } from "../../../common/utils/CrsManager.js";
 async function getCollection(ctx: ExegesisContext): Promise<void> {
   const { url, collection, crs, contentCrsHeader, f, contentTypeHeader } =
     new FeaturesRqManager({

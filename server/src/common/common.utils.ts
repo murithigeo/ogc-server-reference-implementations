@@ -1,7 +1,7 @@
 import type { ExegesisPlugin, ExegesisPluginInstance } from "exegesis-express";
 import type { ExegesisPluginContext } from "exegesis-express";
 import type { StringCustomFormatChecker } from "exegesis-express";
-import type { FeaturesRqManager } from "../standards/features/features.utils.ts";
+import type { FeaturesRqManager } from "../standards/features/features.utils.js";
 import intersects from "@turf/boolean-intersects";
 import YAML from "js-yaml";
 

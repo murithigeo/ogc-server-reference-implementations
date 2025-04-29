@@ -1,7 +1,7 @@
 import type { ExegesisContext } from "exegesis-express";
-import { EdrRqManager } from "../edr.utils.ts";
-import { scalar } from "../../../common/utils/scalar.ts";
-import { jsonlikeToYAML } from "../../../common/common.utils.ts";
+import { EdrRqManager } from "../edr.utils.js";
+import { scalar } from "../../../common/utils/scalar.js";
+import { jsonlikeToYAML } from "../../../common/common.utils.js";
 
 function getServiceDoc(ctx: ExegesisContext): void {
   ctx.res

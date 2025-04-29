@@ -1,4 +1,4 @@
-import type { EdrCollection } from "../../services/services.d.ts";
+import type { EdrCollection } from "../../services/services.d.js";
 import { HttpError } from "exegesis";
 type Row = {
   [x: string]: any;

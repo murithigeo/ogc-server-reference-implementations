@@ -1,12 +1,12 @@
 import type {
   EdrCollection,
   FeaturesCollection,
-} from "../../services/services.d.ts";
+} from "../../services/services.d.js";
 import type { ExegesisContext } from "exegesis-express";
-import type { CrsConfig } from "../../types/commontypes.d.ts";
-import { CRS84Attr, CrsManager, CRS84 } from "../../common/utils/CrsManager.ts";
-import { contenttypes } from "../../common/utils/contenttypes.ts";
-import { services } from "../../services/index.ts";
+import type { CrsConfig } from "../../types/commontypes.d.js";
+import { CRS84Attr, CrsManager, CRS84 } from "../../common/utils/CrsManager.js";
+import { contenttypes } from "../../common/utils/contenttypes.js";
+import { services } from "../../services/index.js";
 
 /**
  *@description Takes spatial extents and returns a collection metadata document
@@ -492,7 +492,7 @@ export class FeaturesLinksManager {
       ...this.output_formats.map((of) => {
         url.searchParams.set("f", of);
         return {
-          title: "View available datasets",
+          title: "View available datas.js",
           href: url.toString(),
           type: contenttypes[of],
           rel: "data",

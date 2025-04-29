@@ -1,11 +1,11 @@
 import { sql, type ExpressionWrapper } from "kysely";
-import { bboxToPolygon } from "../common/common.utils.ts";
-import type { Database } from "../models/db.ts";
-import { stf as _stf } from "../models/kysely-postgis/functions.ts";
+import { bboxToPolygon } from "../common/common.utils.js";
+import type { Database } from "../models/db.js";
+import { stf as _stf } from "../models/kysely-postgis/functions.js";
 import type { SqlBool } from "kysely";
 import type { ReferenceExpression } from "kysely";
 import type { ExpressionBuilder } from "kysely";
-import type { EdrRqManager } from "../standards/edr/edr.utils.ts";
+import type { EdrRqManager } from "../standards/edr/edr.utils.js";
 
 /**
  * Returns an array of boolean conditions of geometries inside a 2D space

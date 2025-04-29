@@ -1,5 +1,5 @@
 import type { ExegesisContext } from "exegesis-express";
-import { EdrLinksManager, EdrRqManager } from "../edr.utils.ts";
+import { EdrLinksManager, EdrRqManager } from "../edr.utils.js";
 
 async function getRadiusAtCollection(ctx: ExegesisContext): Promise<void> {
   const {

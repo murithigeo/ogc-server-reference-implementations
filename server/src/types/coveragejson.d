@@ -376,7 +376,7 @@ export interface TiledNdArray {
    * A TiledNdArray object MUST have a member with the name "shape" where the value is a non-empty array of integers
    */
   shape: [number, ...number[]];
-  /**MUST have member "tileSets" where value is a non-empty array of TileSet objects */
+  /**MUST have member "tileS.js" where value is a non-empty array of TileSet objects */
   tileSets: [TileSet, ...TileSet[]];
   /**
    * A TiledNdArray object MUST have a member with the name "axisNames" where the value is a string array of the same length as "shape"

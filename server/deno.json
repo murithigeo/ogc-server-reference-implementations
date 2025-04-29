@@ -1,6 +1,6 @@
 {
   "tasks": {
-    "dev": "deno run --watch-hmr ./src/index.ts"
+    "dev": "deno run --watch-hmr -A ./src/index.ts"
   },
   "imports": {
     "@std/assert": "jsr:@std/assert@1",
@@ -26,5 +26,6 @@
     "noImplicitAny": false,
     "types": ["node"],
     "verbatimModuleSyntax": true
-  }
+  },
+  "unstable": ["sloppy-imports"]
 }

@@ -1946,3 +1946,5 @@
  GET http://192.168.160.176:3000/edr/api
 ### 2025-04-29T14:15:50.493Z status 200 - ms - application/json - 
  GET http://192.168.160.176:3000/features/
+### 2025-04-29T14:46:52.565Z status 200 - ms - application/json - 
+ GET http://192.168.160.176:3000/features/

@@ -1,6 +1,6 @@
 import type { ExegesisContext } from "exegesis-express";
-import { EdrLinksManager, EdrRqManager } from "../edr.utils.ts";
-import { jsonlikeToYAML } from "../../../common/common.utils.ts";
+import { EdrLinksManager, EdrRqManager } from "../edr.utils.js";
+import { jsonlikeToYAML } from "../../../common/common.utils.js";
 
 function getRoot(ctx: ExegesisContext): void {
   const { f, output_formats, contentTypeHeader } = new EdrRqManager({

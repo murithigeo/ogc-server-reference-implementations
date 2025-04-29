@@ -3,14 +3,14 @@ import {
   edrCollectionDocGenerator,
   EdrLinksManager,
   EdrRqManager,
-} from "../edr.utils.ts";
-import { CRS84 } from "../../../common/utils/CrsManager.ts";
+} from "../edr.utils.js";
+import { CRS84 } from "../../../common/utils/CrsManager.js";
 import {
   filterCollectionByBbox,
   filterCollectionByDatetime,
   filterCollectionByZ,
   jsonlikeToYAML,
-} from "../../../common/common.utils.ts";
+} from "../../../common/common.utils.js";
 
 async function getCollections(ctx: ExegesisContext): Promise<void> {
   /* One of these operations may be causing a premature 404 response */

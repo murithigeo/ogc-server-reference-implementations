@@ -1,6 +1,6 @@
 import type { ExegesisContext, ExegesisResponse } from "exegesis-express";
-import { scalar } from "../../../common/utils/scalar.ts";
-import { FeaturesRqManager } from "../features.utils.ts";
+import { scalar } from "../../../common/utils/scalar.js";
+import { FeaturesRqManager } from "../features.utils.js";
 import yaml from "js-yaml";
 const getServiceDesc = async (
   ctx: ExegesisContext

@@ -1,9 +1,9 @@
 import { ExpressionWrapper, sql } from "kysely";
-import { CRS84, CRS84Attr } from "../common/utils/CrsManager.ts";
-import observedproperties from "../observedProperties.ts";
-import units from "../units.ts";
-import type { EdrCollection, SpatialOptions } from "./services.d.ts";
-import { db } from "../models/db.ts";
+import { CRS84, CRS84Attr } from "../common/utils/CrsManager.js";
+import observedproperties from "../observedProperties.js";
+import units from "../units.js";
+import type { EdrCollection, SpatialOptions } from "./services.d.js";
+import { db } from "../models/db.js";
 import {
   areaFilter,
   bboxFilter,
@@ -20,16 +20,16 @@ import {
   transformGeometry,
   zExtent,
   zFilter,
-} from "./utils.ts";
+} from "./utils.js";
 import type { SqlBool } from "kysely";
-import type { Database } from "../models/db.ts";
-import { stf } from "../models/kysely-postgis/index.ts";
+import type { Database } from "../models/db.js";
+import { stf } from "../models/kysely-postgis/index.js";
 import { HttpError } from "exegesis";
 import pg from "pg";
-import { httpcodes } from "../httpcodes/index.ts";
-import { EdrGeoJsonParser } from "../standards/edr/edr.utils.ts";
-import { CoverageJsonParser } from "../common/parsers/coverageJsonParser.ts";
-import { FeaturesGeoJsonParser } from "../standards/features/features.utils.ts";
+import { httpcodes } from "../httpcodes/index.js";
+import { EdrGeoJsonParser } from "../standards/edr/edr.utils.js";
+import { CoverageJsonParser } from "../common/parsers/coverageJsonParser.js";
+import { FeaturesGeoJsonParser } from "../standards/features/features.utils.js";
 import type { ExpressionBuilder } from "kysely";
 
 export const isdCollection: EdrCollection = {

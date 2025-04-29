@@ -1,5 +1,5 @@
-import { isdCollection } from "./isd.service.ts";
-import { db, type Database } from "../models/db.ts";
+import { isdCollection } from "./isd.service.js";
+import { db, type Database } from "../models/db.js";
 import {
   bboxFilter,
   geomBounds,
@@ -9,12 +9,12 @@ import {
   transformGeometry,
   zExtent,
   zFilter,
-} from "./utils.ts";
+} from "./utils.js";
 import { ExpressionWrapper } from "kysely";
 import type { SqlBool } from "kysely";
 import { HttpError } from "exegesis";
-import { FeaturesGeoJsonParser } from "../standards/features/features.utils.ts";
-import { CRS84 } from "../common/utils/CrsManager.ts";
+import { FeaturesGeoJsonParser } from "../standards/features/features.utils.js";
+import { CRS84 } from "../common/utils/CrsManager.js";
 
 export const mountainsCollection: Services.FeaturesCollection = {
   storageCRS: "http://www.opengis.net/def/crs/OGC/0/CRS84h",
@@ -26,19 +26,19 @@ export const mountainsCollection: Services.FeaturesCollection = {
     const { rows = [], numberMatched } = await db.transaction().execute(async (trx) => {
       const conditions: ExpressionWrapper<
         Database,
-        "features_points",
+        "features_poi.js",
         SqlBool
       >[] = [];
       if (itemId) {
         await trx
-          .selectFrom("features_points")
+          .selectFrom("features_poi.js")
           .where("features_points.name", "=", itemId.toString())
           .executeTakeFirstOrThrow(() => new HttpError(404, "no such item"));
       }
       return (await db
         .with("vals1", (db) =>
           db
-            .selectFrom("features_points")
+            .selectFrom("features_poi.js")
             .select([
               "name as id",
               "continent",
@@ -98,7 +98,7 @@ export const mountainsCollection: Services.FeaturesCollection = {
   },
   async extentQuery({ crs }) {
     return await db
-      .selectFrom("features_points")
+      .selectFrom("features_poi.js")
       .select((eb) => [
         eb.val<string>("mountains").as("id"),
         ...tExtent(eb, undefined, false),

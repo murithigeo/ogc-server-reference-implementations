@@ -1,7 +1,7 @@
 import type { ExegesisContext } from "exegesis-express";
-import { FeaturesRqManager } from "../../features/features.utils.ts";
-import { jsonlikeToYAML } from "../../../common/common.utils.ts";
-import { EdrLinksManager } from "../edr.utils.ts";
+import { FeaturesRqManager } from "../../features/features.utils.js";
+import { jsonlikeToYAML } from "../../../common/common.utils.js";
+import { EdrLinksManager } from "../edr.utils.js";
 
 function getConformance(ctx: ExegesisContext): void {
   const { contentTypeHeader, f, output_formats } = new FeaturesRqManager({

@@ -1,4 +1,4 @@
-export * as CommonTypes from "./commontypes.d.ts";
+export * as CommonTypes from "./commontypes.d.js";
 export * as CoverageJSON from "./coveragejson.d";
 export as namespace EdrTypes;
 export interface RootDocument extends CommonTypes.Root {
@@ -328,11 +328,11 @@ interface CorridorRequestBody extends AreaRequestBody {
   /**Conflict */
   "corridor-height": string;
   /**@description the unit of the corridor-width parameter */
-  "width-units": string;
+  "width-un.js": string;
   /**
    * @description The Unit of the corridor-height parameter
    */
-  "height-units": string;
+  "height-un.js": string;
 }
 
 interface CubeRequestBody
@@ -375,6 +375,6 @@ interface RadiusRequestBody
   /**Radius of circle */
   within: number;
   /**units of within parameter */
-  "within-units": string;
+  "within-un.js": string;
 }
 type TrajectoryRequestBody = AreaRequestBody;

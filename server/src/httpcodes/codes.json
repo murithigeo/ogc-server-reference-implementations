@@ -21,7 +21,7 @@
   },
   "103": {
     "code": 103,
-    "message": "Early Hints",
+    "message": "Early Hi.js",
     "description": "Used to return some response headers before final HTTP message."
   },
   "2xx": {
@@ -271,7 +271,7 @@
   },
   "429": {
     "code": 429,
-    "message": "Too Many Requests",
+    "message": "Too Many Reque.js",
     "description": "The user has sent too many requests in a given amount of time. Intended for use with rate limiting schemes."
   },
   "431": {

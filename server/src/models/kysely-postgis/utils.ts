@@ -7,8 +7,8 @@ import { sql, ValueNode, ExpressionWrapper } from "kysely";
 import * as wkx from "wkx";
 import { isGeometryObject as isGeometryObjectValidator } from "geojson-validation";
 import { type Geometry } from "geojson";
-import { defaultOptions, type Options } from "./index.ts";
-import { geomFromGeoJSON } from "./functions.ts";
+import { defaultOptions, type Options } from "./index.js";
+import { geomFromGeoJSON } from "./functions.js";
 
 export function withDefaultOptions<T>(options: T) {
   return Object.assign({}, defaultOptions, options);

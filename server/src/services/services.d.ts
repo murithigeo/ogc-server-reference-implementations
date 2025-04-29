@@ -1,10 +1,10 @@
 export as namespace Services;
 import type { CoverageJSON } from "@types/coveragejson";
-import type { RefExpression } from "../models/db.ts";
+import type { RefExpression } from "../models/db.js";
 import type { Length } from "convert";
-import type { EdrRqManager } from "../standards/edr/edr.utils.ts";
-import type { FeaturesRqManager } from "../standards/features/features.utils.ts";
-import type { contenttypes } from "../common/utils/contenttypes.ts";
+import type { EdrRqManager } from "../standards/edr/edr.utils.js";
+import type { FeaturesRqManager } from "../standards/features/features.utils.js";
+import type { contenttypes } from "../common/utils/contenttypes.js";
 import type { oas3 } from "exegesis";
 
 type SpatialOptions =

@@ -1,6 +1,6 @@
 import type { ExegesisContext } from "exegesis-express";
-import { FeaturesLinksManager, FeaturesRqManager } from "../features.utils.ts";
-import { jsonlikeToYAML } from "../../../common/common.utils.ts";
+import { FeaturesLinksManager, FeaturesRqManager } from "../features.utils.js";
+import { jsonlikeToYAML } from "../../../common/common.utils.js";
 
 function getRoot(ctx: ExegesisContext): void {
   const { f, output_formats, contentTypeHeader } = new FeaturesRqManager({
@@ -23,7 +23,7 @@ function getRoot(ctx: ExegesisContext): void {
 
   const doc: CommonTypes.Root = {
     description:
-      "Demo API for OGC Features API.\n Supports Part 1 and Part 2 Conformance Requirements",
+      "Demo API for OGC Features API.\n Supports Part 1 and Part 2 Conformance Requireme.js",
     title: "OGC API Features Demo API",
     links,
   };

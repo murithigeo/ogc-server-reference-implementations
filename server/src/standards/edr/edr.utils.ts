@@ -2,15 +2,15 @@ import wkx from "wkx";
 import { convert, type Length } from "convert";
 import type { ExegesisContext, ExegesisRoute, oas3 } from "exegesis-express";
 //import type { edrConfig } from '../../config/index.ts';
-import { contenttypes } from "../../common/utils/contenttypes.ts";
+import { contenttypes } from "../../common/utils/contenttypes.js";
 import {
   FeaturesGeoJsonParser,
   FeaturesLinksManager,
   FeaturesRqManager,
-} from "../features/features.utils.ts";
-import type { EdrCollection } from "../../services/services.d.ts";
-import { services } from "../../services/index.ts";
-import {  TRS_Gregorian } from "../../common/utils/CrsManager.ts";
+} from "../features/features.utils.js";
+import type { EdrCollection } from "../../services/services.d.js";
+import { services } from "../../services/index.js";
+import {  TRS_Gregorian } from "../../common/utils/CrsManager.js";
 import { ValidationError } from "exegesis";
 export class EdrRqManager extends FeaturesRqManager<EdrCollection> {
   /**
@@ -137,8 +137,8 @@ export class EdrRqManager extends FeaturesRqManager<EdrCollection> {
     const {
         "corridor-height": corridor_height,
         "corridor-width": corridor_width,
-        "width-units": width_unit,
-        "height-units": height_unit,
+        "width-un.js": width_unit,
+        "height-un.js": height_unit,
       } = this.ctx.params.query,
       docPath = this.ctx.api.pathItemPtr;
 
@@ -150,7 +150,7 @@ export class EdrRqManager extends FeaturesRqManager<EdrCollection> {
         "invalid width-units. Check collection metadata",
         {
           in: "query",
-          name: "width-units",
+          name: "width-un.js",
           docPath,
         }
       );
@@ -160,7 +160,7 @@ export class EdrRqManager extends FeaturesRqManager<EdrCollection> {
         "invalid height-units. Check collection metadata",
         {
           in: "query",
-          name: "height-units",
+          name: "height-un.js",
           docPath,
         }
       );
@@ -256,13 +256,13 @@ export class EdrRqManager extends FeaturesRqManager<EdrCollection> {
   radiusParser(targetUnit: Length = "metres") {
     const options = this
       .queryTypeOptions as EdrCollection["data_queries"]["radius"];
-    const { within, "within-units": wUnits } = this.ctx.params.query;
+    const { within, "within-un.js": wUnits } = this.ctx.params.query;
     if (!options?.within_units.includes(wUnits)) {
       throw this.ctx.makeValidationError(
         `Invalid within-units. Valid options include: ${options?.within_units.join(
           ", \n "
         )}`,
-        { in: "query", name: "within-units", docPath: this.ctx.api.pathItemPtr }
+        { in: "query", name: "within-un.js", docPath: this.ctx.api.pathItemPtr }
       );
     }
     this.radius = {
