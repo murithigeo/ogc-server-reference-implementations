@@ -2,7 +2,7 @@ import type { ExegesisContext } from "exegesis-express";
 import { EdrLinksManager, EdrRqManager } from "../edr.utils.ts";
 import { jsonlikeToYAML } from "../../../common/common.utils.ts";
 
-async function getRoot(ctx: ExegesisContext): Promise<void> {
+function getRoot(ctx: ExegesisContext): void {
   const { f, output_formats, contentTypeHeader } = new EdrRqManager({
     ctx,
   }).outputFormatParser("json", ["json", "yaml"]);

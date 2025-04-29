@@ -26,7 +26,7 @@ async function getTrajectoryAtCollection(ctx: ExegesisContext): Promise<void> {
     .zParser();
 
   const { data, numberMatched } = await collection.query({
-    server:ctx.api.serverObject!,
+    server: ctx.api.serverObject!,
     crs,
     parameters,
     limit,
@@ -75,7 +75,7 @@ async function getTrajectoryAtInstance(ctx: ExegesisContext): Promise<void> {
     .zParser();
 
   const { data, numberMatched } = await collection.query({
-    server:ctx.api.serverObject!,
+    server: ctx.api.serverObject!,
     crs,
     parameters,
     limit,
@@ -94,8 +94,6 @@ async function getTrajectoryAtInstance(ctx: ExegesisContext): Promise<void> {
     .set(...contentCrsHeader)
     .set(...contentTypeHeader)
     .setBody({ ...data, links });
-
-  ctx.res.end();
 }
 
 /**

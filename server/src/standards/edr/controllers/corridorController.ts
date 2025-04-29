@@ -24,8 +24,8 @@ async function getCorridorAtCollection(ctx: ExegesisContext): Promise<void> {
     .datetimeParser()
     .corridorParser()
     .outputFormatParser();
-  const { data ,numberMatched} = await collection.query({
-    server:ctx.api.serverObject!,
+  const { data, numberMatched } = await collection.query({
+    server: ctx.api.serverObject!,
     limit,
     offset,
     f,
@@ -36,11 +36,7 @@ async function getCorridorAtCollection(ctx: ExegesisContext): Promise<void> {
   const { links } = new EdrLinksManager({ ctx, f, output_formats })
     .self()
     .alternates()
-    .paginationLinks(
-      numberMatched,
-      limit,
-      offset
-    )
+    .paginationLinks(numberMatched, limit, offset)
     .override_output_formats(["json", "yaml"])
     .collection(collection.id);
   ctx.res
@@ -48,8 +44,6 @@ async function getCorridorAtCollection(ctx: ExegesisContext): Promise<void> {
     .set(...contentCrsHeader)
     .set(...contentTypeHeader)
     .setBody({ ...data, links });
-
-  ctx.res.end();
 }
 async function getCorridorAtInstance(ctx: ExegesisContext): Promise<void> {
   const rqManager = new EdrRqManager({ ctx });
@@ -83,8 +77,8 @@ async function getCorridorAtInstance(ctx: ExegesisContext): Promise<void> {
     .offsetParser()
     .limitParser();
 
-  const { data,numberMatched } = await collection.query({
-    server:ctx.api.serverObject!,
+  const { data, numberMatched } = await collection.query({
+    server: ctx.api.serverObject!,
     limit,
     offset,
     crs,
@@ -96,11 +90,7 @@ async function getCorridorAtInstance(ctx: ExegesisContext): Promise<void> {
   const { links } = new EdrLinksManager({ ctx, f, output_formats })
     .self()
     .alternates()
-    .paginationLinks(
-      numberMatched,
-      limit,
-      offset
-    )
+    .paginationLinks(numberMatched, limit, offset)
     .override_output_formats(["json", "yaml"])
     .toInstance(collection.id, instanceId!);
   ctx.res

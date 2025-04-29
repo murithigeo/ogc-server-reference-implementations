@@ -1139,8 +1139,7 @@
       "npm:kysely@*",
       "npm:morgan@*",
       "npm:pg@*",
-      "npm:wkx@*",
-      "npm:yaml@*"
+      "npm:wkx@*"
     ],
     "packageJson": {
       "dependencies": [

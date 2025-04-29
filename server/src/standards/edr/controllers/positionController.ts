@@ -2,7 +2,6 @@ import type { ExegesisContext } from "exegesis-express";
 import { EdrLinksManager, EdrRqManager } from "../edr.utils.ts";
 
 async function getPositionAtCollection(ctx: ExegesisContext): Promise<void> {
-  //try {
   const {
     collection,
     crs,
@@ -100,7 +99,6 @@ async function getPositionAtInstance(ctx: ExegesisContext): Promise<void> {
     .set(...contentCrsHeader)
     .set(...contentTypeHeader)
     .setBody({ ...data, links })
-    .end();
 }
 export default {
   getPositionAtCollection,

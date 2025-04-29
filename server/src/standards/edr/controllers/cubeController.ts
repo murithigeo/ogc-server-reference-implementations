@@ -1,7 +1,6 @@
 import type { ExegesisContext } from "exegesis-express";
 import { EdrLinksManager, EdrRqManager } from "../edr.utils.ts";
 
-//If a client request has a bbox value which includes height values and defines a z query parameter the z query parameter will be the definition of the requested height value
 async function getCubeAtCollection(ctx: ExegesisContext): Promise<void> {
   const {
     collection,
@@ -29,8 +28,8 @@ async function getCubeAtCollection(ctx: ExegesisContext): Promise<void> {
     .offsetParser()
     .limitParser();
 
-  const { data ,numberMatched} = await collection.query({
-    server:ctx.api.serverObject!,
+  const { data, numberMatched } = await collection.query({
+    server: ctx.api.serverObject!,
     crs,
     parameters,
     limit,
@@ -41,19 +40,14 @@ async function getCubeAtCollection(ctx: ExegesisContext): Promise<void> {
   const { links } = new EdrLinksManager({ ctx, f, output_formats })
     .self()
     .alternates()
-    .paginationLinks(
-      numberMatched,
-      limit,
-      offset
-    )
+    .paginationLinks(numberMatched, limit, offset)
     .override_output_formats(["json", "yaml"])
     .collection(collection.id);
   ctx.res
     .status(200)
     .set(...contentCrsHeader)
     .set(...contentTypeHeader)
-    .setBody({ ...data, links })
-    .end();
+    .setBody({ ...data, links });
 }
 const getCubeAtInstance = async (ctx: ExegesisContext): Promise<void> => {
   const {
@@ -85,8 +79,8 @@ const getCubeAtInstance = async (ctx: ExegesisContext): Promise<void> => {
     .offsetParser()
     .limitParser();
 
-  const { data ,numberMatched} = await collection.query({
-    server:ctx.api.serverObject!,
+  const { data, numberMatched } = await collection.query({
+    server: ctx.api.serverObject!,
     crs,
     f,
     parameters,
@@ -98,18 +92,13 @@ const getCubeAtInstance = async (ctx: ExegesisContext): Promise<void> => {
   const { links } = new EdrLinksManager({ ctx, f, output_formats })
     .self()
     .alternates()
-    .paginationLinks(
-      numberMatched,
-      limit,
-      offset
-    )
+    .paginationLinks(numberMatched, limit, offset)
     .override_output_formats(["json", "yaml"])
     .toInstance(collection.id, instanceId!);
   ctx.res
     .status(200)
     .set(...contentCrsHeader)
     .set(...contentTypeHeader)
-    .setBody({ ...data, links })
-    .end();
+    .setBody({ ...data, links });
 };
 export default { getCubeAtCollection, getCubeAtInstance };

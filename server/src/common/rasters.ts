@@ -1,3 +1,4 @@
+/*
 import { fromUrl } from "geotiff";
 const lerp = (a, b, t) => (1 - t) * a + t * b;
 
@@ -44,3 +45,4 @@ const rasters = await image.readRasters();
 const { width, [0]: raster } = rasters;
 const elevation = raster[x + y * width];
 console.log(`The elevation at (${lat.toFixed(6)},${long.toFixed(6)}) is ${elevation}m`);
+*/

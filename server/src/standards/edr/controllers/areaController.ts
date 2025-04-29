@@ -43,8 +43,7 @@ async function getAreaAtCollection(ctx: ExegesisContext): Promise<void> {
     .status(200)
     .set(...contentCrsHeader)
     .set(...contentTypeHeader)
-    .setBody({ ...data, links })
-    .end();
+    .setBody({ ...data, links });
 }
 async function getAreaAtInstance(ctx: ExegesisContext): Promise<void> {
   const {
@@ -96,7 +95,5 @@ async function getAreaAtInstance(ctx: ExegesisContext): Promise<void> {
     .set(...contentCrsHeader)
     .set(...contentTypeHeader)
     .setBody({ ...data, links });
-
-  ctx.res.end();
 }
 export default { getAreaAtCollection, getAreaAtInstance };

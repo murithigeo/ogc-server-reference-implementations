@@ -26,7 +26,7 @@ async function getItemsAtCollection(ctx: ExegesisContext): Promise<void> {
     .limitParser()
     .offsetParser();
 
-  let { data,numberMatched } = await collection.query({
+  const { data,numberMatched } = await collection.query({
     server:ctx.api.serverObject!,
     parameters,
     offset,
@@ -180,7 +180,7 @@ async function getItemAtInstance(ctx: ExegesisContext): Promise<void> {
     .limitParser(1, 1)
     .offsetParser();
 
-  let { data } = await collection.query({
+  const { data } = await collection.query({
     server:ctx.api.serverObject!,
     parameters,
     offset,

@@ -1,23 +1,23 @@
-import type { ExegesisContext, ExegesisResponse } from "exegesis-express";
+import type { ExegesisContext } from "exegesis-express";
 import { EdrRqManager } from "../edr.utils.ts";
 import { scalar } from "../../../common/utils/scalar.ts";
 import { jsonlikeToYAML } from "../../../common/common.utils.ts";
-const getServiceDoc = async (ctx: ExegesisContext): Promise<void> => {
+
+function getServiceDoc(ctx: ExegesisContext): void {
   ctx.res
     .status(200)
     .set("content-type", "text/html")
     .setBody(scalar(ctx.api.openApiDoc));
-};
+}
 
-const getServiceDesc = async (ctx: ExegesisContext): Promise<void> => {
-  let { f, contentTypeHeader } = new EdrRqManager({
+function getServiceDesc(ctx: ExegesisContext): void {
+  const { f } = new EdrRqManager({
     ctx,
     collections: [],
   }).outputFormatParser("json", ["json", "yaml"]);
 
   const { openApiDoc } = ctx.api;
   //Technically this is the same as text/yaml
-
   ctx.res.status(200);
   //.set(...contentTypeHeader)
   //  .setBody(doc);
@@ -37,6 +37,6 @@ const getServiceDesc = async (ctx: ExegesisContext): Promise<void> => {
       break;
   }
   ctx.res.end();
-};
+}
 
 export default { getServiceDesc, getServiceDoc };

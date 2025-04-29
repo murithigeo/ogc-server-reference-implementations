@@ -10,7 +10,7 @@ import {
 } from "../features/features.utils.ts";
 import type { EdrCollection } from "../../services/services.d.ts";
 import { services } from "../../services/index.ts";
-import { CrsManager, TRS_Gregorian } from "../../common/utils/CrsManager.ts";
+import {  TRS_Gregorian } from "../../common/utils/CrsManager.ts";
 import { ValidationError } from "exegesis";
 export class EdrRqManager extends FeaturesRqManager<EdrCollection> {
   /**

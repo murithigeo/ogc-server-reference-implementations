@@ -55,7 +55,8 @@ async function getCollections(ctx: ExegesisContext): Promise<void> {
         ...doc,
         links: Object.values(doc.data_queries)
           .map(
-            ({ link: { variables, ...others } }: EdrTypes.LinkObject) => others
+            ({ link: { variables: _variables, ...others } }: EdrTypes.LinkObject) =>
+              others
           )
           .concat(
             ...new EdrLinksManager({ output_formats, f, ctx }).collection(
@@ -110,7 +111,7 @@ async function getCollection(ctx: ExegesisContext): Promise<void> {
   mainbody = {
     ...mainbody,
     links: Object.values(mainbody.data_queries)
-      .map(({ link: { variables, ...others } }: EdrTypes.LinkObject) => others)
+      .map(({ link: { variables:_variables, ...others } }: EdrTypes.LinkObject) => others)
       .concat(
         ...new EdrLinksManager({ ctx, f, output_formats }).self().alternates()
           .links
@@ -176,7 +177,7 @@ async function getInstances(ctx: ExegesisContext): Promise<void> {
       doc = {
         ...doc,
         links: Object.values(doc.data_queries)
-          .map(({ link: { variables, ...others } }) => others)
+          .map(({ link: { variables:_variables, ...others } }) => others)
           .concat(
             new EdrLinksManager({ ctx, f, output_formats }).toInstance(
               collection.id,

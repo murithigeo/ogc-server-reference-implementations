@@ -17,7 +17,6 @@ async function getLocationsAtCollection(ctx: ExegesisContext): Promise<void> {
     offset,
     limit,
     output_formats,
-    parameters,
   } = new EdrRqManager({ ctx })
     .collectionParser()
     .dataQueryParser("locations")
@@ -34,7 +33,6 @@ async function getLocationsAtCollection(ctx: ExegesisContext): Promise<void> {
       offset,
       crs,
       z,
-      //crs,
     })!;
   const { links } = new EdrLinksManager({ ctx, f, output_formats })
     .self()
@@ -70,8 +68,8 @@ async function getLocationAtCollection(ctx: ExegesisContext): Promise<void> {
     .limitParser()
     .offsetParser();
 
-  const { data ,numberMatched} = await collection.query({
-    server:ctx.api.serverObject!,
+  const { data, numberMatched } = await collection.query({
+    server: ctx.api.serverObject!,
     locationId,
     crs,
     parameters,
@@ -105,7 +103,6 @@ async function getLocationsAtInstance(ctx: ExegesisContext): Promise<void> {
     z,
     datetime,
     collection,
-    parameters,
     instanceId,
     offset,
     output_formats,
@@ -124,17 +121,18 @@ async function getLocationsAtInstance(ctx: ExegesisContext): Promise<void> {
     .limitParser()
     .offsetParser();
 
-  const { data ,numberMatched} = await collection.data_queries?.locations?.handler({
-    //locationId,
-    bbox,
-    z,
-    datetime,
-    instanceId,
-    crs,
-    //parameters,
-    offset,
-    limit,
-  })!;
+  const { data, numberMatched } =
+    await collection.data_queries?.locations?.handler({
+      //locationId,
+      bbox,
+      z,
+      datetime,
+      instanceId,
+      crs,
+      //parameters,
+      offset,
+      limit,
+    })!;
   const { links } = new EdrLinksManager({ ctx, f, output_formats })
     .self()
     .alternates()
@@ -172,8 +170,8 @@ async function getLocationAtInstance(ctx: ExegesisContext): Promise<void> {
     .limitParser()
     .offsetParser();
 
-  const { data,numberMatched } = await collection.query({
-    server:ctx.api.serverObject!,
+  const { data, numberMatched } = await collection.query({
+    server: ctx.api.serverObject!,
     locationId,
     instanceId,
     crs,
