@@ -21,12 +21,9 @@ const urls = (process.env?.BASE_URLS || "http://localhost")
       : ""
   )
   .filter((u) => URL.canParse(u))
-  .map((str) => {
-    if (!URL.canParse(str))
-      throw new Error(`values of env var BASE_URLS may not be a valid URL`);
-    return str;
-  })
-  .map((uri) => `${uri}:${PORT}`);
+  .map((u) => `${u}:${PORT}`);
+
+//.map((uri) => `${uri}:${PORT}`);
 
 console.log(`Server root is: ${urls.join(";\t")}`);
 export const apidocs: {

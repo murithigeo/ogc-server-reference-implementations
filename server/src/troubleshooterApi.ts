@@ -16,7 +16,7 @@ function getServerRoot(ctx: ExegesisContext) {
     links: [
       {
         rel: "data",
-        href: ctx.api.serverObject?.url! + `/fetures/`,
+        href: ctx.api.serverObject?.url! + `/features/`,
         type: "application/json",
         title: `OGCAPI: Features Implementation`,
       },

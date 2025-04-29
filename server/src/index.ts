@@ -2,8 +2,8 @@ import { PORT } from "./apidocs/index.js";
 import server from "./app.js";
 
 try {
-    server.listen(3000,()=>console.log(`Listening on PORT: ${PORT}`))
+  server.listen(PORT, () => `Server online`);
 } catch (error) {
-    console.error(error)
-    process.exit(1)
+  console.error(error);
+  process.exit(1);
 }

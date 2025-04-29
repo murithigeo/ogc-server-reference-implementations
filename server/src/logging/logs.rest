@@ -1966,3 +1966,17 @@
  GET http://localhost:3000/edr/collections/isd-2025/instances
 ### 2025-04-29T18:56:05.193Z status 200 - ms - application/json - 
  GET http://localhost:3000/
+### 2025-04-29T19:10:42.969Z status 200 - ms - application/json - 
+ GET http://localhost:3000/edr/collections/isd-2025/instances
+### 2025-04-29T19:14:57.318Z status 200 - ms - application/json - 
+ GET http://localhost:3000/
+### 2025-04-29T19:14:57.847Z status 404 - ms - text/html; charset=utf-8 150 
+ GET http://localhost:3000/favicon.ico
+### 2025-04-29T19:15:01.321Z status 404 - ms - text/html; charset=utf-8 147 
+ GET http://localhost:3000/fetures/
+### 2025-04-29T19:15:29.342Z status 200 - ms - application/json - 
+ GET http://localhost:3000/edr/
+### 2025-04-29T19:15:29.668Z status 404 - ms - text/html; charset=utf-8 150 
+ GET http://localhost:3000/favicon.ico
+### 2025-04-29T19:24:53.034Z status 200 - ms - application/json - 
+ GET http://localhost:3000/

@@ -1,39 +1,45 @@
-import rootController from './controllers/rootController.js';
-import apiController from './controllers/apiController.js';
-import conformanceController from './controllers/conformanceController.js';
-import collectionsController from './controllers/collectionsController.js';
-import areaController from './controllers/areaController.js';
-import corridorController from './controllers/corridorController.js';
-import cubeController from './controllers/cubeController.js';
-import itemsController from './controllers/itemsController.js';
-import locationsController from './controllers/locationsController.js';
-import positionController from './controllers/positionController.js';
-import radiusController from './controllers/radiusController.js';
-import trajectoryController from './controllers/trajectoryController.js';
-import { middleware, type ExegesisOptions } from 'exegesis-express';
-import { postToGetEdrPlugin } from './plugins/postToGetEdrPlugin.js';
-import { apidocs } from '../../apidocs/index.js';
+import rootController from "./controllers/rootController.js";
+import apiController from "./controllers/apiController.js";
+import conformanceController from "./controllers/conformanceController.js";
+import collectionsController from "./controllers/collectionsController.js";
+import areaController from "./controllers/areaController.js";
+import corridorController from "./controllers/corridorController.js";
+import cubeController from "./controllers/cubeController.js";
+import itemsController from "./controllers/itemsController.js";
+import locationsController from "./controllers/locationsController.js";
+import positionController from "./controllers/positionController.js";
+import radiusController from "./controllers/radiusController.js";
+import trajectoryController from "./controllers/trajectoryController.js";
+import { middleware, type ExegesisOptions } from "exegesis-express";
+import { postToGetEdrPlugin } from "./plugins/postToGetEdrPlugin.js";
+import { apidocs } from "../../apidocs/index.js";
 
-const doc = apidocs.edr;
-doc.servers = doc.servers?.map(({ url, description }) => ({ url: `${url}/edr`, description }));
+let doc = apidocs.edr;
+doc = {
+  servers: doc.servers?.map(({ url, description }) => ({
+    url: `${url}/edr`,
+    description,
+  })),
+  ...doc,
+};
 const options: ExegesisOptions = {
-	plugins: [postToGetEdrPlugin()],
-	lazyCompileValidationSchemas: true,
-	//customFormats: { datetimeRegex },
-	controllers: {
-		rootController,
-		apiController,
-		conformanceController,
-		collectionsController,
-		areaController,
-		corridorController,
-		cubeController,
-		itemsController,
-		locationsController,
-		positionController,
-		radiusController,
-		trajectoryController
-	}
+  plugins: [postToGetEdrPlugin()],
+  lazyCompileValidationSchemas: true,
+  //customFormats: { datetimeRegex },
+  controllers: {
+    rootController,
+    apiController,
+    conformanceController,
+    collectionsController,
+    areaController,
+    corridorController,
+    cubeController,
+    itemsController,
+    locationsController,
+    positionController,
+    radiusController,
+    trajectoryController,
+  },
 };
 const edrApi = middleware(doc, options);
 export default edrApi;
