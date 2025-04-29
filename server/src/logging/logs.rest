@@ -1982,3 +1982,27 @@
  GET http://localhost:3000/
 ### 2025-04-29T19:43:00.245Z status 404 - ms - text/html; charset=utf-8 173 
  GET http://192.168.160.109:3000/edr/collections/isd-2025/locations?f=json
+### 2025-04-29T20:03:35.103Z status 404 - ms - text/html; charset=utf-8 173 
+ GET http://localhost:3000/edr/collections/isd-2025/instances
+### 2025-04-29T20:04:04.428Z status 404 - ms - text/html; charset=utf-8 173 
+ GET http://localhost:3000/edr/collections/isd-2025/locations?f=json
+### 2025-04-29T20:04:10.418Z status 200 - ms - application/json - 
+ GET http://localhost:3000/
+### 2025-04-29T20:04:10.647Z status 404 - ms - text/html; charset=utf-8 150 
+ GET http://localhost:3000/favicon.ico
+### 2025-04-29T20:04:15.111Z status 404 - ms - text/html; charset=utf-8 143 
+ GET http://localhost:3000/edr/
+### 2025-04-29T20:05:20.661Z status 404 - ms - text/html; charset=utf-8 143 
+ GET http://localhost:3000/edr/
+### 2025-04-29T20:05:22.647Z status 404 - ms - text/html; charset=utf-8 143 
+ GET http://localhost:3000/edr/
+### 2025-04-29T20:06:07.384Z status 404 - ms - text/html; charset=utf-8 143 
+ GET http://localhost:3000/edr/
+### 2025-04-29T20:06:36.310Z status 200 - ms - application/json - 
+ GET http://localhost:3000/edr/
+### 2025-04-29T20:06:36.688Z status 404 - ms - text/html; charset=utf-8 150 
+ GET http://localhost:3000/favicon.ico
+### 2025-04-29T20:08:16.567Z status 200 - ms - application/json - 
+ GET http://localhost:3000/edr/
+### 2025-04-29T20:08:17.072Z status 404 - ms - text/html; charset=utf-8 150 
+ GET http://localhost:3000/favicon.ico

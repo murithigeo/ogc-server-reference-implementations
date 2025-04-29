@@ -13,7 +13,7 @@ if (NODE_ENV === "production" && !process.env.BASE_URLS)
 //import { PORT } from '../index.js';
 const lanAddress = new LanHostGenerator().lanAddress();
 
-export const servers: oas3.ServerObject[] = (
+const servers: oas3.ServerObject[] = (
   process.env?.BASE_URLS || "http://localhost"
 )
   .split(",")
@@ -40,12 +40,16 @@ export const apidocs: {
     );
   })
   .reduce((acc, current) => {
-    console.log(`loaded ${current}`)
+    console.log(`started loading file: ${current}`);
     const doc = {
       ...(YAML.load(
-        fs.readFileSync(path.resolve(import.meta?.dirname!, current), "utf8")
-      ) as oas3.OpenAPIObject),
+        fs.readFileSync(
+          path.join(process.cwd(), `/src/apidocs/${current}`),
+          "utf-8"
+        )
+      ) as oas3.OpenAPIObject),servers
     } as oas3.OpenAPIObject;
     acc[current.split(".")[0]] = doc;
+    console.log(servers)
     return acc;
   }, {});

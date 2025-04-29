@@ -12,19 +12,20 @@ import radiusController from "./controllers/radiusController.js";
 import trajectoryController from "./controllers/trajectoryController.js";
 import { middleware, type ExegesisOptions } from "exegesis-express";
 import { postToGetEdrPlugin } from "./plugins/postToGetEdrPlugin.js";
-import { apidocs, servers } from "../../apidocs/index.js";
+import { apidocs } from "../../apidocs/index.js";
 
 let doc = apidocs.edr;
 doc = {
-  servers: servers.map(({ url, description }) => ({
+	...doc,
+  servers: doc.servers?.map(({ url, description }) => ({
     url: `${url}/edr`,
     description,
   })),
-  ...doc,
+  
 };
 const options: ExegesisOptions = {
   plugins: [postToGetEdrPlugin()],
-  lazyCompileValidationSchemas: true,
+  //lazyCompileValidationSchemas: true,
   //customFormats: { datetimeRegex },
   controllers: {
     rootController,
