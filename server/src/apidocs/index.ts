@@ -40,11 +40,11 @@ export const apidocs: {
     );
   })
   .reduce((acc, current) => {
+    console.log(`loaded ${current}`)
     const doc = {
       ...(YAML.load(
         fs.readFileSync(path.resolve(import.meta?.dirname!, current), "utf8")
       ) as oas3.OpenAPIObject),
-      servers,
     } as oas3.OpenAPIObject;
     acc[current.split(".")[0]] = doc;
     return acc;

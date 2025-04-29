@@ -16,7 +16,7 @@ import { apidocs, servers } from "../../apidocs/index.js";
 
 let doc = apidocs.edr;
 doc = {
-  servers: (doc.servers || servers).map(({ url, description }) => ({
+  servers: servers.map(({ url, description }) => ({
     url: `${url}/edr`,
     description,
   })),

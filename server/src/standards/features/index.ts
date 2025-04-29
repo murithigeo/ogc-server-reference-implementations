@@ -8,7 +8,7 @@ import { apidocs, servers } from "../../apidocs/index.js";
 import { unexpectedQueryParamInvalidatorPlugin } from "../../common/common.utils.js";
 
 const doc = apidocs.features;
-doc.servers = (doc.servers || servers).map(({ url, description }) => ({
+doc.servers = servers.map(({ url, description }) => ({
   url: `${url}/features`,
   description,
 }));
