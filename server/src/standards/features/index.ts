@@ -1,24 +1,27 @@
-import apiController from './controllers/apiController.js';
-import { middleware, type ExegesisOptions } from 'exegesis-express';
-import itemsController from './controllers/itemsController.js';
-import collectionsController from './controllers/collectionsController.js';
-import conformanceController from './controllers/conformanceController.js';
-import rootController from './controllers/rootController.js';
-import { apidocs } from '../../apidocs/index.js';
-import { unexpectedQueryParamInvalidatorPlugin } from '../../common/common.utils.js';
+import apiController from "./controllers/apiController.js";
+import { middleware, type ExegesisOptions } from "exegesis-express";
+import itemsController from "./controllers/itemsController.js";
+import collectionsController from "./controllers/collectionsController.js";
+import conformanceController from "./controllers/conformanceController.js";
+import rootController from "./controllers/rootController.js";
+import { apidocs, servers } from "../../apidocs/index.js";
+import { unexpectedQueryParamInvalidatorPlugin } from "../../common/common.utils.js";
 
 const doc = apidocs.features;
-doc.servers = doc.servers?.map(({ url, description }) => ({ url: `${url}/features`, description }));
+doc.servers = (doc.servers || servers).map(({ url, description }) => ({
+  url: `${url}/features`,
+  description,
+}));
 const options: ExegesisOptions = {
-	controllers: {
-		apiController,
-		itemsController,
-		collectionsController,
-		conformanceController,
-		rootController
-	},
-	plugins: [unexpectedQueryParamInvalidatorPlugin()],
-	ignoreServers:false
+  controllers: {
+    apiController,
+    itemsController,
+    collectionsController,
+    conformanceController,
+    rootController,
+  },
+  plugins: [unexpectedQueryParamInvalidatorPlugin()],
+  ignoreServers: false,
 };
 
 const featuresApi = middleware(doc, options);

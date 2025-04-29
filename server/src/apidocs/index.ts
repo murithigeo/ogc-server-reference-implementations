@@ -13,7 +13,9 @@ if (NODE_ENV === "production" && !process.env.BASE_URLS)
 //import { PORT } from '../index.js';
 const lanAddress = new LanHostGenerator().lanAddress();
 
-const urls = (process.env?.BASE_URLS || "http://localhost")
+export const servers: oas3.ServerObject[] = (
+  process.env?.BASE_URLS || "http://localhost"
+)
   .split(",")
   .concat(
     lanAddress && typeof lanAddress === "string" && NODE_ENV !== "production"
@@ -21,11 +23,11 @@ const urls = (process.env?.BASE_URLS || "http://localhost")
       : ""
   )
   .filter((u) => URL.canParse(u))
-  .map((u) => `${u}:${PORT}`);
+  .map((u) => ({ url: `${u}:${PORT}` }));
 
 //.map((uri) => `${uri}:${PORT}`);
 
-console.log(`Server root is: ${urls.join(";\t")}`);
+console.log(`Server root is: ${servers.map((p) => p.url).join(";\t")}`);
 export const apidocs: {
   [key: string | "features" | "edr"]: oas3.OpenAPIObject;
 } = fs
@@ -42,7 +44,7 @@ export const apidocs: {
       ...(YAML.load(
         fs.readFileSync(path.resolve(import.meta?.dirname!, current), "utf8")
       ) as oas3.OpenAPIObject),
-      servers: urls.map((u) => ({ url: u })),
+      servers,
     } as oas3.OpenAPIObject;
     acc[current.split(".")[0]] = doc;
     return acc;

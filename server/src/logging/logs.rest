@@ -1980,3 +1980,5 @@
  GET http://localhost:3000/favicon.ico
 ### 2025-04-29T19:24:53.034Z status 200 - ms - application/json - 
  GET http://localhost:3000/
+### 2025-04-29T19:43:00.245Z status 404 - ms - text/html; charset=utf-8 173 
+ GET http://192.168.160.109:3000/edr/collections/isd-2025/locations?f=json
