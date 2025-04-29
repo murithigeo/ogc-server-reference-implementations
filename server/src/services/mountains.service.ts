@@ -26,19 +26,19 @@ export const mountainsCollection: Services.FeaturesCollection = {
     const { rows = [], numberMatched } = await db.transaction().execute(async (trx) => {
       const conditions: ExpressionWrapper<
         Database,
-        "features_poi.js",
+        "features_points",
         SqlBool
       >[] = [];
       if (itemId) {
         await trx
-          .selectFrom("features_poi.js")
+          .selectFrom("features_points")
           .where("features_points.name", "=", itemId.toString())
           .executeTakeFirstOrThrow(() => new HttpError(404, "no such item"));
       }
       return (await db
         .with("vals1", (db) =>
           db
-            .selectFrom("features_poi.js")
+            .selectFrom("features_points")
             .select([
               "name as id",
               "continent",
@@ -98,7 +98,7 @@ export const mountainsCollection: Services.FeaturesCollection = {
   },
   async extentQuery({ crs }) {
     return await db
-      .selectFrom("features_poi.js")
+      .selectFrom("features_points")
       .select((eb) => [
         eb.val<string>("mountains").as("id"),
         ...tExtent(eb, undefined, false),

@@ -8,8 +8,8 @@ import {
 	valueForGeoJSON,
 	valueForWKT,
 	withDefaultOptions
-} from './utils.ts';
-import type { SRID, STParams } from './types.ts';
+} from './utils.js';
+import type { SRID, STParams } from './types.js';
 
 export interface Options {
 	validate: boolean;
@@ -316,7 +316,7 @@ export function intersects<DB, TB extends keyof DB>(
 	geomB: Exclude<Geometry, GeometryCollection> | ReferenceExpression<DB, TB>,
 	options: Partial<Options> = {}
 ) {
-	return fnCompare(eb, 'ST_Intersects', geomA, geomB, [], options);
+	return fnCompare(eb, 'ST_Interse.js', geomA, geomB, [], options);
 }
 
 export function isValid<DB, TB extends keyof DB>(
@@ -851,7 +851,7 @@ export function intersects3d<DB, TB extends keyof DB>(
 	geomB: Exclude<Geometry, GeometryCollection> | ReferenceExpression<DB, TB>,
 	options: Partial<Options> = {}
 ) {
-	return fnCompare(eb, 'ST_3DIntersects', geomA, geomB, [], options);
+	return fnCompare(eb, 'ST_3DInterse.js', geomA, geomB, [], options);
 }
 
 export function dWithin3d<DB, TB extends keyof DB>(

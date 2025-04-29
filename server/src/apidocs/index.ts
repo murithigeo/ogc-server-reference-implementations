@@ -10,7 +10,7 @@ export const PORT = process.env.PORT || 3000;
 if (NODE_ENV === "production" && !process.env.BASE_URLS)
   throw new Error("BASE_URLS env variable must be set in prod");
 
-//import { PORT } from '../index.ts';
+//import { PORT } from '../index.js';
 const lanAddress = new LanHostGenerator().lanAddress();
 
 const urls = (process.env?.BASE_URLS || "http://localhost")

@@ -14,7 +14,7 @@ import {
 	type TableExpression,
 	type ReferenceExpression
 } from 'kysely';
-import * as models from './models.ts';
+import * as models from './models.js';
 
 export interface Database {
 	isd: models.ISD_GlobalHourly;

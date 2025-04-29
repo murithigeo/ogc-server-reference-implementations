@@ -1948,3 +1948,17 @@
  GET http://192.168.160.176:3000/features/
 ### 2025-04-29T14:46:52.565Z status 200 - ms - application/json - 
  GET http://192.168.160.176:3000/features/
+### 2025-04-29T18:22:33.088Z status 200 - ms - application/json - 
+ GET http://localhost:3000/features/
+### 2025-04-29T18:22:40.364Z status 404 - ms - text/html; charset=utf-8 158 
+ GET http://localhost:3000/features/collection
+### 2025-04-29T18:22:59.503Z status 500 - ms - text/html; charset=utf-8 3367 
+ GET http://localhost:3000/features/collections
+### 2025-04-29T18:25:30.032Z status 200 - ms - application/json - 
+ GET http://localhost:3000/features/collections
+### 2025-04-29T18:25:52.192Z status 404 - ms - text/html; charset=utf-8 159 
+ GET http://localhost:3000/collections/isd-2025
+### 2025-04-29T18:26:01.505Z status 404 - ms - text/html; charset=utf-8 159 
+ GET http://localhost:3000/collections/isd-2025
+### 2025-04-29T18:26:16.546Z status 200 - ms - application/json - 
+ GET http://localhost:3000/edr/collections/isd-2025

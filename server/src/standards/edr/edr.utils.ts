@@ -1,7 +1,7 @@
 import wkx from "wkx";
 import { convert, type Length } from "convert";
 import type { ExegesisContext, ExegesisRoute, oas3 } from "exegesis-express";
-//import type { edrConfig } from '../../config/index.ts';
+//import type { edrConfig } from '../../config/index.js';
 import { contenttypes } from "../../common/utils/contenttypes.js";
 import {
   FeaturesGeoJsonParser,

@@ -2,9 +2,7 @@
   "name": "ogcap-server-implementations",
   "version": "0.0.1",
   "type": "module",
-  "scripts": {
-    "build": "tsc"
-  },
+  "scripts": {},
   "dependencies": {
     "@turf/boolean-intersects": "^7.2.0",
     "@types/coveragejson": "^1.0.0",

@@ -1,5 +1,5 @@
 import { middleware, type ExegesisContext } from 'exegesis-express';
-import { apidocs } from './apidocs/index.ts';
+import { apidocs } from './apidocs/index.js';
 
 const doc = apidocs.troubleshooter;
 

@@ -1,12 +1,12 @@
 import { describe, expect, test } from 'vitest';
 import { Kysely } from 'kysely';
-import { stf } from './index.ts';
+import { stf } from './index.js';
 import {type Polygon } from 'geojson';
 import {
   fnCompare,
   fnWithAdditionalParameters,
   transformGeoJSON,
-} from './utils.ts';
+} from './utils.js';
 
 declare global {
   const db: Kysely<any>;
@@ -805,7 +805,7 @@ describe('intersection', () => {
   });
 });
 
-describe('intersects', () => {
+describe('interse.js', () => {
   test('Column argument', () => {
     const query = db
       .selectFrom('test')
@@ -818,7 +818,7 @@ describe('intersects', () => {
   });
 });
 
-describe('intersects', () => {
+describe('interse.js', () => {
   test('Column argument', () => {
     const query = db
       .selectFrom('test')

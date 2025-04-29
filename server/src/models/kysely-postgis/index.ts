@@ -1,8 +1,8 @@
 'use strict';
 
-import type{ Options } from './functions.ts';
+import type{ Options } from './functions.js';
 
-export * from './functions.ts';
+export * from './functions.js';
 
 // Global options
 export let defaultOptions: Options = {

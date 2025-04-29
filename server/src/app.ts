@@ -1,10 +1,10 @@
 import http from 'node:http';
 import express from 'express';
 import cors from 'cors';
-import requestLogger from './logging/index.ts';
-import edrApi from './standards/edr/index.ts';
-import featuresApi from './standards/features/index.ts';
-import troubleshooterApi from './troubleshooterApi.ts';
+import requestLogger from './logging/index.js';
+import edrApi from './standards/edr/index.js';
+import featuresApi from './standards/features/index.js';
+import troubleshooterApi from './troubleshooterApi.js';
 
 const app = express();
 
