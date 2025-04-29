@@ -1,0 +1,36 @@
+{
+  "tasks": {
+    "dev": "deno run --watch-hmr ./src/index.ts"
+  },
+  "imports": {
+    "@std/assert": "jsr:@std/assert@1",
+    "@std/expect": "jsr:@std/expect@^1.0.15",
+    "exegesis-express": "npm:exegesis-express",
+    "@turf/boolean-intersects": "npm:@turf/boolean-intersects",
+    "convert": "npm:convert",
+    "geojson-validation": "npm:geojson-validation",
+    "wkx": "npm:wkx",
+    "kysely": "npm:kysely",
+    "pg": "npm:pg",
+    "yaml": "npm:yaml",
+    "cors": "npm:cors",
+    "morgan": "npm:morgan",
+    "@types/express": "npm:@types/express",
+    "@types/coveragejson": "npm:@types/coveragejson",
+    "geojson": "npm:geojson",
+    "@types/geojson": "npm:@types/geojson",
+    "@types/node": "npm:@types/node",
+    "exegesis": "npm:exegesis"
+  },
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": false,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "types": ["node"],
+    "verbatimModuleSyntax": true,
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact"
+  },
+  "unstable": ["sloppy-imports"]
+}

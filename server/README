@@ -1,0 +1,7 @@
+# OGCAPI Server Reference Implementations
+This is a demonstration project intended to showcase full server implementations for various guidelines.
+Currently supports:
+    - [x] Environmental Data Retrieval (EDR) v1.0,v1.2
+    - [x] Features Part 1 & Part 2
+
+NOTE: Currently unstable

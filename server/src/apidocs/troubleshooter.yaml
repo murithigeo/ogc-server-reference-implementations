@@ -1,0 +1,12 @@
+openapi: 3.0.3
+info:
+  contact:
+    name: murithiedwing
+paths:
+  /hello:
+    x-exegesis-controller: helloController
+    get:
+      x-exegesis-operationId: sayHello
+      responses:
+        "200":
+          description: Successful

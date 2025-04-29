@@ -1,0 +1,23 @@
+{
+	"compilerOptions": {
+		"target": "ESNext",
+		"allowImportingTsExtensions": true,
+		"noEmit": true,
+		"strict": true,
+		"esModuleInterop": true,
+		"noImplicitAny": false,
+		"module": "NodeNext",
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true,
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
+		"types": ["node"],
+		"typeRoots": ["./node_modules/@types", "./node_modules"],
+		"resolveJsonModule": true,
+		"allowSyntheticDefaultImports": true,
+		"verbatimModuleSyntax": true,
+		"jsx": "react-jsx",
+		"jsxImportSource": "preact"
+	},
+	"include": ["./src/**/*", "vite.config.mts"]
+}
