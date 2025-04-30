@@ -5,6 +5,7 @@ import requestLogger from './logging/index.js';
 import edrApi from './standards/edr/index.js';
 import featuresApi from './standards/features/index.js';
 import troubleshooterApi from './base.js';
+import { PORT } from "./apidocs/index.ts";
 
 const app = express();
 
@@ -39,5 +40,6 @@ app.use(await troubleshooterApi);
 app.use(await edrApi);
 app.use(await featuresApi);
 
-const server = http.createServer(app);
-export default server;
+const server = http.createServer(app).listen(PORT,()=>console.log(`Listening on ${PORT}`));
+export default server
+
