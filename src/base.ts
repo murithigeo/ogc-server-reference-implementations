@@ -1,6 +1,6 @@
 import { middleware, type ExegesisContext } from "exegesis-express";
 import { apidocs } from "./apidocs/index.js";
-import { scalar } from "./common/utils/scalar.ts";
+import { scalar } from "./common/utils/scalar.js";
 
 const doc = apidocs.base;
 
