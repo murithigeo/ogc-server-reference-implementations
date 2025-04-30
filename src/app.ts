@@ -5,7 +5,7 @@ import requestLogger from './logging/index.js';
 import edrApi from './standards/edr/index.js';
 import featuresApi from './standards/features/index.js';
 import troubleshooterApi from './base.js';
-import { PORT } from "./apidocs/index.ts";
+import { PORT } from "./apidocs/index.js";
 
 const app = express();
 
