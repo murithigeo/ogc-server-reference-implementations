@@ -17,3 +17,14 @@ paths:
       responses:
         "200":
           description: Successful
+  /api.html:
+    x-exegesis-controller: rootApi
+    get:
+      x-exegesis-operationId: seeThisDoc
+      responses:
+        "200":
+          description: Successful
+          content:
+            text/yaml:
+              schema:
+                type: string

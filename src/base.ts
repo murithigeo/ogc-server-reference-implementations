@@ -1,18 +1,29 @@
 import { middleware, type ExegesisContext } from "exegesis-express";
 import { apidocs } from "./apidocs/index.js";
+import { scalar } from "./common/utils/scalar.ts";
 
 const doc = apidocs.base;
 
 const troubleshooterApi = middleware(doc, {
-  controllers: { helloController: { sayHello }, serverRoot: { getServerRoot } },
+  controllers: {
+    helloController: { sayHello },
+    serverRoot: { getServerRoot },
+    rootApi: { seeThisDoc },
+  },
 });
 
 function sayHello(ctx: ExegesisContext) {
-  return ctx.res.status(200).json({ message: "Hello!" });
+  ctx.res.status(200).json({ message: "Hello!" }).end();
 }
 
+function seeThisDoc(ctx: ExegesisContext) {
+  ctx.res
+    .status(200)
+    .set("content-type", "text/html")
+    .setBody(scalar(ctx.api.openApiDoc));
+}
 function getServerRoot(ctx: ExegesisContext) {
-  return ctx.res.status(200).json({
+  ctx.res.status(200).json({
     links: [
       {
         rel: "data",
@@ -27,7 +38,7 @@ function getServerRoot(ctx: ExegesisContext) {
         title: `OGCAPI: EDR Implementation`,
       },
     ],
-  });
+  }).end();
 }
 
 export default troubleshooterApi;
