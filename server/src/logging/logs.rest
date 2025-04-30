@@ -2006,3 +2006,7 @@
  GET http://localhost:3000/edr/
 ### 2025-04-29T20:08:17.072Z status 404 - ms - text/html; charset=utf-8 150 
  GET http://localhost:3000/favicon.ico
+### 2025-04-30T09:07:02.378Z status 200 - ms - application/json - 
+ GET http://localhost:3000/edr/collections/isd-2025/instances
+### 2025-04-30T09:09:39.041Z status 200 - ms - application/json - 
+ GET http://localhost:3000/edr/collections/isd-2025/instances

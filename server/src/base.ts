@@ -1,7 +1,7 @@
 import { middleware, type ExegesisContext } from "exegesis-express";
 import { apidocs } from "./apidocs/index.js";
 
-const doc = apidocs.troubleshooter;
+const doc = apidocs.base;
 
 const troubleshooterApi = middleware(doc, {
   controllers: { helloController: { sayHello }, serverRoot: { getServerRoot } },

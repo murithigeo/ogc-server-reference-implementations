@@ -14,15 +14,7 @@ import { middleware, type ExegesisOptions } from "exegesis-express";
 import { postToGetEdrPlugin } from "./plugins/postToGetEdrPlugin.js";
 import { apidocs } from "../../apidocs/index.js";
 
-let doc = apidocs.edr;
-doc = {
-	...doc,
-  servers: doc.servers?.map(({ url, description }) => ({
-    url: `${url}/edr`,
-    description,
-  })),
-  
-};
+//console.log(doc)
 const options: ExegesisOptions = {
   plugins: [postToGetEdrPlugin()],
   lazyCompileValidationSchemas: true,
@@ -42,5 +34,5 @@ const options: ExegesisOptions = {
     trajectoryController,
   },
 };
-const edrApi = middleware(doc, options);
+const edrApi = middleware(apidocs.edr, options);
 export default edrApi;

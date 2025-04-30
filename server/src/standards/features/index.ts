@@ -7,15 +7,6 @@ import rootController from "./controllers/rootController.js";
 import { apidocs } from "../../apidocs/index.js";
 import { unexpectedQueryParamInvalidatorPlugin } from "../../common/common.utils.js";
 
-let doc = apidocs.features;
-doc = {
-  ...doc,
-
-  servers: doc.servers?.map(({ url, description }) => ({
-    url: `${url}/edr`,
-    description,
-  })),
-};
 const options: ExegesisOptions = {
   controllers: {
     apiController,
@@ -28,6 +19,6 @@ const options: ExegesisOptions = {
   ignoreServers: false,
 };
 
-const featuresApi = middleware(doc, options);
+const featuresApi = middleware(apidocs.features, options);
 
 export default featuresApi;

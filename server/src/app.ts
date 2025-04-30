@@ -4,7 +4,7 @@ import cors from 'cors';
 import requestLogger from './logging/index.js';
 import edrApi from './standards/edr/index.js';
 import featuresApi from './standards/features/index.js';
-import troubleshooterApi from './troubleshooterApi.js';
+import troubleshooterApi from './base.js';
 
 const app = express();
 
