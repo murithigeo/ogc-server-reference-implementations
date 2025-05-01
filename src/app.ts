@@ -3,13 +3,31 @@ import cors from "cors";
 import requestLogger from "./logging/index.js";
 import edrApi from "./standards/edr/index.js";
 import featuresApi from "./standards/features/index.js";
-import troubleshooterApi from "./base.js";
 import { PORT } from "./apidocs/index.js";
 
 const app = express();
 
 app.use(cors());
 
+app.get("/", (req, res, next) => {
+  res.send({
+    links: [
+      {
+        rel: "data",
+        href: `${req.protocol}://${req.hostname}:${PORT}/features/`,
+        type: "application/json",
+        title: `OGCAPI: Features Implementation`,
+      },
+      {
+        rel: "data",
+        href: `${req.protocol}://${req.hostname}:${PORT}/edr/`,
+        type: "application/json",
+        title: `OGCAPI: EDR Implementation`,
+      },
+    ],
+  });
+  next();
+});
 app.use((req, _, next) => {
   const reqUri = new URL(req.url, `${req.protocol}://${req.get("host")}`);
   const params = Object.fromEntries(reqUri.searchParams.entries());
@@ -32,9 +50,8 @@ app.use((req, _, next) => {
 });
 
 app.use(requestLogger);
-app.use(await troubleshooterApi);
+//app.use(await troubleshooterApi);
 app.use(await edrApi);
 app.use(await featuresApi);
 
-app.listen(PORT, () => console.log(`listening on ${PORT}`));
 export default app;

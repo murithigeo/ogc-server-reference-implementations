@@ -53,6 +53,7 @@ export const apidocs: {
     ) as OpenAPIObject),
     servers:servers.map(({url,description})=>({url:`${url}/features`,description})),
   },
+  /*
   base: {
     ...(YAML.load(
       fs.readFileSync(path.join(process.cwd(), `/src/apidocs/base.yaml`), {
@@ -60,4 +61,5 @@ export const apidocs: {
       })
     ) as OpenAPIObject),servers
   },
+  */
 };
