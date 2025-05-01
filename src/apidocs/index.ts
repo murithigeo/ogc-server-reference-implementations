@@ -24,7 +24,7 @@ const servers: oas3.ServerObject[] = (
       : ""
   )
   .filter((u) => URL.canParse(u))
-  .map((u) => ({ url: `${u}:${PORT}` }));
+  .map((u) => ({ url: NODE_ENV === "production" ? u : `${u}:${PORT}` }));
 
 console.log(`Server root is: ${servers.map((p) => p.url).join(";\t")}`);
 

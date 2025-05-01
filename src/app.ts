@@ -55,5 +55,4 @@ app.use(await edrApi);
 app.use(await featuresApi);
 
 const server = http.createServer(app);
-server.listen(PORT, () => console.log(`server is live on ${PORT}`));
 export default server;
