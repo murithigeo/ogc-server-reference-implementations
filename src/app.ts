@@ -51,8 +51,8 @@ app.use((req, _, next) => {
 
 app.use(requestLogger);
 //app.use(await troubleshooterApi);
-app.use(await edrApi);
-app.use(await featuresApi);
+app.use("/", await edrApi);
+app.use("/", await featuresApi);
 
 const server = http.createServer(app);
 export default server;
