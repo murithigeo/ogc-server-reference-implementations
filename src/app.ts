@@ -4,7 +4,7 @@ import requestLogger from "./logging/index.js";
 import edrApi from "./standards/edr/index.js";
 import featuresApi from "./standards/features/index.js";
 import { PORT } from "./apidocs/index.js";
-
+import http from "node:http";
 const app = express();
 
 app.use(cors());
@@ -54,4 +54,6 @@ app.use(requestLogger);
 app.use(await edrApi);
 app.use(await featuresApi);
 
-export default app;
+const server = http.createServer(app);
+server.listen(PORT, () => console.log(`server is live on ${PORT}`));
+export default server;

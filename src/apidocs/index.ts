@@ -26,14 +26,8 @@ const servers: oas3.ServerObject[] = (
   .filter((u) => URL.canParse(u))
   .map((u) => ({ url: `${u}:${PORT}` }));
 
-//.map((uri) => `${uri}:${PORT}`);
-
 console.log(`Server root is: ${servers.map((p) => p.url).join(";\t")}`);
-/*
-console.log(YAML.load(fs.readFileSync(path.join(process.cwd(), `/src/apidocs/edr.yaml`), {
-  encoding: "utf8",
-})))
-  */
+
 export const apidocs: {
   [key: string | "features" | "edr"]: oas3.OpenAPIObject;
 } = {
@@ -43,7 +37,10 @@ export const apidocs: {
         encoding: "utf8",
       })
     ) as OpenAPIObject),
-    servers:servers.map(({url,description})=>({url:`${url}/edr`,description})),
+    servers: servers.map(({ url, description }) => ({
+      url: `${url}/edr`,
+      description,
+    })),
   },
   features: {
     ...(YAML.load(
@@ -51,15 +48,9 @@ export const apidocs: {
         encoding: "utf8",
       })
     ) as OpenAPIObject),
-    servers:servers.map(({url,description})=>({url:`${url}/features`,description})),
+    servers: servers.map(({ url, description }) => ({
+      url: `${url}/features`,
+      description,
+    })),
   },
-  /*
-  base: {
-    ...(YAML.load(
-      fs.readFileSync(path.join(process.cwd(), `/src/apidocs/base.yaml`), {
-        encoding: "utf8",
-      })
-    ) as OpenAPIObject),servers
-  },
-  */
 };
