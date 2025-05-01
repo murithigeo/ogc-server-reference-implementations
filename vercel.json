@@ -5,7 +5,7 @@
   "rewrites": [
     { "source": "/(.*)", "destination": "src/app.ts" },
     {
-      "source": "/(.*)/",
+      "source": "/(.*)/(.*)",
       "destination": "src/app.ts"
     }
   ]
