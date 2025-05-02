@@ -30,5 +30,5 @@ export default function requestLogger(
       }
     )(req, _, next);
   }
-  //next();
+  next();
 }
