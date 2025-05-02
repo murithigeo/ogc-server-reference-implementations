@@ -10,25 +10,27 @@ export default function requestLogger(
   _: ServerResponse,
   next: NextFunction
 ) {
-  if (process.env.NODE_ENV !== "production") {
-    if (!fs.existsSync(path.join(import.meta?.dirname!, "/logs.rest"))) {
-      fs.openSync(path.join(import.meta?.dirname!, "/logs.rest"), "w");
-    }
-    morgan.token("host", (req) => req.get("host"));
-    morgan.token("protocol", (req) => req.protocol);
-    //morgan.token("content-type",(res)=>res.headers["content-type"])
-    // Remember to add options to log the POST requests
-    morgan(
-      "### :date[iso] status :status :response-time ms - :res[content-type] :res[content-length] \n :method :protocol://:host:url",
-      {
-        stream: fs.createWriteStream(
-          path.join(import.meta?.dirname!, "/logs.rest"),
-          {
-            flags: "a",
-          }
-        ),
-      }
-    )(req, _, next);
+  if (process.env.NODE_ENV === "production") next()
+
+  if (!fs.existsSync(path.join(import.meta?.dirname!, "/logs.rest"))) {
+    fs.openSync(path.join(import.meta?.dirname!, "/logs.rest"), "w");
   }
-  next();
+  morgan.token("host", (req) => req.get("host"));
+  morgan.token("protocol", (req) => req.protocol);
+  //morgan.token("content-type",(res)=>res.headers["content-type"])
+  // Remember to add options to log the POST requests
+  morgan(
+    "### :date[iso] status :status :response-time ms - :res[content-type] :res[content-length] \n :method :protocol://:host:url",
+    {
+      stream: fs.createWriteStream(
+        path.join(import.meta?.dirname!, "/logs.rest"),
+        {
+          flags: "a",
+        }
+      ),
+    }
+  )(req, _, next);
+
+
+
 }

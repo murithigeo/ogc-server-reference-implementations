@@ -316,7 +316,7 @@ export function intersects<DB, TB extends keyof DB>(
 	geomB: Exclude<Geometry, GeometryCollection> | ReferenceExpression<DB, TB>,
 	options: Partial<Options> = {}
 ) {
-	return fnCompare(eb, 'ST_Interse.js', geomA, geomB, [], options);
+	return fnCompare(eb, 'ST_Intersects', geomA, geomB, [], options);
 }
 
 export function isValid<DB, TB extends keyof DB>(
