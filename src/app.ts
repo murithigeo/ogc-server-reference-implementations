@@ -28,7 +28,6 @@ app.use((req, _, next) => {
   });
 
   req.url = decodeURIComponent(reqUri.pathname + reqUri.search);
-  console.log(reqUri.toString())
   next();
 });
 
