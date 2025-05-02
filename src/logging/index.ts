@@ -1,8 +1,7 @@
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction } from "express";
 import fs from "node:fs";
 import path from "node:path";
 import morgan from "morgan";
-import process from "node:process";
 import type { HttpIncomingMessage } from "exegesis-express";
 import type { ServerResponse } from "node:http";
 export default function requestLogger(
@@ -10,9 +9,13 @@ export default function requestLogger(
   _: ServerResponse,
   next: NextFunction
 ) {
-  if (!fs.existsSync(path.join(import.meta?.dirname!, "/logs.rest"))) {
-    fs.openSync(path.join(import.meta?.dirname!, "/logs.rest"), "w");
+  let folder = path.join(process.cwd(), "/src/logging"),
+    file = path.join(folder, "/logs.rest");
+  
+  if (!fs.existsSync(file)) {
+    fs.openSync(file, "w");
   }
+
   morgan.token("host", (req) => req.get("host"));
   morgan.token("protocol", (req) => req.protocol);
   //morgan.token("content-type",(res)=>res.headers["content-type"])
@@ -20,12 +23,9 @@ export default function requestLogger(
   morgan(
     "### :date[iso] status :status :response-time ms - :res[content-type] :res[content-length] \n :method :protocol://:host:url",
     {
-      stream: fs.createWriteStream(
-        path.join(import.meta?.dirname!, "/logs.rest"),
-        {
-          flags: "a",
-        }
-      ),
+      stream: fs.createWriteStream(file, {
+        flags: "a",
+      }),
     }
   )(req, _, next);
 }

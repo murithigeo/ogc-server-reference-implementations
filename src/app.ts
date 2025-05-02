@@ -29,8 +29,9 @@ app.use((req, _, next) => {
   req.url = decodeURIComponent(reqUri.pathname + reqUri.search);
   next();
 });
-if (NODE_ENV !== "production") {
-  app.use(requestLogger);
+
+if(NODE_ENV!=="production"){
+  app.use(requestLogger)
 }
 app.get("/", (req, res, next) => {
   res.send({
