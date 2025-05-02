@@ -28,7 +28,8 @@ const dialect = new PostgresDialect({
 		host: process.env.DATABASE_HOST || 'localhost',
 		user: process.env.DATABASE_USER || 'postgres',
 		password: process.env.DATABASE_PASS || 'postgres',
-		max: 10
+		max: 10,
+		ssl: process.env.NODE_ENV === "production"
 	})
 });
 
