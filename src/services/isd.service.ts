@@ -352,8 +352,6 @@ export const isdCollection: EdrCollection = {
     let data: Awaited<ReturnType<typeof this.query>>["data"] = undefined;
     switch (f) {
       case "json":
-        //Handle cases where a feature is supposed to be returned
-
         let parser0 = new EdrGeoJsonParser({
           server,
           rows,

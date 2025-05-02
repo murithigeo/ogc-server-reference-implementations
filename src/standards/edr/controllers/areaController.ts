@@ -17,10 +17,13 @@ async function getAreaAtCollection(ctx: ExegesisContext): Promise<void> {
     parameters,
   } = new EdrRqManager({ ctx })
     .collectionParser()
-    .crsParser()
     .coordsParser()
     .dataQueryParser("area")
+    .crsParser()
     .parameterParser()
+    .outputFormatParser()
+    .datetimeParser()
+    .zParser()
     .offsetParser()
     .limitParser(20);
 

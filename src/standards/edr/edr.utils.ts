@@ -10,7 +10,7 @@ import {
 } from "../features/features.utils.js";
 import type { EdrCollection } from "../../services/services.d.js";
 import { services } from "../../services/index.js";
-import {  TRS_Gregorian } from "../../common/utils/CrsManager.js";
+import { TRS_Gregorian } from "../../common/utils/CrsManager.js";
 import { ValidationError } from "exegesis";
 export class EdrRqManager extends FeaturesRqManager<EdrCollection> {
   /**
@@ -293,9 +293,7 @@ export class EdrRqManager extends FeaturesRqManager<EdrCollection> {
     if (invalidParameters.length > 0) {
       //      console.log(invalidParameters);
       throw this.ctx.makeValidationError(
-        `invalid parameter-name items requested. Valid parameter-names may include ${parametersList
-          .map(({ id }) => id)
-          .join(",\n")}`,
+        `invalid parameter-names requested: ${invalidParameters.join(",")}`,
         {
           in: "query",
           name: "parameter-name",
@@ -675,5 +673,3 @@ export class EdrLinksManager extends FeaturesLinksManager {
     };
   }
 }
-
-

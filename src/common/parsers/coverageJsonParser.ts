@@ -92,7 +92,7 @@ export class CoverageJsonParser {
     return this.parameters.reduce(
       (acc: CoverageJSON.Ranges, { id, targetAxis, dataType }) => {
         const values: any[] = row[id];
-        if (!values) acc;
+        if (!values) return acc;
         acc[id] = {
           type: "NdArray",
           //@ts-ignore
