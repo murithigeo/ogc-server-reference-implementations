@@ -1,11 +1,11 @@
 import fs from "node:fs";
 import YAML from "js-yaml";
-import path, { basename } from "node:path";
+import path from "node:path";
 import type { oas3 } from "exegesis-express";
 import { LanHostGenerator } from "../common/utils/lanHostHandler.js";
-import process, { features } from "node:process";
+import process from "node:process";
 import type { OpenAPIObject } from "openapi3-ts";
-export const NODE_ENV = process.env.NODE_ENV || "dev";
+export const NODE_ENV: "production" | "dev" = process.env?.NODE_ENV || "dev";
 export const PORT = process.env.PORT || 3000;
 
 if (NODE_ENV === "production" && !process.env.BASE_URLS)

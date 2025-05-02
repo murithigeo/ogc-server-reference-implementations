@@ -10,8 +10,6 @@ export default function requestLogger(
   _: ServerResponse,
   next: NextFunction
 ) {
-  if (process.env.NODE_ENV === "production") return //next()
-
   if (!fs.existsSync(path.join(import.meta?.dirname!, "/logs.rest"))) {
     fs.openSync(path.join(import.meta?.dirname!, "/logs.rest"), "w");
   }
@@ -30,7 +28,4 @@ export default function requestLogger(
       ),
     }
   )(req, _, next);
-
-
-
 }

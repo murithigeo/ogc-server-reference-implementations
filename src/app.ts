@@ -3,12 +3,12 @@ import cors from "cors";
 import requestLogger from "./logging/index.js";
 import edrApi from "./standards/edr/index.js";
 import featuresApi from "./standards/features/index.js";
-import { PORT } from "./apidocs/index.js";
+import { NODE_ENV, PORT } from "./apidocs/index.js";
 import http from "node:http";
+import process from "node:process";
 const app = express();
 
 app.use(cors());
-
 
 app.use((req, _, next) => {
   const reqUri = new URL(req.url, `${req.protocol}://${req.get("host")}`);
@@ -30,7 +30,9 @@ app.use((req, _, next) => {
   req.url = decodeURIComponent(reqUri.pathname + reqUri.search);
   next();
 });
-
+if (NODE_ENV !== "production") {
+  app.use(requestLogger);
+}
 app.get("/", (req, res, next) => {
   res.send({
     links: [
@@ -50,7 +52,7 @@ app.get("/", (req, res, next) => {
   });
   next();
 });
-app.use(requestLogger);
+
 app.use(await featuresApi);
 app.use(await edrApi);
 
