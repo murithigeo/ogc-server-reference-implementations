@@ -15,7 +15,7 @@ import {
 	type ReferenceExpression
 } from 'kysely';
 import * as models from './models.js';
-import { NODE_ENV } from '../apidocs/index.ts';
+import { NODE_ENV } from '../apidocs/index.js';
 
 export interface Database {
 	isd: models.ISD_GlobalHourly;

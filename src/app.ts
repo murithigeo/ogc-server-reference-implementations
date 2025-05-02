@@ -5,7 +5,6 @@ import edrApi from "./standards/edr/index.js";
 import featuresApi from "./standards/features/index.js";
 import { NODE_ENV, PORT } from "./apidocs/index.js";
 import http from "node:http";
-import process from "node:process";
 const app = express();
 
 app.use(cors());
