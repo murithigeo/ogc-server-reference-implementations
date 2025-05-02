@@ -15,6 +15,7 @@ import {
 	type ReferenceExpression
 } from 'kysely';
 import * as models from './models.js';
+import { NODE_ENV } from '../apidocs/index.ts';
 
 export interface Database {
 	isd: models.ISD_GlobalHourly;
@@ -29,7 +30,7 @@ const dialect = new PostgresDialect({
 		user: process.env.DATABASE_USER || 'postgres',
 		password: process.env.DATABASE_PASS || 'postgres',
 		max: 10,
-		ssl: process.env.NODE_ENV === "production"
+		ssl: NODE_ENV === "production"
 	})
 });
 
