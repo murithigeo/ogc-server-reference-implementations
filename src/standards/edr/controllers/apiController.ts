@@ -7,7 +7,7 @@ function getServiceDoc(ctx: ExegesisContext): void {
   ctx.res
     .status(200)
     .set("content-type", "text/html")
-    .setBody(scalar(ctx.api.openApiDoc));
+    .setBody(scalar([{ url: `${ctx.api.serverObject?.url}/api?f=json` }]));
 }
 
 function getServiceDesc(ctx: ExegesisContext): void {
@@ -15,12 +15,9 @@ function getServiceDesc(ctx: ExegesisContext): void {
     ctx,
     collections: [],
   }).outputFormatParser("json", ["json", "yaml"]);
-
   const { openApiDoc } = ctx.api;
-  //Technically this is the same as text/yaml
+
   ctx.res.status(200);
-  //.set(...contentTypeHeader)
-  //  .setBody(doc);
   switch (f) {
     case "json":
       ctx.res

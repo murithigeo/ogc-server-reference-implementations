@@ -2,6 +2,7 @@
 @collectionId=isd-2025
 @instanceId=2025-02-01
 @itemId=64658099999
+@f=geojson
 ### 
 GET {{SERVER}}/
 
@@ -22,67 +23,135 @@ GET {{SERVER}}/collections/{{collectionId}}
 
 ###
 GET {{SERVER}}/collections/{{collectionId}}/position
+    ?f={{f}}
+    &coords={{point}}
+    &parameter-name={{parameter-name}}
 
 ###
 POST {{SERVER}}/collections/{{collectionId}}/position
+Content-Type: application/json
+    
+    {
+        "coords":"{{point}}",
+        "parameter-name":"{{parameter-name}}"
+    }
 
 ###
 GET {{SERVER}}/collections/{{collectionId}}/radius
+    ?coords={{point}}
+    &radius=1000
+    &within-units=m
+    &f={{f}}
+    &parameter-name={{parameter-name}}
 
 ###
 POST {{SERVER}}/collections/{{collectionId}}/radius
+Content-Type: application/json
+
+{
+    "coords":"{{point}}",
+    "radius":1000,
+    "within-units":"m",
+    "parameter-name":"{{parameter-name}}"
+}
 
 ###
 GET {{SERVER}}/collections/{{collectionId}}/area
     ?coords={{polygon}}
-    &f=coveragejson
+    &f={{f}}
     &parameter-name={{parameter-name}}
 
 ### 
 POST {{SERVER}}/collections/{{collectionId}}/area
+Content-Type: application/json
+
+{
+    "coords":"{{polygon}}",
+    "parameter-name":"{{parameter-name}}"
+}
 
 ###
 GET {{SERVER}}/collections/{{collectionId}}corridor
+    ?coords={{linestring}}
+    &f={{f}}
+    &parameter-name={{parameter-name}}
+    &corridor-height=10
+    &height-units=m
+    &corridor-width=10
+    &width-units=m
 
 ###
 POST {{SERVER}}/collections/{{collectionId}}corridor
+Content-Type: application/json
+
+{
+    "coords":"{{linestring}}",
+    "parameter-name":"{{parameter-name}}",
+    "corridor-height":10,
+    "height-units":"m",
+    "corridor-width":10,
+    "width-units":"m"
+}
 
 ###
 GET {{SERVER}}/collections/{{collectionId}}/trajectory
+    ?coords={{linestring}}
+    &f={{f}}
+    &parameter-name={{parameter-name}}
 
 ###
 POST {{SERVER}}/collections/{{collectionId}}/trajectory
+Content-Type: application/json
+
+{
+    "coords":"{{linestring}}",
+    "parameter-name":"{{parameter-name}}"
+}
 
 ###
 GET {{SERVER}}/collections/{{collectionId}}/cube
+    ?bbox=-180,-90,180,90
+    &f={{f}}
+    &parameter-name={{parameter-name}}
 
 ###
 POST {{SERVER}}/collections/{{collectionId}}/cube
+Content-Type: application/json
+
+{
+    "bbox":"-180,-90,180,90",
+    "parameter-name":"{{parameter-name}}",
+    "f":"{{f}}"
+}
 
 ###
 GET {{SERVER}}/collections/{{collectionId}}/items
-
+    ?bbox=-180,-90,180,90
+    &f={{f}}
+    &parameter-name={{parameter-name}}
 ###
-GET {{SERVER}}/collections/{{collectionId}}/items/{{itemId}}?f=coveragejson&{{parameter-name}}
-
-###
-POST {{SERVER}}/collections/{{collectionId}}/cube
-
+GET {{SERVER}}/collections/{{collectionId}}/items/{{itemId}}
+    ?f={{f}}
+    &parameter-name={{parameter-name}}
 
 ###
 GET {{SERVER}}/collections/{{collectionId}}/locations
+    ?bbox=-180,-90,180,90
 
 ### 
 GET {{SERVER}}/collections/{{collectionId}}/locations/{{locationId}}
+    ?parameter-name={{parameter-name}}
+    &f={{f}}
 
 ###
-{{SERVER}}/collections/{{collectionId}}/instances
+GET {{SERVER}}/collections/{{collectionId}}/instances
+        ?bbox=-180,-90,180,90
 
 ###
-{{SERVER}}/collections/{{collectionId}}/instances/{{instanceId}}
+GET {{SERVER}}/collections/{{collectionId}}/instances/{{instanceId}}
 
 ###
-{{SERVER}}/collections/{{collectionId}}/instances/{{instanceId}}/locations
+GET {{SERVER}}/collections/{{collectionId}}/instances/{{instanceId}}/locations
 ###
 {{SERVER}}/collections/{{collectionId}}/instances/{{instanceId}}/locations/{{locationId}}
    
@@ -155,3 +224,4 @@ GET {{SERVER}}/collections/{{collectionId}}/instances/{{instanceId}}/locations/{
 @EPSG:4326=http://www.opengis.net/def/crs/EPSG/0/4326
 @crs84h=http://www.opengis.net/def/crs/OGC/0/CRS84h
 @EPSG:32737=http://www.opengis.net/def/crs/EPSG/0/32737
+@point=36.82 1.29

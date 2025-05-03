@@ -1,8 +1,9 @@
 //import { describe, test } from "vitest";
 import { expect } from "@std/expect";
+import { TEST_URL_BASE } from "../index.ts";
 /*
 describe('service-doc Test', async (t) => {
-	const res = await fetch('http://localhost/features/api.html');
+	const res = await fetch('${TEST_URL_BASE}/features/api.html');
 
 	test('Expect a 200 status code', (t) => {
 		t.expect(res.status).toBe(200);
@@ -14,7 +15,7 @@ describe('service-doc Test', async (t) => {
 });
 
 describe('service-desc Test', async (t) => {
-	const res = await fetch('http://localhost/features/api');
+	const res = await fetch('${TEST_URL_BASE}/features/api');
 
 	test('Expect a 200 status code', (t) => {
 		t.expect(res.status).toBe(200);
@@ -49,7 +50,7 @@ describe('service-desc Test', async (t) => {
 Deno.test({
   name: "Features /api.html test",
   async fn() {
-    const _res = await fetch("http://localhost/features/api.html");
+    const _res = await fetch(`${TEST_URL_BASE}/features/api.html`);
     expect(_res.status).toBe(200);
     expect(_res.headers.get("content-type")).toBe("text/html");
     await _res.body?.cancel();
@@ -59,7 +60,7 @@ Deno.test({
 Deno.test({
   name: "Features /api test",
   async fn(t) {
-    const url = new URL("http://localhost/features/api");
+    const url = new URL(`${TEST_URL_BASE}/features/api`);
     await t.step({
       name: "json tests",
       async fn() {

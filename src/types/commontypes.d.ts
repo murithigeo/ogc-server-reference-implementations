@@ -1,5 +1,5 @@
 //import GeoJSON from "npm:@types/geojson"
-import type GeoJSON from "@types/geojson"
+import type GeoJSON from "geojson"
 //Recommended by COVJSON && By EDR
 type CoverageJSONMediaType = 'application/vnd.cov+json' | 'application/prs.coverage+json';
 export as namespace CommonTypes;

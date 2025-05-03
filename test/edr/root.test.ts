@@ -1,11 +1,11 @@
 //import { describe, expect, test } from "vitest";
 import { expect } from "@std/expect";
-import { contenttypes } from "../index.ts";
+import { contenttypes, TEST_URL_BASE } from "../index.ts";
 
 Deno.test({
   name: "Edr / tests",
   async fn(t) {
-    const res = await fetch(`http://localhost/edr/`);
+    const res = await fetch(`${TEST_URL_BASE}/edr/`);
     const body = await res.json();
     await t.step({
       name: "Successful request",

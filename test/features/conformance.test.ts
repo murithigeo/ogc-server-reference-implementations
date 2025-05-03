@@ -1,9 +1,10 @@
 import { expect } from "@std/expect";
+import { TEST_URL_BASE } from "../index.ts";
 
 Deno.test({
   name: "Features /conformance tests",
   async fn(t) {
-    const _res = await fetch("http://localhost/features/conformance");
+    const _res = await fetch(`${TEST_URL_BASE}/features/conformance`);
     const _body = await _res.json();
 
     await t.step({

@@ -1,15 +1,22 @@
 //import {  describe, expect, test } from "vitest";
-import { contenttypes, type EdrTypes } from "../index.ts";
+import {
+  contenttypes,
+  MAX_COLLECTIONS_INSTANCES,
+  TEST_URL_BASE,
+  type EdrTypes,
+} from "../index.ts";
 import { expect } from "@std/expect";
 
-const _res0 = await fetch(`http://localhost/edr/collections`);
+const _res0 = await fetch(`${TEST_URL_BASE}/edr/collections`);
 const { collections } = await _res0.json();
 
-for (const c of collections) {
+for (let i = 0; i < MAX_COLLECTIONS_INSTANCES; i++) {
+  const c = collections[i]  
   Deno.test({
+    ignore:!c,
     name: `collection in array matches one at /collections/${c.id}`,
     async fn() {
-      const _res1 = await fetch(`http://localhost/edr/collections/${c.id}`);
+      const _res1 = await fetch(`${TEST_URL_BASE}/edr/collections/${c.id}`);
       expect(_res1.status).toBe(200);
       expect(_res1.headers.get("content-type")).toBe("application/json");
       expect(await _res1.json()).toMatchObject(c);
@@ -126,9 +133,10 @@ for (const {
       //Do without default output_format
 
       await t.step({
+        ignore: !crs_details,
         name: "crs_details test + default_output_format(f not set) but expected",
         async fn() {
-          for (const { crs } of crs_details) {
+          for (const { crs } of crs_details!) {
             url.searchParams.set("crs", crs);
             const crs_res = await fetch(url);
             crs_res.body?.cancel();
@@ -215,9 +223,10 @@ for (const {
         },
       });
       await t.step({
+        ignore: !others.crs_details,
         name: "crs_details + default_output_format",
         async fn() {
-          for (const { crs } of others.crs_details) {
+          for (const { crs } of others.crs_details!) {
             const url1 = new URL(url0);
             url1.searchParams.set("crs", crs);
             url1.searchParams.set("height-units", others.height_units[0]);
@@ -345,12 +354,12 @@ for (const {
   });
 }
 
-const maxInstances = 10;
 //Instances
-for (const {
-  data_queries: { instances },
-  id: cId,
-} of collections as EdrTypes.Collection[]) {
+for (let i = 0; i < MAX_COLLECTIONS_INSTANCES; i++) {
+  const {
+    data_queries: { instances },
+    id: cId,
+  }: EdrTypes.Collection = collections[i];
   Deno.test({
     ignore: !instances,
     name: `Collection: ${cId} INSTANCES: Data Query checks`,
@@ -375,7 +384,7 @@ for (const {
         name: "output_formats checks",
         async fn() {
           for (const f of [default_output_format, ...output_formats]) {
-            const url2 = new URl(url1);
+            const url2 = new URL(url1);
             url2.searchParams.set("f", f);
             const res2 = await fetch(url2);
             expect(res2.status).toBe(200);
@@ -390,7 +399,7 @@ for (const {
       await t.step({
         name: `Instances loop tests`,
         async fn(t) {
-          for (let i = 0; i < maxInstances; i++) {
+          for (let i = 0; i < MAX_COLLECTIONS_INSTANCES; i++) {
             const { id, data_queries, extent, ...others }: EdrTypes.Collection =
               _instances[i];
             await t.step({
@@ -511,9 +520,10 @@ for (const {
                 //Do without default output_format
 
                 await t.step({
+                  ignore: !crs_details,
                   name: "crs_details test + default_output_format(f not set) but expected",
                   async fn() {
-                    for (const { crs } of crs_details) {
+                    for (const { crs } of crs_details!) {
                       url.searchParams.set("crs", crs);
                       const crs_res = await fetch(url);
                       crs_res.body?.cancel();
@@ -609,9 +619,10 @@ for (const {
                   },
                 });
                 await t.step({
+                  ignore: !others.crs_details,
                   name: "crs_details + default_output_format",
                   async fn() {
-                    for (const { crs } of others.crs_details) {
+                    for (const { crs } of others.crs_details!) {
                       const url1 = new URL(url0);
                       url1.searchParams.set("crs", crs);
                       url1.searchParams.set(

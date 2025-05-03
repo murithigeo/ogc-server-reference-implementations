@@ -1,8 +1,8 @@
 //import { describe, expect, test } from "npm:vitest";
-import { contenttypes } from "../index.ts";
+import { contenttypes, TEST_URL_BASE } from "../index.ts";
 import { expect } from "jsr:@std/expect";
 
-const res = await fetch("http://localhost/edr/collections");
+const res = await fetch(`${TEST_URL_BASE}/edr/collections`);
 const _body: EdrTypes.Collection[] = (await res.json()).collections;
 /*
 describe.each(_body)("Data Query Tests-Main", (c) => {

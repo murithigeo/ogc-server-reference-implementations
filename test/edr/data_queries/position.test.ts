@@ -1,7 +1,9 @@
+import { TEST_URL_BASE,type EdrTypes } from "../../index.ts";
+
 Deno.test({
   name: `Data Query: POSITION tests`,
   async fn(t) {
-    const base = `http://localhost/edr/collections`;
+    const base = `${TEST_URL_BASE}/edr/collections`;
     const baseRes = await fetch(base);
     const { collections }: { collections: EdrTypes.Collection[] } =
       await baseRes.json();
@@ -22,7 +24,7 @@ Deno.test({
           await t.step({
             name: `href is a valid URL`,
             fn() {
-              expect();
+              //expect(/);
             },
           });
         },

@@ -1,11 +1,11 @@
 import { expect } from "@std/expect";
-import type { CommonTypes } from "../index.ts";
+import { TEST_URL_BASE, type CommonTypes } from "../index.ts";
 
 Deno.test({
   name: "Features / tests",
   async fn(t) {
     //Test all links are valid
-    const _res = await fetch(new URL("http://localhost/features/"));
+    const _res = await fetch(new URL(`${TEST_URL_BASE}/features/`));
     const { links }: CommonTypes.Root = await _res.json();
     await t.step({
       name: "Successful request",

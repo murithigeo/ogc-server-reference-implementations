@@ -1,10 +1,10 @@
 //import { describe, expect, it, test } from 'vitest';
 import { expect } from "@std/expect";
-import type { CommonTypes } from "../index.ts";
+import { TEST_URL_BASE, type CommonTypes } from "../index.ts";
 Deno.test({
   name: "Features /collections tests",
   async fn(t) {
-    const res = await fetch("http://localhost/features/collections");
+    const res = await fetch(`${TEST_URL_BASE}/features/collections`);
     await t.step({
       name: "Successful request",
       fn() {
@@ -36,7 +36,7 @@ Deno.test({
             name: `Response body at /collections/${id} matches array element`,
             async fn() {
               const res = await fetch(
-                `http://localhost/features/collections/${id}`
+                `${TEST_URL_BASE}/features/collections/${id}`
               );
               expect(res.status).toBe(200);
               expect(res.headers.get("content-type")).toBe("application/json");
@@ -81,7 +81,7 @@ Deno.test({
               let i = 0;
               for (const crs of others.crs) {
                 const url = new URL(
-                  `http://localhost/features/collections/${id}/items`
+                  `${TEST_URL_BASE}/features/collections/${id}/items`
                 );
                 if (i) url.searchParams.set("crs", crs);
                 const res = await fetch(url);

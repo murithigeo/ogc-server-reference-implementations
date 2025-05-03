@@ -5,6 +5,7 @@ import edrApi from "./standards/edr/index.js";
 import featuresApi from "./standards/features/index.js";
 import { NODE_ENV, PORT } from "./apidocs/index.js";
 import http from "node:http";
+import { scalar } from "./common/utils/scalar.ts";
 const app = express();
 
 app.use(cors());
@@ -30,27 +31,16 @@ app.use((req, _, next) => {
   next();
 });
 
-if(NODE_ENV!=="production"){
-  app.use(requestLogger)
+if (NODE_ENV !== "production") {
+  app.use(requestLogger);
 }
 app.get("/", (req, res, next) => {
-  res.send({
-    links: [
-      {
-        rel: "data",
-        href: `${req.protocol}://${req.hostname}:${PORT}/features/`,
-        type: "application/json",
-        title: `OGCAPI: Features Implementation`,
-      },
-      {
-        rel: "data",
-        href: `${req.protocol}://${req.hostname}:${PORT}/edr/`,
-        type: "application/json",
-        title: `OGCAPI: EDR Implementation`,
-      },
-    ],
-  });
-  next();
+  res.setHeader("content-type", "text/html").send(
+    scalar([
+      { url: "/edr/api?f=json", default: true, title: `Edr API` },
+      { url: "/features/api?f=json", title: `Features API` },
+    ])
+  );
 });
 
 app.use(await featuresApi);
