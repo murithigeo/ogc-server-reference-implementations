@@ -71,7 +71,7 @@ Content-Type: application/json
 }
 
 ###
-GET {{SERVER}}/collections/{{collectionId}}corridor
+GET {{SERVER}}/collections/{{collectionId}}/corridor
     ?coords={{linestring}}
     &f={{f}}
     &parameter-name={{parameter-name}}
@@ -81,7 +81,7 @@ GET {{SERVER}}/collections/{{collectionId}}corridor
     &width-units=m
 
 ###
-POST {{SERVER}}/collections/{{collectionId}}corridor
+POST {{SERVER}}/collections/{{collectionId}}/corridor
 Content-Type: application/json
 
 {
@@ -225,3 +225,4 @@ GET {{SERVER}}/collections/{{collectionId}}/instances/{{instanceId}}/locations/{
 @crs84h=http://www.opengis.net/def/crs/OGC/0/CRS84h
 @EPSG:32737=http://www.opengis.net/def/crs/EPSG/0/32737
 @point=36.82 1.29
+@parameterNameArray={{parameter-name}}.split(',')}

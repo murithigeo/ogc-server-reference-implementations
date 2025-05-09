@@ -9,28 +9,30 @@ export function postToGetEdrPlugin(): ExegesisPlugin {
     info: { name: "exegesis-post-to-get" },
     makeExegesisPlugin: () => {
       return {
-        postRouting: async (ctx: ExegesisPluginContext) => {
-          if (ctx.req.method === "POST") {
-            const url = new URL(
-              `${ctx.api.serverObject?.url!}/${ctx.req.url!}`
+        postSecurity: async (ctx: ExegesisPluginContext) => {
+          if (ctx.req.method !== "POST") return;
+          const url = new URL(`${ctx.api.serverObject?.url!}/${ctx.req.url!}`);
+          const queryParams = url.searchParams.keys().toArray();
+          if (!!queryParams.length) {
+            throw new ValidationError(
+              queryParams.map((name) => ({
+                message: `unexpected query parameter on a POST endpoint`,
+                location: {
+                  name,
+                  in: "query",
+                  docPath: ctx.api.pathItemPtr,
+                },
+              }))
             );
-            const queryParams = url.searchParams.keys().toArray();
-            if (!!queryParams.length) {
-              throw new ValidationError(
-                queryParams.map((name) => ({
-                  message: `unexpected query parameter on a POST endpoint`,
-                  location: {
-                    name,
-                    in: "query",
-                    docPath: ctx.api.pathItemPtr,
-                  },
-                }))
-              );
-            }
-            const requestBody = await ctx.getRequestBody();
-            const params = await ctx.getParams();
-            params.query = { ...params.query, ...requestBody };
           }
+          const params = await ctx.getParams();
+          const { "parameter-name": PN, ...others } =
+            await ctx.getRequestBody();
+
+          if (PN && Array.isArray(PN)) {
+            others["parameter-name"] = PN.join(",");
+          }
+          params.query = others;
         },
       };
     },
