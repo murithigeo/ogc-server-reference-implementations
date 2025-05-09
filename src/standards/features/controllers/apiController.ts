@@ -1,7 +1,7 @@
 import type { ExegesisContext } from "exegesis-express";
 import { scalar } from "../../../common/utils/scalar.js";
 import { FeaturesRqManager } from "../features.utils.js";
-import { jsonlikeToYAML } from "../../../common/common.utils.ts";
+import { jsonlikeToYAML } from "../../../common/common.utils.js";
 
 function getServiceDesc(ctx: ExegesisContext): void {
   const { f, contentTypeHeader } = new FeaturesRqManager({

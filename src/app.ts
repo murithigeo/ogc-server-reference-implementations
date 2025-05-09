@@ -5,7 +5,7 @@ import edrApi from "./standards/edr/index.js";
 import featuresApi from "./standards/features/index.js";
 import { NODE_ENV, PORT } from "./apidocs/index.js";
 import http from "node:http";
-import { scalar } from "./common/utils/scalar.ts";
+import { scalar } from "./common/utils/scalar.js";
 const app = express();
 
 app.use(cors());
@@ -34,13 +34,14 @@ app.use((req, _, next) => {
 if (NODE_ENV !== "production") {
   app.use(requestLogger);
 }
-app.get("/", (req, res, next) => {
+app.get("/", (_, res, next) => {
   res.setHeader("content-type", "text/html").send(
     scalar([
       { url: "/edr/api?f=json", default: true, title: `Edr API` },
       { url: "/features/api?f=json", title: `Features API` },
     ])
   );
+  next();
 });
 
 app.use(await featuresApi);
