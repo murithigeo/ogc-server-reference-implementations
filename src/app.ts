@@ -46,7 +46,6 @@ app.get("/", (_, res, next) => {
 
 app.use(await featuresApi);
 app.use(await edrApi);
-app.use(await movingfeaturesApi)
 
 const server = http.createServer(app);
 export default server;

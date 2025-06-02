@@ -1,17 +1,20 @@
 {
-  "version": "4",
+  "version": "5",
   "specifiers": {
-    "jsr:@std/assert@1": "1.0.12",
+    "jsr:@std/assert@1": "1.0.13",
     "jsr:@std/assert@^1.0.12": "1.0.12",
-    "jsr:@std/expect@*": "1.0.15",
-    "jsr:@std/expect@^1.0.15": "1.0.15",
+    "jsr:@std/assert@^1.0.13": "1.0.13",
+    "jsr:@std/expect@*": "1.0.16",
+    "jsr:@std/expect@^1.0.16": "1.0.16",
     "jsr:@std/internal@^1.0.5": "1.0.5",
-    "jsr:@std/internal@^1.0.6": "1.0.6",
+    "jsr:@std/internal@^1.0.6": "1.0.8",
+    "jsr:@std/internal@^1.0.7": "1.0.8",
     "npm:@turf/boolean-intersects@*": "7.2.0",
     "npm:@turf/boolean-intersects@^7.2.0": "7.2.0",
     "npm:@types/coveragejson@*": "1.0.0",
     "npm:@types/coveragejson@1": "1.0.0",
-    "npm:@types/deno@^2.2.0": "2.2.0",
+    "npm:@types/deno@*": "2.3.0",
+    "npm:@types/deno@^2.3.0": "2.3.0",
     "npm:@types/express@*": "5.0.0",
     "npm:@types/express@^4.17.13": "4.17.21",
     "npm:@types/geojson@*": "7946.0.16",
@@ -59,11 +62,17 @@
         "jsr:@std/internal@^1.0.6"
       ]
     },
-    "@std/expect@1.0.15": {
-      "integrity": "eca360007b5a7f13dbfa1294224baee7fb98dcd460d8461fe64eeae302902945",
+    "@std/assert@1.0.13": {
+      "integrity": "ae0d31e41919b12c656c742b22522c32fb26ed0cba32975cb0de2a273cb68b29",
       "dependencies": [
-        "jsr:@std/assert@^1.0.12",
         "jsr:@std/internal@^1.0.6"
+      ]
+    },
+    "@std/expect@1.0.16": {
+      "integrity": "ceeef6dda21f256a5f0f083fcc0eaca175428b523359a9b1d9b3a1df11cc7391",
+      "dependencies": [
+        "jsr:@std/assert@^1.0.13",
+        "jsr:@std/internal@^1.0.7"
       ]
     },
     "@std/internal@1.0.5": {
@@ -71,6 +80,9 @@
     },
     "@std/internal@1.0.6": {
       "integrity": "9533b128f230f73bd209408bb07a4b12f8d4255ab2a4d22a1fd6d87304aca9a4"
+    },
+    "@std/internal@1.0.8": {
+      "integrity": "fc66e846d8d38a47cffd274d80d2ca3f0de71040f855783724bb6b87f60891f5"
     }
   },
   "npm": {
@@ -86,12 +98,12 @@
     "@isaacs/cliui@8.0.2": {
       "integrity": "sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==",
       "dependencies": [
-        "string-width-cjs@npm:string-width@4.2.3",
         "string-width@5.1.2",
-        "strip-ansi-cjs@npm:strip-ansi@6.0.1",
+        "string-width-cjs@npm:string-width@4.2.3",
         "strip-ansi@7.1.0",
-        "wrap-ansi-cjs@npm:wrap-ansi@7.0.0",
-        "wrap-ansi@8.1.0"
+        "strip-ansi-cjs@npm:strip-ansi@6.0.1",
+        "wrap-ansi@8.1.0",
+        "wrap-ansi-cjs@npm:wrap-ansi@7.0.0"
       ]
     },
     "@jsdevtools/ono@7.1.3": {
@@ -188,8 +200,8 @@
     "@types/coveragejson@1.0.0": {
       "integrity": "sha512-YBogUEHiyntM4rqRXjBtKwnDjDnADDqYZx2St7gVsWqrhJRAR1cUHNClqHw9raHu8/MNKd2YTxJtGNctZgYZXg=="
     },
-    "@types/deno@2.2.0": {
-      "integrity": "sha512-4x6M/ZSyoQy6fJeMArP0dvvNT4IOolfySyukuqqKhsLmSXDV4wGanqXIZ+xFihw3TlReS6JTa4hRG9nAZInpmw=="
+    "@types/deno@2.3.0": {
+      "integrity": "sha512-/4SyefQpKjwNKGkq9qG3Ln7MazfbWKvydyVFBnXzP5OQA4u1paoFtaOe1iHKycIWHHkhYag0lPxyheThV1ijzw=="
     },
     "@types/express-serve-static-core@4.19.6": {
       "integrity": "sha512-N4LZ2xG7DatVqhCZzOGb1Yi5lMbXSZcmdLDe9EzSndPV2HpWYWzRbaerl2n27irrm94EPpprqa8KpskPT085+A==",
@@ -293,6 +305,9 @@
     "ajv-formats@2.1.1_ajv@8.17.1": {
       "integrity": "sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==",
       "dependencies": [
+        "ajv"
+      ],
+      "optionalPeers": [
         "ajv"
       ]
     },
@@ -580,7 +595,8 @@
       "integrity": "sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA=="
     },
     "geojson-validation@1.0.2": {
-      "integrity": "sha512-K5jrJ4wFvORn2pRKeg181LL0QPYuEKn2KHPvfH1m2QtFlAXFLKdseqt0XwBM3ELOY7kNM1fglRQ6ZwUQZ5S00A=="
+      "integrity": "sha512-K5jrJ4wFvORn2pRKeg181LL0QPYuEKn2KHPvfH1m2QtFlAXFLKdseqt0XwBM3ELOY7kNM1fglRQ6ZwUQZ5S00A==",
+      "bin": true
     },
     "geojson@0.5.0": {
       "integrity": "sha512-/Bx5lEn+qRF4TfQ5aLu6NH+UKtvIv7Lhc487y/c8BdludrCTpiWf9wyI0RTyqg49MFefIAvFDuEi5Dfd/zgNxQ=="
@@ -616,7 +632,8 @@
         "minipass",
         "package-json-from-dist",
         "path-scurry"
-      ]
+      ],
+      "bin": true
     },
     "gopd@1.2.0": {
       "integrity": "sha512-ZUKRh6/kUFoAiTAtTYPZJ3hw9wNxx+BIBOijnlG9PnrJsCcSjs1wyyD6vJpaYtgnzDrKYRSqf3OO6Rfa93xsRg=="
@@ -661,7 +678,9 @@
     "jackspeak@3.4.3": {
       "integrity": "sha512-OGlZQpz2yfahA/Rd1Y8Cd9SIEsqvXkLVoSw/cgwhnhFMDbsQFeZYoJJ7bIZBS9BcamUW96asq/npPWugM+RQBw==",
       "dependencies": [
-        "@isaacs/cliui",
+        "@isaacs/cliui"
+      ],
+      "optionalDependencies": [
         "@pkgjs/parseargs"
       ]
     },
@@ -669,7 +688,8 @@
       "integrity": "sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==",
       "dependencies": [
         "argparse"
-      ]
+      ],
+      "bin": true
     },
     "json-ptr@3.1.1": {
       "integrity": "sha512-SiSJQ805W1sDUCD1+/t1/1BIrveq2Fe9HJqENxZmMCILmrPI7WhS/pePpIOx85v6/H2z1Vy7AI08GV2TzfXocg=="
@@ -708,7 +728,8 @@
       ]
     },
     "mime@1.6.0": {
-      "integrity": "sha512-x0Vn8spI+wuJ1O6S7gnbaQg8Pxh4NNHb7KSINmEWKiPE4RKOplvijn+NkmYmmRgP68mc70j2EbeTFRsrswaQeg=="
+      "integrity": "sha512-x0Vn8spI+wuJ1O6S7gnbaQg8Pxh4NNHb7KSINmEWKiPE4RKOplvijn+NkmYmmRgP68mc70j2EbeTFRsrswaQeg==",
+      "bin": true
     },
     "minimatch@9.0.5": {
       "integrity": "sha512-G6T0ZX48xgozx7587koeX9Ys2NYy6Gmv//P89sEte9V9whIapMNF4idKxnW2QtCcLiTWlb/wfCabAtAFWhhBow==",
@@ -833,12 +854,14 @@
     "pg@8.13.3": {
       "integrity": "sha512-P6tPt9jXbL9HVu/SSRERNYaYG++MjnscnegFh9pPHihfoBSujsrka0hyuymMzeJKFWrcG8wvCKy8rCe8e5nDUQ==",
       "dependencies": [
-        "pg-cloudflare",
         "pg-connection-string",
         "pg-pool",
         "pg-protocol",
         "pg-types@2.2.0",
         "pgpass"
+      ],
+      "optionalDependencies": [
+        "pg-cloudflare"
       ]
     },
     "pgpass@1.0.5": {
@@ -936,7 +959,8 @@
       "integrity": "sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg=="
     },
     "semver@7.7.1": {
-      "integrity": "sha512-hlq8tAfn0m/61p4BVRcPzIGr6LKiMwo4VM6dGi6pt4qcRkmNzTcWq6eCEjEh+qXjkMDvPlOFFSGwQjoEa6gyMA=="
+      "integrity": "sha512-hlq8tAfn0m/61p4BVRcPzIGr6LKiMwo4VM6dGi6pt4qcRkmNzTcWq6eCEjEh+qXjkMDvPlOFFSGwQjoEa6gyMA==",
+      "bin": true
     },
     "send@0.19.0": {
       "integrity": "sha512-dW41u5VfLXu8SJh5bwRmyYUbAoSB3c9uQh6L8h/KtsFREPWpbX1lrljJo186Jc4nmci/sGUZ9a0a0J2zgfq2hw==",
@@ -1073,7 +1097,8 @@
       ]
     },
     "typescript@5.8.3": {
-      "integrity": "sha512-p1diW6TqL9L07nNxvRMM7hMMw4c5XOo/1ibL4aAIGmSAt9slTE1Xgw5KWuof2uTOvCg9BY7ZRi+GaF+7sfgPeQ=="
+      "integrity": "sha512-p1diW6TqL9L07nNxvRMM7hMMw4c5XOo/1ibL4aAIGmSAt9slTE1Xgw5KWuof2uTOvCg9BY7ZRi+GaF+7sfgPeQ==",
+      "bin": true
     },
     "undici-types@6.19.8": {
       "integrity": "sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw=="
@@ -1094,7 +1119,8 @@
       "integrity": "sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==",
       "dependencies": [
         "isexe"
-      ]
+      ],
+      "bin": true
     },
     "wkx@0.5.0": {
       "integrity": "sha512-Xng/d4Ichh8uN4l0FToV/258EjMGU9MGcA0HV2d9B/ZpZB3lqQm7nkOdZdm5GhKtLLhAE7PiVQwN4eN+2YJJUg==",
@@ -1122,15 +1148,17 @@
       "integrity": "sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ=="
     },
     "yaml@2.7.0": {
-      "integrity": "sha512-+hSoy/QHluxmC9kCIJyL/uyFmLmc+e5CFR5Wa+bpIhIj85LVb9ZH2nVnqrHoSvKogwODv0ClqZkmiSSaIH5LTA=="
+      "integrity": "sha512-+hSoy/QHluxmC9kCIJyL/uyFmLmc+e5CFR5Wa+bpIhIj85LVb9ZH2nVnqrHoSvKogwODv0ClqZkmiSSaIH5LTA==",
+      "bin": true
     }
   },
   "workspace": {
     "dependencies": [
       "jsr:@std/assert@1",
-      "jsr:@std/expect@^1.0.15",
+      "jsr:@std/expect@^1.0.16",
       "npm:@turf/boolean-intersects@*",
       "npm:@types/coveragejson@*",
+      "npm:@types/deno@*",
       "npm:@types/express@*",
       "npm:@types/geojson@*",
       "npm:@types/node@*",
@@ -1147,9 +1175,10 @@
     ],
     "packageJson": {
       "dependencies": [
+        "npm:@jsr/std__expect@*",
         "npm:@turf/boolean-intersects@^7.2.0",
         "npm:@types/coveragejson@1",
-        "npm:@types/deno@^2.2.0",
+        "npm:@types/deno@^2.3.0",
         "npm:@types/express@^4.17.13",
         "npm:@types/geojson@^7946.0.16",
         "npm:@types/js-yaml@^4.0.9",

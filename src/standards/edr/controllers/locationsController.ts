@@ -48,7 +48,6 @@ async function getLocationsAtCollection(ctx: ExegesisContext): Promise<void> {
 }
 
 async function getLocationAtCollection(ctx: ExegesisContext): Promise<void> {
-  const { locationId } = ctx.params.path;
   const {
     contentCrsHeader,
     f,
@@ -59,12 +58,14 @@ async function getLocationAtCollection(ctx: ExegesisContext): Promise<void> {
     output_formats,
     offset,
     limit,
+    locationId
   } = new EdrRqManager({ ctx })
     .collectionParser()
     .dataQueryParser("locations")
     .crsParser()
     .parameterParser()
     .outputFormatParser()
+    .locationsParser()
     .limitParser()
     .offsetParser();
 
@@ -147,7 +148,6 @@ async function getLocationsAtInstance(ctx: ExegesisContext): Promise<void> {
 }
 
 async function getLocationAtInstance(ctx: ExegesisContext): Promise<void> {
-  const { locationId } = ctx.params.path;
   const {
     contentCrsHeader,
     f,
@@ -159,6 +159,7 @@ async function getLocationAtInstance(ctx: ExegesisContext): Promise<void> {
     offset,
     limit,
     instanceId,
+    locationId
   } = new EdrRqManager({ ctx })
     .collectionParser()
     .dataQueryParser("instances")
@@ -166,6 +167,7 @@ async function getLocationAtInstance(ctx: ExegesisContext): Promise<void> {
     .dataQueryParser("locations")
     .crsParser()
     .parameterParser()
+    .locationsParser()
     .outputFormatParser()
     .limitParser()
     .offsetParser();

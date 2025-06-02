@@ -110,7 +110,7 @@ paths:
               schema:
                 type: string
 
-##!Work around for invalid path request
+  ##!Work around for invalid path request
   /conformance/:
     x-exegesis-controller: conformanceController
     get:
@@ -249,6 +249,7 @@ paths:
       parameters:
       ###! MISSING QUERY PARAMS
         - $ref: '#/components/parameters/collectionId'
+        - $ref: '#/components/parameters/datetime'
         - $ref: '#/components/parameters/f'
       responses:
         '200':
@@ -284,18 +285,17 @@ paths:
         - Items
       x-exegesis-operationId: getItemsAtCollection
       parameters:
-        - $ref: '#/components/parameters/download'
         - $ref: '#/components/parameters/collectionId'
         - $ref: '#/components/parameters/bbox'
         - $ref: '#/components/parameters/datetime'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/f'
+        - $ref: '#/components/parameters/crs'
         - $ref: '#/components/parameters/offset'
       responses:
         '200':
           $ref: '#/components/responses/geoJsonFeatureCollection'
 
-  ##//
   /collections/{collectionId}/items/{itemId}:
     x-exegesis-controller: itemsController
     get:
@@ -303,14 +303,14 @@ paths:
         - Items
       x-exegesis-operationId: getItemAtCollection
       parameters:
-        - $ref: '#/components/parameters/download'
         - $ref: '#/components/parameters/f'
         - $ref: '#/components/parameters/collectionId'
         - $ref: '#/components/parameters/itemId'
+        - $ref: '#/components/parameters/crs'
       responses:
         '200':
           $ref: '#/components/responses/geoJsonFeature'
-  ##//
+
   /collections/{collectionId}/instances/{instanceId}/items:
     x-exegesis-controller: itemsController
     get:
@@ -319,17 +319,16 @@ paths:
         - Instances
       x-exegesis-operationId: getItemsAtInstance
       parameters:
-        - $ref: '#/components/parameters/download'
         - $ref: '#/components/parameters/f'
         - $ref: '#/components/parameters/collectionId'
         - $ref: '#/components/parameters/bbox'
         - $ref: '#/components/parameters/instanceId'
         - $ref: '#/components/parameters/datetime'
+        - $ref: '#/components/parameters/crs'
       responses:
         '200':
           $ref: '#/components/responses/geoJsonFeatureCollection'
 
-  ##//
   /collections/{collectionId}/instances/{instanceId}/items/{itemId}:
     x-exegesis-controller: itemsController
     get:
@@ -338,15 +337,15 @@ paths:
         - Instances
       x-exegesis-operationId: getItemAtInstance
       parameters:
-        - $ref: '#/components/parameters/download'
         - $ref: '#/components/parameters/f'
         - $ref: '#/components/parameters/itemId'
         - $ref: '#/components/parameters/collectionId'
         - $ref: '#/components/parameters/instanceId'
+        - $ref: '#/components/parameters/crs'
       responses:
         '200':
           $ref: '#/components/responses/geoJsonFeature'
-  ##//
+
   /collections/{collectionId}/position:
     x-exegesis-controller: positionController
     get:
@@ -354,7 +353,6 @@ paths:
         - Position
       x-exegesis-operationId: getPositionAtCollection
       parameters:
-        - $ref: '#/components/parameters/download'
         - $ref: '#/components/parameters/collectionId'
         - $ref: '#/components/parameters/f'
         - $ref: '#/components/parameters/crs'
@@ -377,7 +375,7 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/covJson_edrGeoJson_yaml'
-  ##//
+
   /collections/{collectionId}/instances/{instanceId}/position:
     x-exegesis-controller: positionController
     get:
@@ -386,7 +384,6 @@ paths:
         - Instances
       x-exegesis-operationId: getPositionAtInstance
       parameters:
-        - $ref: '#/components/parameters/download'
         - $ref: '#/components/parameters/collectionId'
         - $ref: '#/components/parameters/instanceId'
         - $ref: '#/components/parameters/f'
@@ -412,7 +409,7 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/covJson_edrGeoJson_yaml'
-  ##//
+
   /collections/{collectionId}/radius:
     x-exegesis-controller: radiusController
     get:
@@ -420,7 +417,6 @@ paths:
         - Radius
       x-exegesis-operationId: getRadiusAtCollection
       parameters:
-        - $ref: '#/components/parameters/download'
         - $ref: '#/components/parameters/f'
         - $ref: '#/components/parameters/collectionId'
         - $ref: '#/components/parameters/crs'
@@ -445,7 +441,7 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/covJson_edrGeoJson_yaml'
-  ##//
+
   /collections/{collectionId}/instances/{instanceId}/radius:
     x-exegesis-controller: radiusController
     get:
@@ -454,7 +450,6 @@ paths:
         - Instances
       x-exegesis-operationId: getRadiusAtInstance
       parameters:
-        - $ref: '#/components/parameters/download'
         - $ref: '#/components/parameters/f'
         - $ref: '#/components/parameters/collectionId'
         - $ref: '#/components/parameters/crs'
@@ -483,7 +478,6 @@ paths:
         '200':
           $ref: '#/components/responses/covJson_edrGeoJson_yaml'
 
-  ##//
   /collections/{collectionId}/area:
     x-exegesis-controller: areaController
     get:
@@ -491,7 +485,6 @@ paths:
         - Area
       x-exegesis-operationId: getAreaAtCollection
       parameters:
-        - $ref: '#/components/parameters/download'
         - $ref: '#/components/parameters/areaCoords'
         - $ref: '#/components/parameters/z'
         - $ref: '#/components/parameters/datetime'
@@ -517,7 +510,6 @@ paths:
         '200':
           $ref: '#/components/responses/covJson_edrGeoJson_yaml'
 
-  ##//
   /collections/{collectionId}/instances/{instanceId}/area:
     x-exegesis-controller: areaController
     get:
@@ -526,7 +518,6 @@ paths:
         - Instances
       x-exegesis-operationId: getAreaAtInstance
       parameters:
-        - $ref: '#/components/parameters/download'
         - $ref: '#/components/parameters/areaCoords'
         - $ref: '#/components/parameters/z'
         - $ref: '#/components/parameters/datetime'
@@ -553,7 +544,7 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/covJson_edrGeoJson_yaml'
-  ##//
+  
   /collections/{collectionId}/cube:
     x-exegesis-controller: cubeController
     get:
@@ -561,7 +552,6 @@ paths:
         - Cube
       x-exegesis-operationId: getCubeAtCollection
       parameters:
-        - $ref: '#/components/parameters/download'
         - $ref: '#/components/parameters/cubeBbox'
         - $ref: '#/components/parameters/collectionId'
         - $ref: '#/components/parameters/cube-z'
@@ -584,7 +574,7 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/covJson_edrGeoJson_yaml'
-  ##//
+
   /collections/{collectionId}/instances/{instanceId}/cube:
     x-exegesis-controller: cubeController
     get:
@@ -593,7 +583,6 @@ paths:
         - Instances
       x-exegesis-operationId: getCubeAtInstance
       parameters:
-        - $ref: '#/components/parameters/download'
         - $ref: '#/components/parameters/cubeBbox'
         - $ref: '#/components/parameters/collectionId'
         - $ref: '#/components/parameters/instanceId'
@@ -618,7 +607,7 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/covJson_edrGeoJson_yaml'
-  ##//
+  
   /collections/{collectionId}/locations:
     x-exegesis-controller: locationsController
     get:
@@ -627,11 +616,11 @@ paths:
       description: List available location identifiers for the collection
       x-exegesis-operationId: getLocationsAtCollection
       parameters:
-        - $ref: '#/components/parameters/download'
         - $ref: '#/components/parameters/collectionId'
         - $ref: '#/components/parameters/datetime'
         - $ref: '#/components/parameters/f'
         - $ref: '#/components/parameters/bbox'
+        - $ref: '#/components/parameters/crs'
       responses:
         '200':
           $ref: '#/components/responses/geoJsonFeatureCollection'
@@ -647,7 +636,7 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/covJson_edrGeoJson_yaml'
-
+  
   /collections/{collectionId}/locations/{locationId}:
     x-exegesis-controller: locationsController
     get:
@@ -655,7 +644,6 @@ paths:
         - Locations
       x-exegesis-operationId: getLocationAtCollection
       parameters:
-        - $ref: '#/components/parameters/download'
         - $ref: '#/components/parameters/locationId'
         - $ref: '#/components/parameters/collectionId'
         - $ref: '#/components/parameters/parameter-name'
@@ -687,8 +675,10 @@ paths:
         - Instances
       x-exegesis-operationId: getLocationsAtInstance
       parameters:
-        - $ref: '#/components/parameters/download'
+        
+
         - $ref: '#/components/parameters/bbox'
+        - $ref: '#/components/parameters/crs'
         - $ref: '#/components/parameters/datetime'
         - $ref: '#/components/parameters/collectionId'
         - $ref: '#/components/parameters/instanceId'
@@ -719,7 +709,6 @@ paths:
         - Instances
       x-exegesis-operationId: getLocationAtInstance
       parameters:
-        - $ref: '#/components/parameters/download'
         - $ref: '#/components/parameters/instanceId'
         - $ref: '#/components/parameters/collectionId'
         - $ref: '#/components/parameters/locationId'
@@ -751,7 +740,8 @@ paths:
         - Trajectory
       x-exegesis-operationId: getTrajectoryAtCollection
       parameters:
-        - $ref: '#/components/parameters/download'
+        
+
         - $ref: '#/components/parameters/trajectoryCoords' #Must be 2D
         - $ref: '#/components/parameters/z'
         - $ref: '#/components/parameters/datetime'
@@ -783,7 +773,6 @@ paths:
         - Instances
       x-exegesis-operationId: getTrajectoryAtInstance
       parameters:
-        - $ref: '#/components/parameters/download'
         - $ref: '#/components/parameters/trajectoryCoords'
         - $ref: '#/components/parameters/collectionId'
         - $ref: '#/components/parameters/instanceId'
@@ -819,7 +808,8 @@ paths:
         - Corridor
       x-exegesis-operationId: getCorridorAtCollection
       parameters:
-        - $ref: '#/components/parameters/download'
+        
+
         - $ref: '#/components/parameters/trajectoryCoords' #Must be LineString/MultiLineString
         - $ref: '#/components/parameters/datetime'
         - $ref: '#/components/parameters/z'
@@ -860,7 +850,6 @@ paths:
         - Instances
       x-exegesis-operationId: getCorridorAtInstance
       parameters:
-        - $ref: '#/components/parameters/download'
         - $ref: '#/components/parameters/trajectoryCoords' #Must be LineString/MultiLineString
         - $ref: '#/components/parameters/datetime'
         - $ref: '#/components/parameters/z'

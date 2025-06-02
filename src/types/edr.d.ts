@@ -1,5 +1,5 @@
 import * as CommonTypes from "./commontypes.d.js";
-import {CoverageJSON} from "coveragejson";
+import { CoverageJSON } from "coveragejson";
 
 export as namespace EdrTypes;
 export interface RootDocument extends CommonTypes.Root {
@@ -69,8 +69,8 @@ export interface Collection<DQ extends DataQueries = DataQueries>
     spatial: {
       /**Default should be CRS84? */
       crs:
-        | string
-        | `GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]]`;
+      | string
+      | `GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]]`;
       /**
        * @description name of the crs
        */
@@ -119,15 +119,15 @@ export interface Collection<DQ extends DataQueries = DataQueries>
        * The value `null` is supported and indicates an open vertical interval.
        * @example ["2","10","80", "100"] or ["R20/1000/-50"]
        */
-      values?: (string | null)[];
+      values?: (string)[];
       /**
        * @description Coordinate reference system of the coordinates in the vertical extent (property `interval`).
        * @default VERTCS["WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PARAMETER["Vertical_Shift",0.0],PARAMETER["Direction",1.0],UNIT["Meter",1.0]],AXIS["Up",UP]
        * @example
        */
       vrs:
-        | string
-        | 'VERTCS["WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PARAMETER["Vertical_Shift",0.0],PARAMETER["Direction",1.0],UNIT["Meter",1.0]],AXIS["Up",UP]';
+      | string
+      | 'VERTCS["WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PARAMETER["Vertical_Shift",0.0],PARAMETER["Direction",1.0],UNIT["Meter",1.0]],AXIS["Up",UP]';
       /**
        * @description  Name of the vertical coordinate reference system
        */
@@ -171,7 +171,7 @@ export interface MeasurementTypeObject {
   period?: string;
 }
 
-interface EdrParameter extends CoverageJSON.Parameter {}
+interface EdrParameter extends CoverageJSON.Parameter { }
 export interface BaseDQVariables {
   query_type: LinkObject["link"]["variables"]["query_type"];
   title: string;
@@ -182,15 +182,15 @@ export interface BaseDQVariables {
 }
 export interface LinkObject<
   T =
-    | AreaDataQuery
-    | PositionDataQuery
-    | CorridorDataQuery
-    | CubeDataQuery
-    | InstancesDataQuery
-    | ItemsDataQuery
-    | LocationsDataQuery
-    | RadiusDataQuery
-    | TrajectoryDataQuery
+  | AreaDataQuery
+  | PositionDataQuery
+  | CorridorDataQuery
+  | CubeDataQuery
+  | InstancesDataQuery
+  | ItemsDataQuery
+  | LocationsDataQuery
+  | RadiusDataQuery
+  | TrajectoryDataQuery
 > {
   link: CommonTypes.Link & { variables: T };
 }
@@ -244,6 +244,7 @@ export interface ItemsDataQuery extends BaseDQVariables {
 }
 export interface LocationsDataQuery extends BaseDQVariables {
   query_type: "locations";
+  multi?: boolean;
 }
 export interface PositionDataQuery extends BaseDQVariables {
   query_type: "position";
@@ -278,16 +279,16 @@ interface ObservedPropertyCollection {
 export interface Parameter extends CoverageJSON.Parameter {
   measurementType?: MeasurementTypeObject;
   /* {
-		 Approach to calculating the data values i.e. mean, average
-		method: string;
+     Approach to calculating the data values i.e. mean, average
+    method: string;
 
-		//Measurement time duration
-		 //The time duration that the value was calculated for as an RFC3339 duration value.  If the method value is instantaneous this value is not required.
-		 //PT10M
-		 
-		duration?: string;
-	};
-	*/
+    //Measurement time duration
+     //The time duration that the value was calculated for as an RFC3339 duration value.  If the method value is instantaneous this value is not required.
+     //PT10M
+     
+    duration?: string;
+  };
+  */
   extent?: Collection["extent"];
 }
 

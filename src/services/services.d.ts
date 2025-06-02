@@ -14,44 +14,44 @@ type SpatialOptions =
    */
   (
     | {
-        query_type: "items";
-        bbox?: CommonTypes.Bbox;
-        bboxCrs?: CommonTypes.CrsConfig;
-      }
+      query_type: "items";
+      bbox?: CommonTypes.Bbox;
+      bboxCrs?: CommonTypes.CrsConfig;
+    }
     | {
-        query_type: "locations";
-        bbox?: CommonTypes.Bbox;
-      }
+      query_type: "locations";
+      bbox?: CommonTypes.Bbox;
+    }
     | {
-        query_type: "radius";
-        coords: EdrRqManager["coords"];
-        radius: EdrRqManager["radius"];
-      }
+      query_type: "radius";
+      coords: EdrRqManager["coords"];
+      radius: EdrRqManager["radius"];
+    }
     | {
-        query_type: "corridor";
-        coords: EdrRqManager["coords"];
-        resolutions?: EdrRqManager["resolutions"];
-        corridor: EdrRqManager["corridor"];
-      }
+      query_type: "corridor";
+      coords: EdrRqManager["coords"];
+      resolutions?: EdrRqManager["resolutions"];
+      corridor: EdrRqManager["corridor"];
+    }
     | {
-        query_type: "cube";
-        bbox: CommonTypes.Bbox;
-        bboxCrs?: CommonTypes.CrsConfig;
-      }
+      query_type: "cube";
+      bbox: CommonTypes.Bbox;
+      bboxCrs?: CommonTypes.CrsConfig;
+    }
     | {
-        query_type: "area";
-        coords: EdrRqManager["coords"];
-        resolutions?: EdrRqManager["resolutions"];
-      }
+      query_type: "area";
+      coords: EdrRqManager["coords"];
+      resolutions?: EdrRqManager["resolutions"];
+    }
     | {
-        query_type: "trajectory";
-        coords: EdrRqManager["coords"];
-      }
+      query_type: "trajectory";
+      coords: EdrRqManager["coords"];
+    }
     | {
-        query_type: "instances";
-        bbox?: CommonTypes.Bbox;
-        datetime?: FeaturesRqManager["datetime"];
-      }
+      query_type: "instances";
+      bbox?: CommonTypes.Bbox;
+      datetime?: FeaturesRqManager["datetime"];
+    }
     | { query_type: "position"; coords: Coords }
   ) & {
     datetime?: FeaturesRqManager["datetime"];
@@ -114,6 +114,7 @@ export interface EdrCollection {
         data: CommonTypes.FeatureCollection;
         numberMatched: number;
       }>;
+      multi?: boolean
     };
     items?: DataQueryConfig;
     radius?: DataQueryConfig & { within_units: Length[] };
@@ -192,7 +193,7 @@ type Query = (opt: {
   server: oas3.ServerObject;
   f: keyof typeof contenttypes;
   itemId?: string | number;
-  locationId?: string | number;
+  locationId?: (string | number)[];
   instanceId?: string;
   spatial?: SpatialOptions;
   offset: number;
@@ -201,11 +202,11 @@ type Query = (opt: {
   crs: CommonTypes.CrsConfig;
 }) => Promise<{
   data:
-    | EdrTypes.EdrFeature
-    | EdrTypes.EdrFeatureCollection
-    | CoverageJSON.CoverageJSON
-    | CommonTypes.Feature
-    | CommonTypes.FeatureCollection;
+  | EdrTypes.EdrFeature
+  | EdrTypes.EdrFeatureCollection
+  | CoverageJSON.CoverageJSON
+  | CommonTypes.Feature
+  | CommonTypes.FeatureCollection;
   numberMatched: number;
 }>;
 

@@ -4,9 +4,10 @@
   "type": "module",
   "scripts": {},
   "dependencies": {
+    "@std/expect": "npm:@jsr/std__expect",
     "@turf/boolean-intersects": "^7.2.0",
     "@types/coveragejson": "^1.0.0",
-    "@types/deno": "^2.2.0",
+    "@types/deno": "^2.3.0",
     "@types/geojson": "^7946.0.16",
     "convert": "^5.7.0",
     "cors": "^2.8.5",

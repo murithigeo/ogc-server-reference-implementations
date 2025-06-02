@@ -15,33 +15,33 @@ export const bboxToPolygon = (bbox: CommonTypes.Bbox): GeoJSON.Polygon => ({
   coordinates:
     bbox.length === 6
       ? [
-          [
-            //minx,miny,minz
-            [bbox[0], bbox[1], bbox[2]],
-            //maxx,miny,maxz
-            [bbox[3], bbox[1], bbox[5]],
-            //maxx,maxy,maxz
-            [bbox[3], bbox[4], bbox[5]],
-            //minx,maxy,minz
-            [bbox[0], bbox[4], bbox[2]],
-            //minx,miny,minz
-            [bbox[0], bbox[1], bbox[2]],
-          ],
-        ]
-      : [
-          [
-            //minx,miny
-            [bbox[0], bbox[1]],
-            //maxx,miny
-            [bbox[2], bbox[1]],
-            //maxx,maxy
-            [bbox[2], bbox[3]],
-            //minx,maxy
-            [bbox[0], bbox[3]],
-            //minx,miny
-            [bbox[0], bbox[1]],
-          ],
+        [
+          //minx,miny,minz
+          [bbox[0], bbox[1], bbox[2]],
+          //maxx,miny,maxz
+          [bbox[3], bbox[1], bbox[5]],
+          //maxx,maxy,maxz
+          [bbox[3], bbox[4], bbox[5]],
+          //minx,maxy,minz
+          [bbox[0], bbox[4], bbox[2]],
+          //minx,miny,minz
+          [bbox[0], bbox[1], bbox[2]],
         ],
+      ]
+      : [
+        [
+          //minx,miny
+          [bbox[0], bbox[1]],
+          //maxx,miny
+          [bbox[2], bbox[1]],
+          //maxx,maxy
+          [bbox[2], bbox[3]],
+          //minx,maxy
+          [bbox[0], bbox[3]],
+          //minx,miny
+          [bbox[0], bbox[1]],
+        ],
+      ],
 });
 
 //console.log(bboxToPolygon([-180,-90,180,90]))
@@ -126,20 +126,19 @@ export function filterCollectionByDatetime({
   const levelCheck =
     datetime?.levels && tvalues
       ? datetime.levels
-          .map((l) => new Date(l).getTime())
-          .every((level) =>
-            tvalues.map((v) => new Date(v).getTime()).includes(level)
-          )
+        .map((l) => new Date(l).getTime())
+        .every((level) =>
+          tvalues.map((v) => new Date(v).getTime()).includes(level)
+        )
       : true;
   const maxCheck =
     datetime?.max && tmax
-      ? new Date(tmax).getTime() <= new Date(tmax).getTime()
+      ? new Date(tmax).getTime() <= new Date(datetime.max).getTime()
       : true;
   const minCheck =
     datetime?.min && tmin
-      ? new Date(tmin).getTime() >= new Date(tmin).getTime()
+      ? new Date(tmin).getTime() >= new Date(datetime.min).getTime()
       : true;
-
   return levelCheck && maxCheck && minCheck;
 }
 

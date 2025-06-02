@@ -13,7 +13,6 @@ import {
 } from "../../../common/common.utils.js";
 
 async function getCollections(ctx: ExegesisContext): Promise<void> {
-  /* One of these operations may be causing a premature 404 response */
   const {
     output_formats,
     datetime,
@@ -50,6 +49,7 @@ async function getCollections(ctx: ExegesisContext): Promise<void> {
         metadata: { ...c },
         ctx,
         crs,
+        collectionId: c.id
       });
       return {
         ...doc,
@@ -111,7 +111,7 @@ async function getCollection(ctx: ExegesisContext): Promise<void> {
   mainbody = {
     ...mainbody,
     links: Object.values(mainbody.data_queries)
-      .map(({ link: { variables:_variables, ...others } }: EdrTypes.LinkObject) => others)
+      .map(({ link: { variables: _variables, ...others } }: EdrTypes.LinkObject) => others)
       .concat(
         ...new EdrLinksManager({ ctx, f, output_formats }).self().alternates()
           .links
@@ -156,7 +156,6 @@ async function getInstances(ctx: ExegesisContext): Promise<void> {
     .bboxParser()
     .datetimeParser()
     .outputFormatParser();
-
   const instances: EdrTypes.Collection[] = (
     await collection.extentQuery({ crs, mode: "instances" })
   )
@@ -172,12 +171,13 @@ async function getInstances(ctx: ExegesisContext): Promise<void> {
         crs,
         ctx,
         collectionId: collection.id,
+        instanceId: c.id,
       });
       delete doc.data_queries.instances;
       doc = {
         ...doc,
         links: Object.values(doc.data_queries)
-          .map(({ link: { variables:_variables, ...others } }) => others)
+          .map(({ link: { variables: _variables, ...others } }) => others)
           .concat(
             new EdrLinksManager({ ctx, f, output_formats }).toInstance(
               collection.id,
@@ -240,6 +240,7 @@ async function getInstance(ctx: ExegesisContext) {
     crs,
     ctx,
     collectionId: collection.id,
+    instanceId: instance.id
   });
   mainbody = {
     ...mainbody,

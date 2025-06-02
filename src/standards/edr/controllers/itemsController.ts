@@ -19,7 +19,6 @@ async function getItemsAtCollection(ctx: ExegesisContext): Promise<void> {
     .collectionParser()
     .dataQueryParser("items")
     .crsParser()
-    .bboxParser()
     .parameterParser()
     .datetimeParser()
     .outputFormatParser()

@@ -23,6 +23,7 @@ async function getCorridorAtCollection(ctx: ExegesisContext): Promise<void> {
     .crsParser()
     .datetimeParser()
     .corridorParser()
+    .parameterParser()
     .outputFormatParser();
   const { data, numberMatched } = await collection.query({
     server: ctx.api.serverObject!,

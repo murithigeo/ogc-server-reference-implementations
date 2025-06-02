@@ -104,7 +104,7 @@ export const isdCollection: EdrCollection = {
   ],
   data_queries: {
     locations: {
-      output_formats: ["GeoJSON"],
+      output_formats: ["GeoJSON","JSON","CoverageJSON"],
       default_output_format: "GeoJSON",
       async handler({ datetime, z, bbox, crs, instanceId, limit, offset }) {
         let { rows, numberMatched } = await db
@@ -119,16 +119,17 @@ export const isdCollection: EdrCollection = {
                 .where((eb) => {
                   const instanceCheck = eb(
                     sql<string>`TO_CHAR(${eb.ref(
-                      "isd.datetime"
-                    )},'YYYY-MM-DD')`,
+                      "isd.datetime",
+                    )
+                      },'YYYY-MM-DD')`,
                     "=",
-                    instanceId.toString()
+                    instanceId.toString(),
                   );
                   conditions.push(instanceCheck);
                   return instanceCheck;
                 })
                 .executeTakeFirstOrThrow(
-                  () => new HttpError(404, "no such instance")
+                  () => new HttpError(404, "no such instance"),
                 );
             }
             return (await trx
@@ -143,8 +144,8 @@ export const isdCollection: EdrCollection = {
                     transformAsGeoJSON(
                       eb,
                       stf(eb).extent(
-                        transformGeometry(eb, "isd.geom", crs, 4327)
-                      )
+                        transformGeometry(eb, "isd.geom", crs, 4327),
+                      ),
                     )
                   )
                   .where((eb) => {
@@ -156,10 +157,13 @@ export const isdCollection: EdrCollection = {
 
                     return eb.and(conditions);
                   })
-                  .groupBy(["isd.country"])
-              )
-              .with("values2", (db) =>
-                db.selectFrom("values1").selectAll().limit(limit).offset(offset)
+                  .groupBy(["isd.country"]))
+              .with(
+                "values2",
+                (db) =>
+                  db.selectFrom("values1").selectAll().limit(limit).offset(
+                    offset,
+                  ),
               )
               .selectFrom(["values1", "values2"])
               .select((eb) => [
@@ -181,6 +185,7 @@ export const isdCollection: EdrCollection = {
           numberMatched,
         };
       },
+      multi: true
     },
     instances: {
       default_output_format: "JSON",
@@ -189,7 +194,7 @@ export const isdCollection: EdrCollection = {
     },
     items: {
       default_output_format: "GeoJSON",
-      output_formats: ["GeoJSON", "YAML", "CoverageJSON"],
+      output_formats: ["GeoJSON", "YAML", "CoverageJSON","JSON"],
     },
     radius: {
       default_output_format: "JSON",
@@ -235,7 +240,6 @@ export const isdCollection: EdrCollection = {
     let { rows, numberMatched } = await db
       .transaction()
       .execute(async (trx) => {
-        //let eb:ExpressionBuilder<Database,"isd">;
         const conditions: ExpressionWrapper<Database, "isd", SqlBool>[] = [];
         let template = trx.selectFrom("isd"),
           _instanceBuilder = (eb: ExpressionBuilder<Database, "isd">) =>
@@ -249,18 +253,21 @@ export const isdCollection: EdrCollection = {
               return instanceCheck;
             })
             .executeTakeFirstOrThrow(
-              () => new HttpError(404, `no such instance`)
+              () => new HttpError(404, `no such instance`),
             );
         }
         if (locationId) {
           await template
             .where((eb) => {
-              const check = eb("isd.country", "=", locationId.toString());
+              const check = eb(eb.selectFrom("isd")
+                .select(eb => eb.fn.agg("ARRAY_AGG", ["country"])
+                  .distinct()
+                  .as("countries")), "@>", sql`ARRAY[${sql.join(locationId)}]::varchar[]`)
               conditions.push(check);
               return check;
             })
             .executeTakeFirstOrThrow(
-              () => new HttpError(404, `no such location`)
+              () => new HttpError(404, `no such location`),
             );
         }
         if (itemId) {
@@ -290,7 +297,7 @@ export const isdCollection: EdrCollection = {
                 //transform to crs config and get as geojson geometry
                 transformAsGeoJSON(
                   eb,
-                  transformGeometry(eb, "isd.geom", crs, this.storageSRID)
+                  transformGeometry(eb, "isd.geom", crs, this.storageSRID),
                 ),
               ])
               //get variable as a array of string,number of nulls.
@@ -303,14 +310,14 @@ export const isdCollection: EdrCollection = {
                     eb,
                     p.column,
                     p.dataType,
-                    p.index
-                  )}))[1:${arrLimit || sql.raw("")}]`.as(p.id)
+                    p.index,
+                  )
+                  }))[1:${arrLimit || sql.raw("")}]`.as(p.id)
                 )
               )
               .select((eb) => [
-                sql<string[]>`(ARRAY_AGG(${eb.ref("isd.datetime")}))[1:${
-                  arrLimit || sql.raw("")
-                }]`.as("datetime"),
+                sql<string[]>`(ARRAY_AGG(${eb.ref("isd.datetime")}))[1:${arrLimit || sql.raw("")
+                  }]`.as("datetime"),
                 // These will be used for Edr GeoJSON which requires a datetime field
                 eb.fn.max<string>("isd.datetime").as("tmax"),
                 eb.fn.min<string>("isd.datetime").as("tmin"),
@@ -323,8 +330,8 @@ export const isdCollection: EdrCollection = {
                       spatial,
                       storageSRID: this.storageSRID,
                       crs,
-                    })
-                  )
+                    }),
+                  ),
                 )
               )
               .groupBy([
@@ -332,12 +339,10 @@ export const isdCollection: EdrCollection = {
                 "isd.geom", //"countries.name",
                 "isd.station",
                 "isd.country",
-              ])
-          )
+              ]))
           .with("values2", (db) =>
             //If edr really does not support limit, then disable /{collectionId}/{query_type} so as to reduce processing time
-            db.selectFrom("values1").selectAll().limit(limit).offset(offset)
-          )
+            db.selectFrom("values1").selectAll().limit(limit).offset(offset))
           .selectFrom(["values1", "values2"])
           .select((eb) => [
             eb
@@ -350,17 +355,25 @@ export const isdCollection: EdrCollection = {
       });
     rows = rows ?? [];
     let data: Awaited<ReturnType<typeof this.query>>["data"] = undefined;
+
     switch (f) {
-      case "json":
-        let parser0 = new EdrGeoJsonParser({
+      case "json": {
+        const parser0 = new EdrGeoJsonParser({
           server,
-          rows,
+          rows: rows.map(r => {
+            if (r.tmin && r.tmax) {
+              r.datetime = `${r.tmin}/${r.tmax}`
+              delete r.tmin; delete r.tmax
+            }
+            return r;
+          }),
           parameters: this.parameters,
           numberMatched,
           offset,
           limit,
           collectionId: this.id,
           instanceId,
+          supportsLocation: true
         });
 
         if (!itemId) {
@@ -369,9 +382,14 @@ export const isdCollection: EdrCollection = {
           data = parser0.toEdrFeature();
         }
         break;
-      case "geojson":
-        let parser = new FeaturesGeoJsonParser({
-          rows,
+      }
+      case "geojson": {
+        const parser = new FeaturesGeoJsonParser({
+          rows: rows.map(r => {
+            r.datetime = `${r.tmin}/${r.tmax}`
+            delete r.tmin; delete r.tmax;
+            return r
+          }),
           offset,
           numberMatched,
           limit,
@@ -382,9 +400,10 @@ export const isdCollection: EdrCollection = {
           data = parser.featureCollection;
         }
         break;
+      }
       //Handle cases where a feature is supposed to be returned
       //case "yaml":
-      case "coveragejson":
+      case "coveragejson": {
         const parser2 = new CoverageJsonParser({
           rows,
           crs,
@@ -396,6 +415,7 @@ export const isdCollection: EdrCollection = {
           data = parser2.toCoverageCollection().covjsonDoc;
         }
         break;
+      }
     }
     return { data, numberMatched: rows.length };
   },
@@ -405,8 +425,8 @@ export const isdCollection: EdrCollection = {
       .select((eb) => [
         mode === "instances"
           ? sql<string>`TO_CHAR(${eb.ref("isd.datetime")},'YYYY-MM-DD')`.as(
-              "id"
-            )
+            "id",
+          )
           : eb.val("isd-2025").as("id"),
         ...tExtent(eb, "isd.datetime"),
         ...zExtent(eb, "isd.geom"),
@@ -422,11 +442,9 @@ export const isdCollection: EdrCollection = {
               eb(
                 sql<string>`TO_CHAR(${eb.ref("isd.datetime")},'YYYY-MM-DD')`,
                 "=",
-                instanceId?.toString()!
+                instanceId?.toString()!,
               )
-            )
-          )
-      )
+            )))
       .execute();
   },
 };
@@ -453,11 +471,10 @@ function spatialWhere({
         ...bboxFilter(
           eb,
           "isd.geom",
-
           4327,
           spatial.bboxCrs || crs,
-          spatial.bbox
-        )
+          spatial.bbox,
+        ),
       );
       break;
     case "corridor":
@@ -468,18 +485,18 @@ function spatialWhere({
           spatial.coords,
           spatial.corridor,
           crs,
-          4327
-        )
+          4327,
+        ),
       );
       break;
     case "area":
       conditions.push(
-        areaFilter(eb, "isd.geom", spatial.coords, storageSRID, crs)
+        areaFilter(eb, "isd.geom", spatial.coords, storageSRID, crs),
       );
       break;
     case "position":
       conditions.push(
-        positionFilter(eb, "isd.geom", spatial.coords, crs, storageSRID)
+        positionFilter(eb, "isd.geom", spatial.coords, crs, storageSRID),
       );
       break;
     case "radius":
@@ -490,13 +507,13 @@ function spatialWhere({
           spatial.coords,
           spatial.radius,
           crs,
-          storageSRID
-        )
+          storageSRID,
+        ),
       );
       break;
     case "trajectory":
       conditions.push(
-        trajectoryFilter(eb, "isd.geom", spatial.coords, crs, storageSRID)
+        trajectoryFilter(eb, "isd.geom", spatial.coords, crs, storageSRID),
       );
       break;
   }
