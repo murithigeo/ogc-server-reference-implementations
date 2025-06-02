@@ -1,7 +1,6 @@
 import wkx from "wkx";
 import { convert, type Length } from "convert";
 import type { ExegesisContext, ExegesisRoute, oas3 } from "exegesis-express";
-//import type { edrConfig } from '../../config/index.js';
 import { contenttypes } from "../../common/utils/contenttypes.js";
 import {
   FeaturesGeoJsonParser,
@@ -24,7 +23,7 @@ export class EdrRqManager extends FeaturesRqManager<EdrCollection> {
     hasM: false,
     hasZ: false,
   };
-
+  locationId: (string | number)[] = undefined;
   corridor: { width: number; height: number } = { width: 0, height: 0 };
   parameters: EdrCollection["parameters"] = [];
   radius: { within: number } = { within: 0 };
@@ -36,10 +35,10 @@ export class EdrRqManager extends FeaturesRqManager<EdrCollection> {
     y: number | undefined;
     z: number | undefined;
   } = {
-    x: undefined,
-    y: undefined,
-    z: undefined,
-  };
+      x: undefined,
+      y: undefined,
+      z: undefined,
+    };
 
   queryTypeOptions: EdrCollection["data_queries"][keyof EdrCollection["data_queries"]];
   //	private corridorConfig
@@ -47,11 +46,11 @@ export class EdrRqManager extends FeaturesRqManager<EdrCollection> {
     ctx,
     collections = services.edr,
   }: //corridorConfig = { widthTargetUnit: 'meters', heightTargetUnit: 'meters' }
-  {
-    ctx: ExegesisContext;
-    collections?: EdrCollection[];
-    //		corridorConfig?: { heightTargetUnit: Length; widthTargetUnit: Length };
-  }) {
+    {
+      ctx: ExegesisContext;
+      collections?: EdrCollection[];
+      //		corridorConfig?: { heightTargetUnit: Length; widthTargetUnit: Length };
+    }) {
     super({ ctx, collections });
   }
 
@@ -135,11 +134,11 @@ export class EdrRqManager extends FeaturesRqManager<EdrCollection> {
     targetWidthUnit: Length = "metres"
   ) {
     const {
-        "corridor-height": corridor_height,
-        "corridor-width": corridor_width,
-        "width-un.js": width_unit,
-        "height-un.js": height_unit,
-      } = this.ctx.params.query,
+      "corridor-height": corridor_height,
+      "corridor-width": corridor_width,
+      "width-units": width_unit,
+      "height-units": height_unit,
+    } = this.ctx.params.query,
       docPath = this.ctx.api.pathItemPtr;
 
     const options = (this
@@ -150,7 +149,7 @@ export class EdrRqManager extends FeaturesRqManager<EdrCollection> {
         "invalid width-units. Check collection metadata",
         {
           in: "query",
-          name: "width-un.js",
+          name: "width-units",
           docPath,
         }
       );
@@ -160,7 +159,7 @@ export class EdrRqManager extends FeaturesRqManager<EdrCollection> {
         "invalid height-units. Check collection metadata",
         {
           in: "query",
-          name: "height-un.js",
+          name: "height-units",
           docPath,
         }
       );
@@ -224,9 +223,9 @@ export class EdrRqManager extends FeaturesRqManager<EdrCollection> {
     return this;
   }
 
-  override crsParser(crsList: string[] = this.collection.crs): this {
-    super.crsParser(crsList);
-    return this;
+  override crsParser(crsList?: string[]): this {
+    return super.crsParser(crsList);
+
   }
   override bboxCrsParser(crsList: string[] = this.collection.crs): this {
     super.bboxCrsParser(crsList);
@@ -256,13 +255,13 @@ export class EdrRqManager extends FeaturesRqManager<EdrCollection> {
   radiusParser(targetUnit: Length = "metres") {
     const options = this
       .queryTypeOptions as EdrCollection["data_queries"]["radius"];
-    const { within, "within-un.js": wUnits } = this.ctx.params.query;
+    const { within, "within-units": wUnits } = this.ctx.params.query;
     if (!options?.within_units.includes(wUnits)) {
       throw this.ctx.makeValidationError(
         `Invalid within-units. Valid options include: ${options?.within_units.join(
           ", \n "
         )}`,
-        { in: "query", name: "within-un.js", docPath: this.ctx.api.pathItemPtr }
+        { in: "query", name: "within-units", docPath: this.ctx.api.pathItemPtr }
       );
     }
     this.radius = {
@@ -307,8 +306,72 @@ export class EdrRqManager extends FeaturesRqManager<EdrCollection> {
     );
     return this;
   }
+
+  locationsParser() {
+    const { locationId }: { locationId: string } = this.ctx.params.path;
+    if (!locationId) throw this.ctx.makeError(404, `Invalid/empty string`)
+    const opts = this.queryTypeOptions as EdrCollection["data_queries"]["locations"];
+    this.locationId = opts.multi ? locationId.split(",") : [locationId]
+    return this
+  }
+
 }
 
+/*
+class EdrNew {
+  ctx: ExegesisContext;
+  collections: EdrCollection[]
+  #collection: EdrCollection | undefined = undefined
+  #crs: CrsConfig | undefined = undefined;
+  constructor({ ctx, collections }: { ctx: ExegesisContext, collections?: EdrCollection[] }) {
+    this.ctx = ctx;
+    this.collections = collections || services.edr;
+    this.collection = collections.find(c => c.id === ctx.params.path.collectionId);
+    //this.#crs
+  }
+
+  public get collection() {
+    //let collection = this.collections.find(c => c.id === this.ctx.params.path.collectionId);
+    if (!this.#collection) throw this.ctx.makeError(404, "No such collection");
+    return this.#collection;
+  }
+  public set collection(collection: EdrCollection) {
+
+  }
+  public get corridor() {
+    let height: number, width: number;
+    return {
+      width,
+      height
+    }
+  }
+  public get radius() {
+    if (!this.collection.data_queries.radius) throw this.ctx.makeError(404, `collection does not support radius queries`)
+    if (!this.collection.data_queries.radius.within_units.includes(this.ctx.params.query["within-units"])) throw this.ctx.makeValidationError(`Invalid within-units`, { in: "query", name: "within-units", docPath: this.ctx.api.pathItemPtr })
+    return {
+      within: convert<number, Length>(this.ctx.params.query["within"], this.ctx.params.query["within-units"]).to("meters")
+    }
+  }
+
+  public get locationId(): string[] {
+    if (!this.collection.data_queries.locations) throw this.ctx.makeError(404, `collection does not support locations`);
+
+    return this.collection.data_queries.locations.multi ? this.ctx.params.path.locationId.split(",") : this.ctx.params.path.locationId
+  }
+
+  public get bbox() {
+    
+  }
+
+  public get crs() {
+    if (!this.#crs) throw this.ctx.makeValidationError(`Invalid crs string`, { in: "query", name: "crs", docPath: this.ctx.api.pathItemPtr })
+    return this.#crs
+  }
+  public set crs(crsConfig) {
+    this.#crs = crsConfig
+  }
+}
+  */
 //!Fix the inclusion of query params
 export function dataQueryLink(
   url: URL,
@@ -320,7 +383,7 @@ export function dataQueryLink(
   url.search = "";
   url.pathname =
     route.path === "/collections/{collectionId}/instances/{instanceId}" ||
-    route.path === "/collections/{collectionId}"
+      route.path === "/collections/{collectionId}"
       ? url.pathname + `/${queryType}`
       : url.pathname + `/${id}/${queryType}`;
   return url.toString();
@@ -351,7 +414,8 @@ export class EdrGeoJsonParser extends FeaturesGeoJsonParser {
 
   public edrqueryendpoint(row: { [x: string]: any }): string {
     //{server}/collections/{collectionId}/locations/{locationId} or {server}/collections/{collectionId}/instances/{instanceId}/locations/{locationId}
-    const { location = "" } = row;
+    const { location } = row;
+    console.log(location)
     if (!this.supportsLocation) return "";
     if (!row.location) return "";
     const base = `${this.server.url}/collections/${this.collectionId}`;
@@ -379,7 +443,7 @@ export class EdrGeoJsonParser extends FeaturesGeoJsonParser {
       ...feature,
       properties: {
         ...feature.properties,
-        datetime: row["tmin"] & row["tmax"] ? `${row.tmin}/${row.tmax}` : "",
+        datetime: row.datetime || "",
         "parameter-name": this.parameters.map((p) => p.id),
         //remember to replace with valid url if collection has locations
         edrqueryendpoint: this.edrqueryendpoint(row),
@@ -423,12 +487,13 @@ export function edrCollectionDocGenerator({
   metadata,
   crs,
   ctx,
-  collectionId,
+  collectionId, instanceId,
 }: {
   ctx: ExegesisContext;
   metadata: Awaited<ReturnType<EdrCollection["extentQuery"]>>[0];
   crs: CommonTypes.CrsConfig;
-  collectionId?: string | number;
+  collectionId: string | number;
+  instanceId?: string | number
 }): EdrTypes.Collection {
   const {
     id,
@@ -452,10 +517,10 @@ export function edrCollectionDocGenerator({
     parameters,
     keywords,
     id: cId,
-  } = services.edr.find((c) => c.id === collectionId || c.id === id)!;
+  } = services.edr.find((c) => c.id === collectionId)!;
 
   return {
-    id,
+    id: instanceId.toString() || collectionId.toString(),
     title,
     description,
     keywords,
@@ -516,6 +581,7 @@ export function edrCollectionDocGenerator({
             width_units,
             //@ts-expect-error <type intersection error>
             within_units,
+            multi,
             ..._others
           },
         ]
@@ -529,16 +595,16 @@ export function edrCollectionDocGenerator({
         const link =
           cId !== id
             ? x.instanceBasedQueryType(
-                cId,
-                id,
-                query_type,
-                default_output_format
-              )
+              cId,
+              id,
+              query_type,
+              default_output_format
+            )
             : x.collectionBasedQueryType(
-                cId,
-                query_type,
-                default_output_format
-              );
+              cId,
+              query_type,
+              default_output_format
+            );
         acc[query_type] = {
           link: {
             ...link,
@@ -547,12 +613,14 @@ export function edrCollectionDocGenerator({
               title: `${query_type.toUpperCase()} queries`,
               default_output_format,
               output_formats,
+
               //Will be dropped in the future since query_type is declared twice
               //@ts-expect-error <string is in fact assignable to keyof data_queries>
               query_type,
               height_units,
               width_units,
               within_units,
+              multi
             },
             hreflang,
           },
@@ -585,10 +653,9 @@ class _EdrLinksManager extends FeaturesLinksManager {
     );
     const collection = `/collections/${collectionId}`;
     return new URL(
-      `${this.server}/${
-        atInstance
-          ? `${collection}/instances/${instanceId}/locations/${locationId}`
-          : collection
+      `${this.server}/${atInstance
+        ? `${collection}/instances/${instanceId}/locations/${locationId}`
+        : collection
       }`
     ).toString();
   }

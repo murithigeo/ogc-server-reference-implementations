@@ -103,8 +103,9 @@ export class FeaturesRqManager<
    * Also sets the value of the content-crs header
    */
   crsParser(crsList: string[] = this.collection.crs || []) {
-    const param = this.ctx.params.query.crs || CRS84;
-    crsList = Array.from(new Set([...(crsList || []), CRS84]));
+    const { crs: param = CRS84 } = this.ctx.params.query;
+    crsList = Array.from(new Set([CRS84, ...crsList,]));
+
     if (!crsList.includes(param))
       throw this.ctx.makeValidationError(
         "invalid crs. Check that the requested crs exists in collection metadata",
@@ -138,7 +139,7 @@ export class FeaturesRqManager<
       if (param.length === 4) {
         xy = flipCoords
           ? //Since we can use ST_3dExtent, we can reduce code complexity and use the bbox as intended
-            [param[1], param[0], param[3], param[2]]
+          [param[1], param[0], param[3], param[2]]
           : [param[0], param[1], param[2], param[3]];
       } else {
         xy = flipCoords

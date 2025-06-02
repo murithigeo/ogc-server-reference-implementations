@@ -28,9 +28,7 @@ const servers: oas3.ServerObject[] = (
 
 console.log(`Server root is: ${servers.map((p) => p.url).join(";\t")}`);
 
-export const apidocs: {
-  [key: string | "features" | "edr"]: oas3.OpenAPIObject;
-} = {
+export const apidocs = {
   edr: {
     ...(YAML.load(
       fs.readFileSync(path.join(process.cwd(), `/src/apidocs/edr.yaml`), {

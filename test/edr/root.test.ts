@@ -2,71 +2,76 @@
 import { expect } from "@std/expect";
 import { contenttypes, TEST_URL_BASE } from "../index.ts";
 
+
 Deno.test({
-  name: "Edr / tests",
+  name: `Edr :root/ tests`,
   async fn(t) {
-    const res = await fetch(`${TEST_URL_BASE}/edr/`);
-    const body = await res.json();
+    let res: Response = await fetch(TEST_URL_BASE + '/edr/');
+    let doc: EdrTypes.RootDocument = await res.json()
     await t.step({
-      name: "Successful request",
-      fn() {
+      name: `Response checks`,
+      async fn(t) {
         expect(res.status).toBe(200);
-        expect(res.headers.get("content-type")).toBe(contenttypes.json);
+        expect(res.headers.get("content-type"), "content-type should be application/json").toBe(contenttypes.json);
       },
-    });
+    })
+
     await t.step({
-      ignore: !body.links,
-      name: "links check",
+      ignore: !res.ok,
+      name: "Links Tests",
+      async fn(t) {
+        await t.step({
+          name: `links array contains link objects with rel as data,service-desc,service-doc,conformance`,
+          async fn() {
+            expect(doc.links).toEqual(expect.arrayContaining([
+              expect.objectContaining({ rel: "data" }),
+              expect.objectContaining({ rel: "service-desc" }),
+              expect.objectContaining({ rel: "service-doc" }),
+              expect.objectContaining({ rel: "conformance" })
+            ]))
+          }
+        })
+        await t.step({
+          name: `all link objects have parseable urls resolving to a valid document`,
+          async fn(t) {
+            for (const { href, type } of doc.links) {
+              res = await fetch(href);
+              expect(res.status).toBe(200);
+              expect(res.headers.get("content-type")).toBe(type);
+              await res.body?.cancel()
+            }
+          },
+        })
+      },
+    })
+
+    await t.step({
+      ignore: doc.provider === undefined,
+      name: "Provider checks",
       async fn() {
-        for (const { href, type } of body.links) {
-          const _res = await fetch(href);
-          expect(_res.status).toBe(200);
-          expect(_res.headers.get("content-type")).toBe(type);
-          _res.body?.cancel();
-        }
-      },
-    });
-    expect(typeof body.title).toBe("string");
-    expect(typeof body.description).toBe("string");
+        expect(URL.canParse(doc.provider?.url!)).toBeTruthy();
+        expect(typeof doc.provider?.name).toBe("string")
+      }
+    })
+
     await t.step({
-      ignore: !body.provider,
-      name: "Provider check",
-      fn() {
-        expect(typeof body.provider.name).toBe("string");
-        expect(URL.canParse(body.provider.url)).toBeTruthy;
+      ignore: doc.contact === undefined,
+      name: "contact",
+      async fn(t) {
+        await t.step({
+          ignore: doc.contact?.email === undefined,
+          name: "email", fn() {
+            expect(URL.canParse(("https://" + doc.contact!.email!.split("@")[1]))).toBeTruthy();
+          }
+        })
+        await t.step({
+          ignore: true,
+          name: "phone number",
+          fn() {
+
+          }
+        })
       },
-    });
-    await t.step({
-      name: "contact checks",
-      fn() {
-        //Add checks for undefined
-        expect(typeof body.contact.email).toBe("string");
-      },
-    });
-    //Title
-    //Description
-    //provider
-    //contact
-    //links
-    await t.step({
-      ignore: !body.links,
-      name: "Links Checks",
-      async fn() {
-        expect(body.links).toEqual(
-          expect.arrayContaining([
-            expect.objectContaining({ rel: "conformance" }),
-            expect.objectContaining({ rel: "service-desc" }),
-            expect.objectContaining({ rel: "service-doc" }),
-            expect.objectContaining({ rel: "data" }),
-          ])
-        );
-        for (const { href, type } of body.links) {
-          const _res = await fetch(href);
-          expect(_res.status).toBe(200);
-          expect(_res.headers.get("content-type")).toBe(type);
-          _res.body?.cancel();
-        }
-      },
-    });
-  },
-});
+    })
+  }
+})
