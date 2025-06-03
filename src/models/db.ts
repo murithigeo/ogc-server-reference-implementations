@@ -11,8 +11,6 @@ import {
 	type ReferenceExpression
 } from 'kysely';
 import * as models from './models.js';
-import { NODE_ENV } from '../app.ts';
-
 export interface Database {
 	isd: models.ISD_GlobalHourly;
 	features_points: models.FeaturesPoints;
