@@ -186,11 +186,11 @@ export function filterCollectionByZ({
 }
 
 /**
- * 
+ * Run before other plugins that require the serverObject to be set
  * @param location string like this edr not /edr
  * @returns 
  */
- function setServerAddress(location: string): ExegesisPlugin {
+export function setRelativeServerLocation(location: string): ExegesisPlugin {
   return {
     info: { name: "x-exegesis-plugin", },
     makeExegesisPlugin(data) {
@@ -202,7 +202,6 @@ export function filterCollectionByZ({
             url,
             description: `Auto-generated server root`
           }
-            
         }
       }
     }

@@ -3,9 +3,20 @@ import cors from "cors";
 import requestLogger from "./logging/index.js";
 import edrApi from "./standards/edr/index.js";
 import featuresApi from "./standards/features/index.js";
-import { NODE_ENV, PORT } from "./apidocs/index.js";
 import http from "node:http";
 import { scalar } from "./common/utils/scalar.js";
+import type { oas3 } from "exegesis";
+import { LanHostGenerator } from "./common/utils/lanHostHandler.js";
+
+const { lanAddress } = new LanHostGenerator();
+const NODE_ENV: string = process.env.NODE_ENV || "development";
+export const PORT = process.env.PORT || "8000";
+
+if (lanAddress) console.log(`Server also accessible on LAN at ${lanAddress}`)
+// Declare alternative servers
+// Modifies the document you get :root/*/api
+// TODO point to a env parameter
+export const servers: oas3.ServerObject[] = [];
 const app = express();
 
 app.use(cors());
@@ -44,8 +55,8 @@ app.get("/", (_, res, next) => {
   next();
 });
 
-app.use(await featuresApi);
-app.use(await edrApi);
+app.use("/features", await featuresApi);
+app.use("/edr", await edrApi);
 
 const server = http.createServer(app);
 export default server;

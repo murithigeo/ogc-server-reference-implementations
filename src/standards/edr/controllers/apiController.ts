@@ -2,6 +2,7 @@ import type { ExegesisContext } from "exegesis-express";
 import { EdrRqManager } from "../edr.utils.js";
 import { scalar } from "../../../common/utils/scalar.js";
 import { jsonlikeToYAML } from "../../../common/common.utils.js";
+import { servers } from "../../../app.js";
 
 function getServiceDoc(ctx: ExegesisContext): void {
   ctx.res
@@ -15,8 +16,12 @@ function getServiceDesc(ctx: ExegesisContext): void {
     ctx,
     collections: [],
   }).outputFormatParser("json", ["json", "yaml"]);
-  const { openApiDoc } = ctx.api;
-
+  let { openApiDoc } = ctx.api;
+  openApiDoc = {
+    ...openApiDoc,
+    // This negates the need to set a env variable with the server url
+    servers: [ctx.api.serverObject, ...openApiDoc.servers || [], ...servers.map(({ url, description }) => ({ url: `${url}/edr`, description }))]
+  }
   ctx.res.status(200);
   switch (f) {
     case "json":

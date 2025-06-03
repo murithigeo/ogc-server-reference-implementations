@@ -14,10 +14,12 @@ import trajectoryController from "./controllers/trajectoryController.js";
 import { middleware, type ExegesisOptions } from "exegesis-express";
 import { postToGetEdrPlugin } from "./plugins/postToGetEdrPlugin.js";
 import { apidocs } from "../../apidocs/index.js";
+import { setRelativeServerLocation } from "../../common/common.utils.js";
 
 //console.log(doc)
 const options: ExegesisOptions = {
-  plugins: [postToGetEdrPlugin()],
+  plugins: [setRelativeServerLocation("edr"),
+  postToGetEdrPlugin()],
   lazyCompileValidationSchemas: true,
   //customFormats: { datetimeRegex },
   controllers: {

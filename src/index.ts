@@ -1,4 +1,3 @@
-import { PORT } from "./apidocs/index.js";
-import app from "./app.js";
+import app, { PORT } from "./app.js";
 
-app.listen(PORT,()=>console.log(`listening on ${PORT}`));
+app.listen(PORT, () => console.log(`listening on ${PORT}`));

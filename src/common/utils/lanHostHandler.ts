@@ -2,12 +2,12 @@ import os from "node:os";
 import process from "node:process";
 
 export class LanHostGenerator {
-  constructor() {}
+  constructor() { }
 
   /**
    * @returns number|string. If no address is found, then returns 0
    */
-  lanAddress(): string | number {
+  public get lanAddress(): string | number {
     let ips: number | string = 0;
     if (process.argv.includes("--host")) {
       const ifaces = os.networkInterfaces();
@@ -24,6 +24,6 @@ export class LanHostGenerator {
         }
       });
     }
-    return ips;
+    return ips === 0 ? undefined : ips
   }
 }
