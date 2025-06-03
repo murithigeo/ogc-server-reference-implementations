@@ -5,7 +5,7 @@ import collectionsController from "./controllers/collectionsController.js";
 import conformanceController from "./controllers/conformanceController.js";
 import rootController from "./controllers/rootController.js";
 import { apidocs } from "../../apidocs/index.js";
-import { unexpectedQueryParamInvalidatorPlugin } from "../../common/common.utils.js";
+import { setRelativeServerLocation, unexpectedQueryParamInvalidatorPlugin } from "../../common/common.utils.js";
 
 const options: ExegesisOptions = {
   controllers: {
@@ -15,7 +15,8 @@ const options: ExegesisOptions = {
     conformanceController,
     rootController,
   },
-  plugins: [unexpectedQueryParamInvalidatorPlugin()],
+  plugins: [setRelativeServerLocation("features"),
+  unexpectedQueryParamInvalidatorPlugin()],
   ignoreServers: false,
 };
 

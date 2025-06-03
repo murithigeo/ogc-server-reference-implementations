@@ -1,21 +1,17 @@
-/**
- * @description central interface to export initialized models
- * Use Kysely because there is a new plugin to ease use of kysley-postgis plugin
- */
-//import { Pool } from "pg";
 import pg from 'pg';
 const { Pool, types } = pg;
 pg.types.setTypeParser(types.builtins.NUMERIC, (val) => parseFloat(val));
 pg.types.setTypeParser(types.builtins.INT4, (val) => parseInt(val));
+import process from "node:process";
+let NODE_ENV = process.env.NODE_ENV || "development";
 import {
 	Kysely,
 	PostgresDialect,
 	ParseJSONResultsPlugin,
-	type TableExpression,
 	type ReferenceExpression
 } from 'kysely';
 import * as models from './models.js';
-import { NODE_ENV } from '../apidocs/index.js';
+import { NODE_ENV } from '../app.ts';
 
 export interface Database {
 	isd: models.ISD_GlobalHourly;
