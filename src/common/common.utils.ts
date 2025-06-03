@@ -197,7 +197,7 @@ export function setRelativeServerLocation(location: string): ExegesisPlugin {
       return {
         //preRouting:(ctx)=>{}
         postRouting: (ctx: ExegesisPluginContext) => {
-          let url = `${ctx.req.protocol || "https"}://${ctx.req.headers.host}/${location}`
+          let url = `${process.env.NODE_ENV === "production" ? "https" : (ctx.req.protocol || "https")}://${ctx.req.headers.host}/${location}`
           ctx.api.serverObject = {
             url,
             description: `Auto-generated server root`
