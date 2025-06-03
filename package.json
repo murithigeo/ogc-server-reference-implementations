@@ -2,7 +2,9 @@
   "name": "ogcap-server-implementations",
   "version": "0.0.1",
   "type": "module",
-  "scripts": {},
+  "scripts": {
+    "start": "node src/index.js"
+  },
   "dependencies": {
     "@std/expect": "npm:@jsr/std__expect",
     "@turf/boolean-intersects": "^7.2.0",
