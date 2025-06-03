@@ -104,7 +104,7 @@ export const isdCollection: EdrCollection = {
   ],
   data_queries: {
     locations: {
-      output_formats: ["GeoJSON","JSON","CoverageJSON"],
+      output_formats: ["GeoJSON", "JSON", "CoverageJSON"],
       default_output_format: "GeoJSON",
       async handler({ datetime, z, bbox, crs, instanceId, limit, offset }) {
         let { rows, numberMatched } = await db
@@ -194,7 +194,7 @@ export const isdCollection: EdrCollection = {
     },
     items: {
       default_output_format: "GeoJSON",
-      output_formats: ["GeoJSON", "YAML", "CoverageJSON","JSON"],
+      output_formats: ["GeoJSON", "YAML", "CoverageJSON", "JSON"],
     },
     radius: {
       default_output_format: "JSON",
@@ -263,7 +263,7 @@ export const isdCollection: EdrCollection = {
                 .select(eb => eb.fn.agg("ARRAY_AGG", ["country"])
                   .distinct()
                   .as("countries")), "@>", sql`ARRAY[${sql.join(locationId)}]::varchar[]`)
-              conditions.push(check);
+              conditions.push(eb("country", "in", locationId.map(p => p.toString())));
               return check;
             })
             .executeTakeFirstOrThrow(

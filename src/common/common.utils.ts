@@ -184,3 +184,27 @@ export function filterCollectionByZ({
       : true;
   return minCheck && maxCheck && levelCheck;
 }
+
+/**
+ * 
+ * @param location string like this edr not /edr
+ * @returns 
+ */
+ function setServerAddress(location: string): ExegesisPlugin {
+  return {
+    info: { name: "x-exegesis-plugin", },
+    makeExegesisPlugin(data) {
+      return {
+        //preRouting:(ctx)=>{}
+        postRouting: (ctx: ExegesisPluginContext) => {
+          let url = `${ctx.req.protocol || "https"}://${ctx.req.headers.host}/${location}`
+          ctx.api.serverObject = {
+            url,
+            description: `Auto-generated server root`
+          }
+            
+        }
+      }
+    }
+  }
+}
