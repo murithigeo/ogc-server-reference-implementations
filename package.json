@@ -6,6 +6,7 @@
     "start": "node ./dist/server.cjs",
     "build": "vite build"
   },
+  "main": "dist/server.cjs",
   "dependencies": {
     "@std/expect": "npm:@jsr/std__expect",
     "@turf/boolean-intersects": "^7.2.0",
