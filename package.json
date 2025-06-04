@@ -3,10 +3,10 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "start": "node ./dist/server.js",
+    "start": "node ./dist/index.js",
     "build": "vite build"
   },
-  "main": "dist/server.js",
+  "main": "dist/index.js",
   "dependencies": {
     "@std/expect": "npm:@jsr/std__expect",
     "@turf/boolean-intersects": "^7.2.0",
