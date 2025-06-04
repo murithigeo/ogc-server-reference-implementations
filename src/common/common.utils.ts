@@ -4,6 +4,13 @@ import type { StringCustomFormatChecker } from "exegesis-express";
 import type { FeaturesRqManager } from "../standards/features/features.utils.js";
 import intersects from "@turf/boolean-intersects";
 import YAML from "js-yaml";
+import process from "node:process";
+const NODE_ENV = process.env.NODE_ENV||"development";
+/**
+ * Because services are often behind a proxy with content forwaded to a port unlike 80 or 443
+ * One might need to ignore the port the app is listening to in the url
+ */
+const INCLUDE_PORT = parseInt(process.env.INCLUDE_PORT) || 1;
 
 /**
  *
@@ -197,9 +204,14 @@ export function setRelativeServerLocation(location: string): ExegesisPlugin {
       return {
         //preRouting:(ctx)=>{}
         postRouting: (ctx: ExegesisPluginContext) => {
-          let url = `${process.env.NODE_ENV === "production" ? "https" : (ctx.req.protocol || "https")}://${ctx.req.headers.host}/${location}`
+          let url = new URL(`https://${ctx.req.headers.host}/${location}`);
+          if (NODE_ENV === "production") {
+            url.protocol = "https";
+          }
+          if (INCLUDE_PORT === 0) url.port = "";
+
           ctx.api.serverObject = {
-            url,
+            url: url.toString(),
             description: `Auto-generated server root`
           }
         }

@@ -520,7 +520,7 @@ export function edrCollectionDocGenerator({
   } = services.edr.find((c) => c.id === collectionId)!;
 
   return {
-    id: instanceId.toString() || collectionId.toString(),
+    id: (instanceId || collectionId).toString(),
     title,
     description,
     keywords,

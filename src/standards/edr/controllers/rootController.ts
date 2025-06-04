@@ -28,7 +28,7 @@ function getRoot(ctx: ExegesisContext): void {
     },
     provider: {
       name: "None",
-      url: "https://murithigeo.space",
+      url: "https://murithigeo.vercel.app",
     },
     links,
   };
