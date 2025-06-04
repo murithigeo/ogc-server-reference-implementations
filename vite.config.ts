@@ -7,11 +7,11 @@ export default defineConfig({
         target: "ESNext",
         lib: {
             entry: "src/index.ts",
-            formats: ["es"]
+            formats: ["cjs"]
         },
         rollupOptions: {
             input: "src/index.ts",
-            output: { entryFileNames: "server.mjs" }
+            output: { entryFileNames: "server.cjs" }
         }
     }
 })
