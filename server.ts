@@ -1,4 +1,4 @@
-import app from "./api.ts";
+import app from "./api/index.ts";
 import process from "node:process";
 import { addresses } from "./utils/lanhost.ts";
 const PORT = process.env.PORT || 80;
