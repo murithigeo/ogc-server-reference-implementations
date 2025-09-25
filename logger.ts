@@ -6,12 +6,12 @@ import type { HttpIncomingMessage } from "exegesis-express";
 import type { ServerResponse } from "node:http";
 import process from "node:process";
 
-let isWritable = true;
+let isWritable = process.env.NODE_ENV !== "production";
 const file = path.join(process.cwd(), "/logs.http");
 fs.access(file, fs.constants.W_OK, (err) => {
-  if (err) isWritable=false;
+  if (err) isWritable = false;
 });
-if (!fs.existsSync(file)&&isWritable) {
+if (!fs.existsSync(file) && isWritable) {
   fs.openSync(file, "w");
 }
 export default function logger(
