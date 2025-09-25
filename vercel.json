@@ -9,7 +9,7 @@
   ],
   "functions": {
     "app.ts": {
-      "runtime": "vercel-deno"
+      "runtime": "vercel-deno@3.1.1"
     }
   }
 }

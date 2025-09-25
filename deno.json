@@ -7,7 +7,6 @@
     "types": ["node"],
     "verbatimModuleSyntax": true
   },
-  "unstable": ["sloppy-imports"],
   "test": {
     "include": ["./edr/tests/*", "./features/tests/*","./utils/*"]
   }
