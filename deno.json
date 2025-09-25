@@ -24,7 +24,8 @@
     "@turf/bbox":"npm:@turf/bbox",
     "@turf/boolean-intersects":"npm:@turf/boolean-intersects",
     "cors":"npm:cors",
-    "morgan":"npm:morgan"
+    "morgan":"npm:morgan",
+    "vite":"npm:vite"
   },
   "test": {
     "include": ["./edr/tests/*", "./features/tests/*", "./utils/*"]
