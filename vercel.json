@@ -4,11 +4,11 @@
   "rewrites": [
     {
       "source": "(.*)",
-      "destination": "app.ts"
+      "destination": "api.ts"
     }
   ],
   "functions": {
-    "app.ts": {
+    "api.ts": {
       "runtime": "vercel-deno@3.1.1"
     }
   }
