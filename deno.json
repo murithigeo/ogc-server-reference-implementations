@@ -1,13 +1,32 @@
 {
   "workspace": ["utils", "features", "edr", "data"],
-  
+
   "compilerOptions": {
     "strict": true,
     "noImplicitAny": false,
     "types": ["node"],
     "verbatimModuleSyntax": true
   },
+  "imports": {
+    "@types/node": "npm:@types/node",
+    "@types/express": "npm:@types/express",
+    "@types/geojson": "npm:@types/geojson",
+    "@types/coveragejson": "npm:@types/coveragejson",
+    "convert": "npm:convert",
+    "wkt": "npm:wkt",
+    "proj4": "npm:proj4",
+    "betterknown": "npm:betterknown",
+    "react":"npm:react",
+    "react-dom":"npm:react-dom",
+    "@types/react":"npm:@types/react",
+    "@types/react-dom":"npm:@types/react-dom",
+    "@scalar/core":"npm:@scalar/core",
+    "@turf/bbox":"npm:@turf/bbox",
+    "@turf/boolean-intersects":"npm:@turf/boolean-intersects",
+    "cors":"npm:cors",
+    "morgan":"npm:morgan"
+  },
   "test": {
-    "include": ["./edr/tests/*", "./features/tests/*","./utils/*"]
+    "include": ["./edr/tests/*", "./features/tests/*", "./utils/*"]
   }
 }

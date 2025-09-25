@@ -7,7 +7,9 @@
         "websocket-express": "npm:websocket-express@^4.0.1",
         "wkx": "npm:wkx@^0.5.0",
         "yaml": "npm:yaml@^2.8.1",
-        "@types/coveragejson":"npm:@types/coveragejson"
+        "@types/coveragejson":"npm:@types/coveragejson",
+        "exegesis-express":"npm:exegesis-express",
+        "exegesis":"npm:exegesis"
     },
     "exports":"./index.ts"
 }

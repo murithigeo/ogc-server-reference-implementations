@@ -2,7 +2,8 @@ import type { ExegesisPlugin, ExegesisPluginContext } from "exegesis";
 import process from "node:process";
 import { CRS84 } from "./projection.ts";
 import type { Bbox } from "./types.d.ts";
-import { bbox2polygon, reprojectAndFlip } from "@template/utils";
+import { bbox2polygon } from "./bbox2polygon.ts"
+import {reprojectAndFlip} from "./projection.ts"
 import type { IncomingMessage } from "node:http";
 const { NODE_ENV = "development" } = process.env;
 

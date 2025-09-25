@@ -1354,6 +1354,25 @@
     }
   },
   "workspace": {
+    "dependencies": [
+      "npm:@scalar/core@*",
+      "npm:@turf/bbox@*",
+      "npm:@turf/boolean-intersects@*",
+      "npm:@types/coveragejson@*",
+      "npm:@types/express@*",
+      "npm:@types/geojson@*",
+      "npm:@types/node@*",
+      "npm:@types/react-dom@*",
+      "npm:@types/react@*",
+      "npm:betterknown@*",
+      "npm:convert@*",
+      "npm:cors@*",
+      "npm:morgan@*",
+      "npm:proj4@*",
+      "npm:react-dom@*",
+      "npm:react@*",
+      "npm:wkt@*"
+    ],
     "packageJson": {
       "dependencies": [
         "npm:@scalar/core@~0.3.17",
@@ -1381,6 +1400,8 @@
           "npm:@types/coveragejson@*",
           "npm:betterknown@^1.0.5",
           "npm:convert@^5.12.0",
+          "npm:exegesis-express@*",
+          "npm:exegesis@*",
           "npm:websocket-express@^4.0.1",
           "npm:wkx@0.5",
           "npm:yaml@^2.8.1"

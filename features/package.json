@@ -1,8 +1,9 @@
 {
-    "name": "@template/features",
-    "exports":{
-        "default":"./index.ts"
-    },
-    "imports": {
-    }
+  "name": "@template/features",
+  "exports": {
+    "default": "./index.ts"
+  },
+  "imports":{
+    "@template/utils":"../utils/index.ts"
+  }
 }
