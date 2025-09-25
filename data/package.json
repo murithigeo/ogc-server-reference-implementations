@@ -1,0 +1,6 @@
+{
+    "name": "@template/data",
+    "exports":{
+        "default":"./index.ts"
+    }
+}

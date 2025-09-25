@@ -1,0 +1,9 @@
+{
+  "name": "@template/utils",
+  "exports": {
+    "default": "./index.ts"
+  },
+  "dependencies": {
+    "proj4": "^2.19.10"
+  }
+}

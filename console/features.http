@@ -1,4 +1,4 @@
-@lAN=http://192.168.160.109:3000/features
+@lAN=http://localhost:3000/features
 
 ### Root
 {{lAN}}/?f=html
@@ -20,7 +20,7 @@ GET {{lAN}}/collections
 GET {{lAN}}/collections/mountains
 
 ####
-GET {{lAN}}/collections/mountains/items?f=geojson&bbox=33,-5,42,5
+GET {{lAN}}/collections/world-mountains/items?f=geojson&crs=http://www.opengis.net/def/crs/EPSG/0/4326
 
 ###
-GET {{lAN}}/collections/mountains/items/T
+GET {{lAN}}/collections/world-mountains/items/Mount Kenya?crs=http://www.opengis.net/def/crs/EPSG/0/4326

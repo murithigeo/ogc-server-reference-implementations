@@ -1,0 +1,9 @@
+export const contenttypes = {
+  JSON: "application/json",
+  GEOJSON: "application/geo+json",
+  HTML: "text/html",
+  YAML: "text/yaml",
+  COVERAGEJSON: "application/prs.coverage+json",
+  OPENAPI_JSON: "application/vnd.oai.openapi+json;version=3.0",
+  OPENAPI_YAML: "application/vnd.oai.openapi;version=3.0",
+};

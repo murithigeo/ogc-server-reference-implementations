@@ -1,0 +1,13 @@
+{
+    "name": "@template/edr",
+    "imports": {
+        "@turf/buffer": "npm:@turf/buffer@^7.2.0",
+        "betterknown": "npm:betterknown@^1.0.5",
+        "convert": "npm:convert@^5.12.0",
+        "websocket-express": "npm:websocket-express@^4.0.1",
+        "wkx": "npm:wkx@^0.5.0",
+        "yaml": "npm:yaml@^2.8.1",
+        "@types/coveragejson":"npm:@types/coveragejson"
+    },
+    "exports":"./index.ts"
+}

@@ -1,0 +1,10 @@
+{
+    "name":"@template/features",
+    "exports":{
+        ".": "./index.ts"
+        ,"./types":"./types.d.ts"
+    },
+    "test": {
+
+    }
+}

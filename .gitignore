@@ -5,3 +5,4 @@ node_modules
 *.rest
 build
 dist
+logs.http
