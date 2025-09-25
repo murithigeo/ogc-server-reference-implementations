@@ -1,6 +1,7 @@
 import path from "node:path";
 import { defineConfig } from "vite";
 import process from "node:process";
+const filename = "server.ts";
 export default defineConfig({
   resolve: {
     alias: {
@@ -15,11 +16,11 @@ export default defineConfig({
     outDir: ".",
     target: "ESNext",
     lib: {
-      entry: "app.ts",
+      entry: filename,
       formats: ["es"],
     },
     rollupOptions: {
-      input: "index.ts",
+      input: filename,
       output: { entryFileNames: "app.js" },
     },
   },
