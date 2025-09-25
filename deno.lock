@@ -7,6 +7,7 @@
     "npm:@turf/bbox@^7.2.0": "7.2.0",
     "npm:@turf/boolean-intersects@*": "7.2.0",
     "npm:@turf/boolean-intersects@^7.2.0": "7.2.0",
+    "npm:@turf/buffer@*": "7.2.0",
     "npm:@turf/buffer@^7.2.0": "7.2.0",
     "npm:@types/cors@^2.8.19": "2.8.19",
     "npm:@types/coveragejson@*": "1.0.0",
@@ -40,6 +41,7 @@
     "npm:react-dom@^19.1.1": "19.1.1_react@19.1.1",
     "npm:react@*": "19.1.1",
     "npm:react@^19.1.1": "19.1.1",
+    "npm:vite@*": "7.1.7_@types+node@24.2.0_yaml@2.8.1_picomatch@4.0.3",
     "npm:vite@^7.1.7": "7.1.7_@types+node@24.2.0_yaml@2.8.1_picomatch@4.0.3",
     "npm:websocket-express@^4.0.1": "4.0.1_@types+express@5.0.3_@types+ws@8.18.1_express@5.1.0_ws@8.18.3",
     "npm:wkt@*": "0.1.1",
@@ -1746,6 +1748,7 @@
       "npm:@scalar/core@*",
       "npm:@turf/bbox@*",
       "npm:@turf/boolean-intersects@*",
+      "npm:@turf/buffer@*",
       "npm:@types/coveragejson@*",
       "npm:@types/express@*",
       "npm:@types/geojson@*",
@@ -1759,6 +1762,7 @@
       "npm:proj4@*",
       "npm:react-dom@*",
       "npm:react@*",
+      "npm:vite@*",
       "npm:wkt@*"
     ],
     "packageJson": {
@@ -1797,6 +1801,7 @@
         ],
         "packageJson": {
           "dependencies": [
+            "npm:@turf/buffer@^7.2.0",
             "npm:@types/coveragejson@1",
             "npm:betterknown@^1.0.5",
             "npm:convert@^5.12.0",

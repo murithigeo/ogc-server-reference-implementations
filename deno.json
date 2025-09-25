@@ -25,7 +25,8 @@
     "@turf/boolean-intersects":"npm:@turf/boolean-intersects",
     "cors":"npm:cors",
     "morgan":"npm:morgan",
-    "vite":"npm:vite"
+    "vite":"npm:vite",
+    "@turf/buffer":"npm:@turf/buffer"
   },
   "test": {
     "include": ["./edr/tests/*", "./features/tests/*", "./utils/*"]

@@ -4,6 +4,7 @@
         "default":"./index.ts"
     },
     "dependencies": {
+        "@turf/buffer": "^7.2.0",
         "@types/coveragejson": "^1.0.0",
         "betterknown": "^1.0.5",
         "convert": "^5.12.0",
