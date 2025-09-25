@@ -44,7 +44,9 @@
     "npm:vite@*": "7.1.7_@types+node@24.2.0_yaml@2.8.1_picomatch@4.0.3",
     "npm:vite@^7.1.7": "7.1.7_@types+node@24.2.0_yaml@2.8.1_picomatch@4.0.3",
     "npm:websocket-express@^4.0.1": "4.0.1_@types+express@5.0.3_@types+ws@8.18.1_express@5.1.0_ws@8.18.3",
+    "npm:wkx@*": "0.5.0",
     "npm:wkx@0.5": "0.5.0",
+    "npm:yaml@*": "2.8.1",
     "npm:yaml@^2.8.1": "2.8.1"
   },
   "npm": {
@@ -1782,6 +1784,7 @@
         "npm:react-dom@^19.1.1",
         "npm:react@^19.1.1",
         "npm:vite@^7.1.7",
+        "npm:wkx@0.5",
         "npm:yaml@^2.8.1"
       ]
     },

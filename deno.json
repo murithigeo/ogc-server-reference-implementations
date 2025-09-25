@@ -28,7 +28,7 @@
     "vite": "npm:vite",
     "@turf/buffer": "npm:@turf/buffer",
     "yaml": "npm:yaml",
-    "exegesis-express":"npm:exegesis-express"
+    "exegesis-express": "npm:exegesis-express"
   },
   "test": {
     "include": ["./edr/tests/*", "./features/tests/*", "./utils/*"]
