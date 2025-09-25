@@ -12,15 +12,15 @@ export default defineConfig({
   },
   build: {
     ssr: true,
-    outDir: "api",
+    outDir: ".",
     target: "ESNext",
     lib: {
       entry: "app.ts",
       formats: ["es"],
     },
     rollupOptions: {
-      input: "server.ts",
-      output: { entryFileNames: "index.js" },
+      input: "index.ts",
+      output: { entryFileNames: "app.js" },
     },
   },
 });

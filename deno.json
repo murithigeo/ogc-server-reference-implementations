@@ -27,7 +27,8 @@
     "morgan": "npm:morgan",
     "vite": "npm:vite",
     "@turf/buffer": "npm:@turf/buffer",
-    "yaml": "npm:yaml"
+    "yaml": "npm:yaml",
+    "exegesis-express":"npm:exegesis-express"
   },
   "test": {
     "include": ["./edr/tests/*", "./features/tests/*", "./utils/*"]

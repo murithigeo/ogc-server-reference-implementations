@@ -44,7 +44,6 @@
     "npm:vite@*": "7.1.7_@types+node@24.2.0_yaml@2.8.1_picomatch@4.0.3",
     "npm:vite@^7.1.7": "7.1.7_@types+node@24.2.0_yaml@2.8.1_picomatch@4.0.3",
     "npm:websocket-express@^4.0.1": "4.0.1_@types+express@5.0.3_@types+ws@8.18.1_express@5.1.0_ws@8.18.3",
-    "npm:wkt@*": "0.1.1",
     "npm:wkx@0.5": "0.5.0",
     "npm:yaml@^2.8.1": "2.8.1"
   },
@@ -1704,9 +1703,6 @@
     "wkt-parser@1.5.2": {
       "integrity": "sha512-1ZUiV1FTwSiSrgWzV9KXJuOF2BVW91KY/mau04BhnmgOdroRQea7Q0s5TVqwGLm0D2tZwObd/tBYXW49sSxp3Q=="
     },
-    "wkt@0.1.1": {
-      "integrity": "sha512-2vtzYZOqN0VZdtDTMDUgbpXpE+MXRdsFTiCpS08FZ4yktT9pPylVMZaLxcIqT9pRkBp5FIAGVQyJ/kJa9b8uGg=="
-    },
     "wkx@0.5.0": {
       "integrity": "sha512-Xng/d4Ichh8uN4l0FToV/258EjMGU9MGcA0HV2d9B/ZpZB3lqQm7nkOdZdm5GhKtLLhAE7PiVQwN4eN+2YJJUg==",
       "dependencies": [
@@ -1758,12 +1754,14 @@
       "npm:betterknown@*",
       "npm:convert@*",
       "npm:cors@*",
+      "npm:exegesis-express@*",
       "npm:morgan@*",
       "npm:proj4@*",
       "npm:react-dom@*",
       "npm:react@*",
       "npm:vite@*",
-      "npm:wkt@*"
+      "npm:wkx@*",
+      "npm:yaml@*"
     ],
     "packageJson": {
       "dependencies": [
