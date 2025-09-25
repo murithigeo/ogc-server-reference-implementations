@@ -13,7 +13,7 @@
     "@types/geojson": "npm:@types/geojson",
     "@types/coveragejson": "npm:@types/coveragejson",
     "convert": "npm:convert",
-    "wkt": "npm:wkt",
+    "wkx": "npm:wkx",
     "proj4": "npm:proj4",
     "betterknown": "npm:betterknown",
     "react": "npm:react",
