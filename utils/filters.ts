@@ -1,6 +1,13 @@
-import type { Bbox, Elevation } from "./types.d.ts";
+import type {
+  Bbox,
+  Datetime,
+  Elevation,
+  Feature,
+  GeoJsonProperties,
+} from "./types.d.ts";
 import booleanIntersects from "@turf/boolean-intersects";
 import { bbox2polygon } from "./bbox2polygon.ts";
+import type { ifError } from "node:assert";
 
 export function filterByDatetime(
   tvalues: string[] | null,
@@ -123,5 +130,21 @@ export function elevationFilter<
     if (z.min) mincheck = values.some((v) => z.min! <= v);
     if (z.values) levelcheck = values.some((v) => z.values?.includes(v));
     return levelcheck && mincheck && maxcheck;
+  };
+}
+
+export function datetimeFilter<
+  G extends GeoJSON.Geometry,
+  P extends GeoJsonProperties
+>(datetime?: Datetime, field?: string) {
+  return (feature: Feature<G, P>) => {
+    if (!datetime || !field) return true;
+    const values_ = feature.properties[field];
+
+    const values = Array.isArray(values_) ? values_ : [values_];
+    values.map((p) => new Date(p).getTime()).sort((a, b) => a - b);
+    if (datetime.min) return datetime.min <= values[0];
+    if (datetime.max) return datetime.max >= values[values.length - 1];
+    if (datetime.values) return datetime.values.some((v) => values.includes(v));
   };
 }

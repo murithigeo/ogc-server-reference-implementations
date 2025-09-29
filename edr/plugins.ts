@@ -3,7 +3,7 @@ import type { DataQueryConfig, Dataset } from "./config.ts";
 import { convert } from "convert";
 import { Geometry } from "wkx";
 import { wktToGeoJSON } from "betterknown";
-import { reprojectAndFlip } from "@template/utils";
+import { reproject } from "@template/utils";
 import { ValidationError } from "exegesis";
 export function post2getPlugin(): ExegesisPlugin {
   return {
@@ -51,23 +51,21 @@ export function coordsPlugin(): ExegesisPlugin {
   return {
     info: { name: "validate-coords-wkt" },
     makeExegesisPlugin: () => {
-      const allowedGeometryTypesByEndpoint = {
+      const geometryTypes = {
         radius: ["Point", "MultiPoint"],
         position: ["Point", "MultiPoint"],
         area: ["Polygon"],
         trajectory: ["LineString", "MultiLineString"],
         corridor: ["LineString", "MultiLineString"],
-      } satisfies {
+      } as {
         [x in keyof DataQueryConfig]: Array<GeoJSON.GeoJsonGeometryTypes>;
       };
 
       return {
         async postSecurity(ctx: ExegesisPluginContext) {
           const operation = ctx.api.operationObject!["x-exegesis-operationId"];
-          const [, query_type]: [
-            string,
-            keyof typeof allowedGeometryTypesByEndpoint
-          ] = operation.split("@");
+          const [, query_type]: [string, keyof typeof geometryTypes] =
+            operation.split("@");
 
           const params = await ctx.getParams();
           if (!("coords" in params.query)) return;
@@ -83,13 +81,11 @@ export function coordsPlugin(): ExegesisPlugin {
                 docPath: ctx.api.pathItemPtr,
               });
             }
-            if (
-              !allowedGeometryTypesByEndpoint[query_type].includes(value.type)
-            ) {
+            if (!geometryTypes[query_type]!.includes(value.type)) {
               throw ctx.makeValidationError(
-                `This endpoint only supports ${allowedGeometryTypesByEndpoint[
-                  query_type
-                ].join(",")} geometries`,
+                `This endpoint only supports ${geometryTypes[query_type]!.join(
+                  ","
+                )} geometries`,
                 { in: "query", name: "coords", docPath: ctx.api.pathItemPtr }
               );
             }
@@ -150,14 +146,19 @@ export function coordsPlugin(): ExegesisPlugin {
                 break;
             }
 
-            ctx["ectx"]["coords"] = reprojectAndFlip(
-              ctx["ectx"]["crs"],
-              ctx["ectx"]["dataset"]["storageCrs"]
-            )({ type: "Feature", geometry: value, properties: {} }).geometry;
+            const crs = ctx["ectx"]["crs"];
+            const storageCrs = ctx["ectx"]["dataset"]["storageCrs"];
+            ctx["ectx"]["coords"] = reproject(
+              crs,
+              storageCrs
+            )({
+              type: "Feature",
+              geometry: value,
+              properties: {},
+            }).geometry;
           } catch (err) {
-            // console.log(err);
+            console.log(err);
             if (err instanceof ValidationError) {
-              console.log("y");
               throw err;
             } else {
               //@ts-expect-error err is of type unknown
@@ -267,7 +268,7 @@ export function parameterNamePlugin(): ExegesisPlugin {
             }
           );
         }
-        ctx["ectx"]["parameternames"] = activeParameterIds;
+        ctx["ectx"]["parameters"] = activeParameterIds;
       },
     }),
   };
@@ -295,7 +296,7 @@ export function unitConverterPlugin(): ExegesisPlugin {
           return;
         if (query_type === "radius") {
           if (
-            dataset.data_queries.radius!.within_units.includes(
+            !dataset.data_queries.radius!.within_units.includes(
               params.query["within-units"]
             )
           ) {
@@ -358,7 +359,61 @@ export function instanceIdPlugin(): ExegesisPlugin {
         if (!matchedInstance)
           throw ctx.makeError(404, `dataset does not have such an instance`);
         params.path.instanceid = instanceId;
+        ctx["ectx"]["instanceId"] = instanceId;
       },
     }),
+  };
+}
+
+export function resolutionPlugin(): ExegesisPlugin {
+  return {
+    info: { name: "exegesis-plugin-resolutions" },
+    makeExegesisPlugin: () => ({
+      postSecurity: async (ctx: ExegesisPluginContext) => {
+        const params = await ctx.getParams();
+        const {
+          "resolution-x": xn = 0,
+          "resolution-y": yn = 0,
+          "resolution-z": zn = 0,
+        } = params.query;
+        if ("resolution-x" in params.query) {
+          if (Number.isNaN(Number(xn))) {
+            throw ctx.makeValidationError("resolution-x is not an number", {
+              in: "query",
+              name: "resolution-x",
+              docPath: ctx.api.pathItemPtr,
+            });
+          }
+          ctx["ectx"]["resolution-x"] = xn;
+        }
+        if ("resolution-y" in params.query) {
+          if (Number.isNaN(Number(yn))) {
+            throw ctx.makeValidationError("resolution-y is not an number", {
+              in: "query",
+              name: "resolution-y",
+              docPath: ctx.api.pathItemPtr,
+            });
+          }
+          ctx["ectx"]["resolution-y"] = yn;
+        }
+        if ("resolution-z" in params.query) {
+          if (Number.isNaN(Number(zn))) {
+            throw ctx.makeValidationError("resolution-z is not an number", {
+              in: "query",
+              name: "resolution-z",
+              docPath: ctx.api.pathItemPtr,
+            });
+          }
+          ctx["ectx"]["resolution-z"] = zn;
+        }
+      },
+    }),
+  };
+}
+
+export function responseEnder(): ExegesisPlugin {
+  return {
+    info: { name: "exegesis-plugin-response-ender" },
+    makeExegesisPlugin: () => ({}),
   };
 }

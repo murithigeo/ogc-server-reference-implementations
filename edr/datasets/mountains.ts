@@ -2,16 +2,17 @@ import {
   bbox2polygon,
   CRS84,
   numberReturned,
-  reprojectAndFlip,
+  reproject,
   intersects,
   elevationFilter,
+  datetimeFilter,
 } from "@template/utils";
 import type { Dataset } from "../config.ts";
 import type { EdrFeature, FeatureCollection } from "../types.d.ts";
 import { mountains as mts } from "@template/data";
 import { bbox } from "@turf/bbox";
-import buffer from "@turf/buffer";
 import { HttpError } from "exegesis";
+import { corridorFilter, radiusFilter } from "./filters.ts";
 const mountains = {
   ...mts,
   features: mts.features
@@ -25,9 +26,9 @@ const mountains = {
 
 export default {
   id: "world-mountains",
-  crs: [CRS84, CRS84],
+  crs: ["OGC:CRS84", "EPSG:4326"],
   output_formats: ["JSON", "GEOJSON", "HTML"],
-  storageCrs: "http://www.opengis.net/def/crs/OGC/1.3/CRS84",
+  storageCrs: "OGC:CRS84",
   description: "Mountains",
   keywords: ["mountains"],
   parameters: [
@@ -47,11 +48,15 @@ export default {
   getExtent() {
     return {
       id: "world-mountains",
-      bbox: [bbox(mountains)],
-      crs: CRS84,
-      datetime: null,
-      vrs: CRS84,
-      z: mountains.features.map((f) => f.properties.meters),
+      spatial: {
+        bbox: [bbox(mountains)],
+        crs: "OGC:CRS84",
+      },
+      vertical: {
+        vrs: CRS84,
+        values: mountains.features.map((f) => f.properties.meters),
+      },
+      temporal: null,
     };
   },
 
@@ -74,14 +79,15 @@ export default {
             throw new HttpError(404, invalidLocationIds.join(","));
           }
           const matched = mountains.features
+
             .filter(instanceIdChecker(opts.instanceId))
+            .filter(elevationFilter(opts.z, "meters"))
             .filter(intersects(opts.bbox))
             .filter((feat) =>
               activeLocationIds.every((v) =>
                 feat.properties.countries.includes(v)
               )
-            )
-            .filter(elevationFilter(opts.z, "meters"));
+            );
 
           const limit = opts.limit || matched.length;
           const offset = opts.offset || 0;
@@ -90,8 +96,8 @@ export default {
             numberMatched: matched.length,
             numberReturned: numberReturned(matched.length, limit, offset),
             features: matched.slice(offset, offset + limit).map((feat) =>
-              reprojectAndFlip(
-                "http://www.opengis.net/def/crs/OGC/1.3/CRS84",
+              reproject(
+                "OGC:CRS84",
                 opts.crs
               )({
                 ...feat,
@@ -157,12 +163,7 @@ export default {
           timeStamp: new Date().toJSON(),
           features: matched
             .slice(offset, limit + offset)
-            .map(
-              reprojectAndFlip(
-                "http://www.opengis.net/def/crs/OGC/1.3/CRS84",
-                opts.crs
-              )
-            ),
+            .map(reproject("OGC:CRS84", opts.crs)),
           numberMatched: matched.length,
           numberReturned: numberReturned(matched.length, limit, offset),
         };
@@ -178,22 +179,23 @@ export default {
       handler(opts) {
         return Object.entries(
           Object.groupBy(
-            mountains.features.filter((c) => c.properties.continent !== null),
+            mountains.features
+              .filter((c) => c.properties.continent !== null)
+              .filter(instanceIdChecker(opts.instanceId)),
             ({ properties: { continent } }) => continent!
           )
-        )
-          .map(([continent, features]) => ({
-            id: continent,
-            datetime: null,
+        ).map(([continent, features]) => ({
+          id: continent,
+          temporal: null,
+          spatial: {
             bbox: [bbox({ type: "FeatureCollection", features: features! })],
-            crs: CRS84,
+            crs: "OGC:CRS84",
+          },
+          vertical: {
             vrs: CRS84,
-            z: features!.map((f) => f.properties.meters),
-          }))
-          .filter((p) => {
-            if (opts.instanceId) return p.id === opts.instanceId;
-            return true;
-          });
+            values: features!.map((f) => f.properties.meters),
+          },
+        }));
       },
     },
     items: {
@@ -227,26 +229,56 @@ export default {
       handler(opts) {
         // return this.output_formats
         const matched = mountains.features
-          .filter(
-            intersects(
-              buffer(opts.coords, opts["corridor-width"], { units: "meters" })
-            )
-          )
+          .filter((feat) => feat.properties.meters <= opts["corridor-height"])
           .filter(instanceIdChecker(opts.instanceId))
-          .filter((feat) => feat.properties.meters <= opts["corridor-height"]);
+          .filter(corridorFilter(opts.coords, opts["corridor-width"]));
 
         return {
           type: "FeatureCollection",
           numberMatched: matched.length,
           numberReturned: numberReturned(matched.length, matched.length, 0),
           timeStamp: new Date().toJSON(),
-          features: matched.map(
-            reprojectAndFlip(
-              "http://www.opengis.net/def/crs/OGC/1.3/CRS84",
-              opts.crs
-            )
-          ),
+          features: matched.map(reproject("OGC:CRS84", opts.crs)),
         } satisfies FeatureCollection;
+      },
+    },
+    trajectory: {
+      default_output_format: "GEOJSON",
+      allowAt: ["collection", "instance"],
+      handler(opts) {
+        const matched = mountains.features
+          .filter(instanceIdChecker(opts.instanceId))
+          .filter(datetimeFilter(opts.datetime))
+          .filter(elevationFilter(opts.z, "meters"))
+          .filter(intersects(opts.coords));
+
+        return {
+          timeStamp: new Date().toISOString(),
+          type: "FeatureCollection",
+          numberMatched: matched.length,
+          numberReturned: numberReturned(matched.length, matched.length, 0),
+          features: matched.map(reproject("OGC:CRS84", opts.crs)),
+        };
+      },
+    },
+    radius: {
+      allowAt: ["collection", "instance"],
+      default_output_format: "GEOJSON",
+      output_formats: ["GEOJSON", "JSON"],
+      within_units: ["meters"],
+      handler(opts) {
+        const matched = mountains.features
+          .filter(instanceIdChecker(opts.instanceId))
+          .filter(datetimeFilter(opts.datetime))
+          .filter(elevationFilter(opts.z, "meters"))
+          .filter(radiusFilter(opts.coords, opts.within));
+        return {
+          type: "FeatureCollection",
+          timeStamp: new Date().toISOString(),
+          numberMatched: matched.length,
+          numberReturned: numberReturned(matched.length, matched.length, 0),
+          features: matched.map(reproject("OGC:CRS84", opts.crs)),
+        };
       },
     },
   },

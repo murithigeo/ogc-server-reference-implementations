@@ -8,7 +8,7 @@ import {
   type Bbox,
   type Interval,
   type crs,
-  reprojectAndFlip,
+  reproject,
   intersects,
 } from "@template/utils";
 
@@ -75,7 +75,7 @@ export default {
           features: matched
             .slice(props.offset, props.offset + props.limit)
             .map(
-              reprojectAndFlip(
+              reproject(
                 "http://www.opengis.net/def/crs/OGC/1.3/CRS84",
                 props.crs
               )

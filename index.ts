@@ -1,15 +1,15 @@
-import express from "express";
+import { WebSocketExpress } from "websocket-express";
 import cors from "cors";
-import { createServer } from "node:http";
-import edr from "@template/edr";
+import edr, { asyncapiAddon } from "@template/edr";
 import features from "@template/features";
 import logger from "./logger.ts";
 import { getHtmlDocument } from "@scalar/core/libs/html-rendering";
 
-const app = express();
+const app = new WebSocketExpress();
+// const router=aw
 app.use(cors());
 
-app.use(logger);
+app.useHTTP(logger);
 app.get("/", (_, res) => {
   res.set("content-type", "text/html").send(
     getHtmlDocument({
@@ -20,6 +20,9 @@ app.get("/", (_, res) => {
     })
   );
 });
-app.use("/features", await features);
-app.use("/edr", await edr);
-export default createServer(app);
+app.useHTTP("/features", await features);
+
+app.use("/edr", asyncapiAddon);
+app.useHTTP("/edr", await edr);
+
+export default app.createServer();

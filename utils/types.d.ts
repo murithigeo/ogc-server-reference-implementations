@@ -39,9 +39,10 @@ export interface Extent {
   };
 }
 
+export type GeoJsonProperties = { [x: string]: unknown };
 export interface Feature<
-  G extends GeoJSON.Geometry,
-  P extends { [x: string]: unknown }
+  G extends GeoJSON.Geometry = GeoJSON.Geometry,
+  P extends GeoJsonProperties = GeoJsonProperties
 > extends GeoJSON.Feature<G, P> {
   id?: string | number;
   links?: Array<Link>;
@@ -57,10 +58,11 @@ type Crs = {
   hasZ: boolean;
   srid: number;
   flipCoords: boolean;
+  uri: `http://www.opengis.net/def/crs/${string}/${number}/${string | number}`;
 };
 export interface FeatureCollection<
   G extends GeoJSON.Geometry = GeoJSON.Geometry,
-  P extends GeoJSON.GeoJsonProperties = GeoJSON.GeoJsonProperties
+  P extends GeoJsonProperties = GeoJsonProperties
 > extends GeoJSON.FeatureCollection<G, P> {
   numberMatched: number;
   numberReturned: number;
@@ -78,4 +80,3 @@ export type Elevation = {
   max?: number;
   values?: number[];
 };
-

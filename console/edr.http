@@ -20,7 +20,7 @@ GET {{SERVER}}/api.html
 GET {{SERVER}}/collections?f=yaml
 
 ###
-GET {{SERVER}}/collections/{{collectionId}}
+GET {{SERVER}}/collections/nighttimelight
 
 ###
 GET {{SERVER}}/collections/{{collectionId}}/position
@@ -39,12 +39,10 @@ Content-Type: application/json
 
 ###
 GET {{SERVER}}/collections/{{collectionId}}/radius
-    ?coords={{point}}
-    &radius=1000
-    &within-units=m
-    &f={{f}}
-    &parameter-name={{parameter-name}}
-
+    ?coords=POINT(-0.15 37.3)
+    &within=200
+    &within-units=meters
+    &crs=EPSG:4326
 ###
 POST {{SERVER}}/collections/{{collectionId}}/radius
 Content-Type: application/json
@@ -72,14 +70,17 @@ Content-Type: application/json
 }
 
 ###
-GET {{SERVER}}/collections/{{collectionId}}/corridor
-    ?coords={{linestring}}
-    &f={{f}}
-    &parameter-name={{parameter-name}}
+GET {{SERVER}}/collections/nighttimelight/corridor
+    ?coords=LINESTRING(36 -1, 37 -2)
+    &parameter-name=nightimelight
     &corridor-height=10
     &height-units=meters
-    &corridor-width=10
+    &corridor-width=80
     &width-units=meters
+    &crs=EPSG:4326
+    &resolution-x=5
+    &resolution-y=5
+    &f=coveragejson
 
 ###
 POST {{SERVER}}/collections/{{collectionId}}/corridor
@@ -136,7 +137,7 @@ GET {{SERVER}}/collections/{{collectionId}}/items/{{itemId}}
     &parameter-name={{parameter-name}}
 
 ###
-GET {{SERVER}}/collections/{{collectionId}}/locations
+GET {{SERVER}}/collections/nighttimelight/locations
     ?bbox=-180,-90,180,90
 
 ### 
@@ -145,11 +146,11 @@ GET {{SERVER}}/collections/{{collectionId}}/locations/{{locationId}}
     &f={{f}}
 
 ###
-GET {{SERVER}}/collections/{{collectionId}}/instances
+GET {{SERVER}}/collections/fapar-anomaly/instances
         ?bbox=-53.1546130%2C-176.1764470%2C74.6335530%2C179.3666670
 
 ###
-GET {{SERVER}}/collections/{{collectionId}}/instances/{{instanceId}}
+GET {{SERVER}}/collections/fapar-anomaly/instances/2025-05-21
 
 ###
 GET {{SERVER}}/collections/{{collectionId}}/instances/{{instanceId}}/locations
@@ -180,13 +181,23 @@ Content-Type: application/json
 }
 
 ###
-GET {{SERVER}}/collections/{{collectionId}}/instances/{{instanceId}}/corridor
+GET {{SERVER}}/collections/fapar-anomaly/instances/2025-01-01/corridor
+    ?coords=LINESTRING (37.3 -0.15, 36.3 -0.15)
+    &corridor-height=5198
+    &corridor-width=100
+    &height-units=meters
+    &width-units=meters
+    &crs=OGC:CRS84
+    &f=coveragejson
+    #&crs
+
 
 ###
 POST {{SERVER}}/collections/{{collectionId}}/instances/{{instanceId}}corridor
 
 ###
 GET {{SERVER}}/collections/{{collectionId}}/instances/{{instanceId}}/trajectory
+    ?coords=LINESTRING (37.3 -0.15, 36.3 -0.15)
 
 ###
 POST {{SERVER}}/collections/{{collectionId}}/instances/{{instanceId}}/trajectory

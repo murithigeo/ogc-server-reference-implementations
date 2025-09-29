@@ -2,9 +2,10 @@ import type { ExegesisPlugin, ExegesisPluginContext } from "exegesis";
 import process from "node:process";
 import { CRS84 } from "./projection.ts";
 import type { Bbox } from "./types.d.ts";
-import { bbox2polygon } from "./bbox2polygon.ts"
-import {reprojectAndFlip} from "./projection.ts"
+import { bbox2polygon } from "./bbox2polygon.ts";
+import { reproject } from "./projection.ts";
 import type { IncomingMessage } from "node:http";
+import { crs } from "@template/utils";
 const { NODE_ENV = "development" } = process.env;
 
 /**
@@ -14,9 +15,6 @@ export function makeExtraContext(): ExegesisPlugin {
   return {
     info: { name: "exegesis-plugin-make-extra-context" },
     makeExegesisPlugin: () => ({
-      preRouting: () => {
-        // console.log(req)
-      },
       postRouting: (ctx: ExegesisPluginContext) => {
         ctx["ectx"] = Object.assign({});
       },
@@ -82,6 +80,7 @@ export function crsParamPlugin(): ExegesisPlugin {
           const params = await ctx.getParams();
           if (!("crs" in params.query)) return;
           const dataset: { id: string; crs: string[] } = ctx["ectx"].dataset;
+          console.log(params.query.crs)
           params.query.crs = params.query.crs || CRS84;
           const value = dataset.crs.find((c) => c === params.query.crs);
           if (!value) {
@@ -91,7 +90,7 @@ export function crsParamPlugin(): ExegesisPlugin {
             );
           }
           ctx["ectx"]["crs"] = value;
-          ctx.res.set("content-crs", `<${value}>`);
+          ctx.res.set("content-crs", `<${crs[value]["uri"]}>`);
         },
       };
     },
@@ -126,10 +125,7 @@ export function datetimePlugin(): ExegesisPlugin {
   return {
     info: { name: "exegesis-plugin-datetime" },
     makeExegesisPlugin: () => ({
-      preRouting({ req }: { req: IncomingMessage }) {
-        // req.url = encodeURIComponent(req.);
-        console.log(req.url);
-      },
+      preRouting({}: { req: IncomingMessage }) {},
 
       postSecurity: async (ctx: ExegesisPluginContext) => {
         const params = await ctx.getParams();
@@ -175,13 +171,6 @@ export function elevationPlugin(): ExegesisPlugin {
   return {
     info: { name: "exegesis-plugin-elevation(z)-parser" },
     makeExegesisPlugin: () => ({
-      preRouting: () => {
-        // const params = querystring.parse(req.url?.split("?")[1]!);
-        // if (params.bbox) {
-        //   params.bbox = (decodeURIComponent(params.bbox))
-        //   console.log(params.bbox)
-        // }
-      },
       postSecurity: async (ctx: ExegesisPluginContext) => {
         const params = await ctx.getParams();
         // z parameter takes precedence over height values in bbox
@@ -248,7 +237,7 @@ export function bboxPlugin(crsField: string = "crs"): ExegesisPlugin {
           xyComponent = [bbox[0], bbox[1], bbox[3], bbox[4]];
           ctx["ectx"]["z"] = { min: bbox[2], max: bbox[5] };
         }
-        const transformed = reprojectAndFlip(
+        const transformed = reproject(
           crs,
           storageCrs
         )({

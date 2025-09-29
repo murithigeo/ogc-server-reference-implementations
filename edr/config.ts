@@ -7,26 +7,27 @@ import type {
 import type { Length } from "convert";
 import mountains from "./datasets/mountains.ts";
 import type { contenttypes } from "../utils/constants.ts";
-// import process from "node:process";
-import type { Bbox, crs, Datetime } from "@template/utils";
+import type { Bbox, crs, Datetime, Link } from "@template/utils";
 import type { EdrFeatureCollection, FeatureCollection } from "./types.d.ts";
+import faparanomaly from "./datasets/faparanomaly.ts";
 
 // //@external https://www.ncei.noaa.gov/support/access-data-service-api-user-documentation
 export default {
-  datasets: [mountains],
+  datasets: [mountains, faparanomaly],
 } as Config;
 
 export type Dataset = {
+  attribution?: Link[];
   id: string;
   description: string;
   output_formats: Array<keyof typeof contenttypes>;
   title?: string;
-  crs: Array<string>;
+  crs: Array<keyof typeof crs>;
   storageCrs: keyof typeof crs;
   keywords: string[];
   parameters: Array<{
     id: string;
-    unit: Unit;
+    unit?: Unit;
     dataType: "string" | "float" | "integer";
     observedProperty: ObservedProperty;
     description?: I18N;
@@ -41,11 +42,16 @@ export type Config = {
 
 export type ExtentProps = {
   id: string;
-  bbox: Bbox[];
-  crs: string;
-  z: number[] | null;
-  datetime: string[] | null;
-  vrs: string;
+  spatial: {
+    bbox: Bbox[];
+    values?: { x: string[]; y: string[] };
+    crs: keyof typeof crs;
+  };
+  vertical?: {
+    values: number[];
+    vrs: string;
+  };
+  temporal: string[] | null;
 };
 
 export type DataQueryProps = {
@@ -67,10 +73,14 @@ export type DataQueryConfig = {
   };
   radius?: DataQueryProps & {
     within_units: Array<Length>;
-    handler: <T>(opts: RadiusQueryOptions) => Promise<T> | T;
+    handler: (
+      opts: RadiusQueryOptions
+    ) => FeatureCollection | EdrFeatureCollection | CoverageCollection;
   };
   corridor?: DataQueryProps & {
-    handler: (opts: CorridorQueryOptions) => unknown;
+    handler: (
+      opts: CorridorQueryOptions
+    ) => Promise<CoverageCollection | FeatureCollection>;
     width_units: Array<Length>;
     height_units: Array<Length>;
   };
@@ -81,10 +91,14 @@ export type DataQueryConfig = {
     handler: <T>(opts: AreaQueryOptions) => Promise<T> | T;
   };
   trajectory?: DataQueryProps & {
-    handler: <T>(opts: TrajectoryQueryOptions) => Promise<T> | T;
+    handler: (
+      opts: TrajectoryQueryOptions
+    ) => CoverageCollection | EdrFeatureCollection | FeatureCollection;
   };
   position?: DataQueryProps & {
-    handler: <T>(opts: PositionQueryOptions) => Promise<T> | T;
+    handler: <T>(
+      opts: PositionQueryOptions
+    ) => Promise<FeatureCollection | EdrFeatureCollection | CoverageCollection>;
   };
   items?: DataQueryProps & {
     handler: (
@@ -97,9 +111,10 @@ type BaseQueryOptions = {
   format?: keyof typeof contenttypes;
   datetime?: Datetime;
   z?: { min?: number; max?: number; values?: number[] };
-  crs: keyof typeof crs | string;
+  crs: keyof typeof crs;
   server: string;
   instanceId?: string;
+  parameters?: string[];
 };
 type ItemsQueryOptions = BaseQueryOptions & {
   bbox?: GeoJSON.Polygon;
@@ -116,7 +131,9 @@ type TrajectoryQueryOptions = BaseQueryOptions & {
 };
 type AreaQueryOptions = BaseQueryOptions & {
   coords: GeoJSON.Polygon;
-  resolution?: Resolutions;
+  "resolution-x"?: number;
+  "resolution-y"?: number;
+  // "resolution-z"?: number;
 };
 type CubeQueryOptions = BaseQueryOptions & {
   bbox: GeoJSON.Polygon;
@@ -124,7 +141,9 @@ type CubeQueryOptions = BaseQueryOptions & {
 type CorridorQueryOptions = BaseQueryOptions & {
   "corridor-width": number;
   "corridor-height": number;
-  resolutions?: Resolutions;
+  "resolution-x"?: number;
+  "resolution-y"?: number;
+  "resolution-z"?: number;
   coords: GeoJSON.MultiLineString | GeoJSON.LineString;
 };
 

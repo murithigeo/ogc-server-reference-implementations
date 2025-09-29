@@ -18,8 +18,9 @@ import {
 } from "@template/utils";
 import config from "./config.ts";
 import { paginationPlugin, bboxPlugin, CRS84 } from "@template/utils";
+import process from "node:process";
 
-export default middleware(path.resolve("./features/openapi.yaml"), {
+export default middleware(path.join(process.cwd(), "./features/openapi.yaml"), {
   controllers: {
     rootcontroller,
     doccontroller,
@@ -84,6 +85,6 @@ export default middleware(path.resolve("./features/openapi.yaml"), {
     }))(),
     bboxPlugin("bbox-crs"),
     paginationPlugin(70),
-    datetimePlugin()
+    datetimePlugin(),
   ],
 });

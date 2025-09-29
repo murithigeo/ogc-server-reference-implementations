@@ -52,7 +52,7 @@ export type EdrGeoJsonProperties = {
 export interface EdrFeature<
   G extends GeoJSON.Geometry = GeoJSON.Geometry,
   P extends EdrGeoJsonProperties = EdrGeoJsonProperties
-  > extends Feature<G, P> { }
+> extends Feature<G, P> {}
 
 export interface EdrFeatureCollection<
   G extends GeoJSON.Geometry = GeoJSON.Geometry,
@@ -60,9 +60,15 @@ export interface EdrFeatureCollection<
 > extends FeatureCollection<G, P> {}
 
 export type Extent = {
-  spatial: Ext["spatial"] & { crs?: string };
+  spatial: Ext["spatial"] & {
+    crs?: string;
+    values?: {
+      x: string[];
+      y: string[];
+    };
+  };
   temporal: Ext["temporal"] & { values: null | Array<string> };
-  vertical: {
+  vertical?: {
     interval: Interval[];
     values: string[] | number[] | null;
     vrs: string;
@@ -201,7 +207,4 @@ declare module "exegesis-express" {
     api: OAS3ApiInfo;
   }
 }
-export type {
-  ConformancePage,
-  FeatureCollection,
-} from "@template/utils";
+export type { ConformancePage, FeatureCollection } from "@template/utils";
