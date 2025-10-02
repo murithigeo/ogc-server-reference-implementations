@@ -36,6 +36,7 @@
     "react-dom": "^19.1.1",
     "vite": "^7.1.7",
     "vitest": "^3.2.4",
+    "websocket-express": "^4.0.1",
     "wkx": "^0.5.0",
     "yaml": "^2.8.1"
   },
