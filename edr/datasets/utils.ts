@@ -3,7 +3,11 @@ import type { FeatureCollection } from "../types.d.ts";
 import type { LineString, Point, MultiLineString } from "geojson";
 import { buffer } from "@turf/buffer";
 import bbox from "@turf/bbox";
-import { fromFile as fromU, fromArrayBuffer as fromAb } from "geotiff";
+import {
+  fromFile as fromF,
+  fromArrayBuffer as fromAb,
+  fromUrl as fromU,
+} from "geotiff";
 
 export function generateSamplePoints(
   xn = 0,
@@ -60,8 +64,8 @@ export function regularCorridor(
   return bbox(buffered);
 }
 
-export async function fromFile(...args: Parameters<typeof fromU>) {
-  const file = await fromU(...args);
+export async function fromFile(...args: Parameters<typeof fromF>) {
+  const file = await fromF(...args);
 
   return {
     ...file,
@@ -103,6 +107,46 @@ export async function fromFile(...args: Parameters<typeof fromU>) {
 
 export async function fromArrayBuffer(...args: Parameters<typeof fromAb>) {
   const file = await fromAb(...args);
+  return {
+    ...file,
+    getImage: async (index?: number) => {
+      const image = await file.getImage(index);
+
+      return {
+        ...image,
+        get bbox() {
+          return image.getBoundingBox() as Bbox;
+        },
+        get pixelPosition() {
+          return (position: [number, number]) => {
+            const widthPct =
+              (position[0] - this.bbox[0]) / (this.bbox[2] - this.bbox[0]);
+            const heightPct =
+              (position[1] - this.bbox[1]) / (this.bbox[3] - this.bbox[1]);
+
+            return [
+              Math.floor(image.getWidth() * widthPct),
+              Math.floor(image.getHeight() * (1 - heightPct)),
+            ];
+          };
+        },
+        getData(bbox?: Bbox, bandIndex: number = 0) {
+          return async (position: number[]) => {
+            const [xPx, yPx] = this.pixelPosition([position[0], position[1]]);
+            const data = await image.readRasters({
+              window: [xPx, yPx, xPx + 1, yPx + 1],
+              bbox,
+            });
+            return data[bandIndex];
+          };
+        },
+      };
+    },
+  };
+}
+
+export async function fromUrl(...args: Parameters<typeof fromU>) {
+  const file = await fromU(...args);
   return {
     ...file,
     getImage: async (index?: number) => {

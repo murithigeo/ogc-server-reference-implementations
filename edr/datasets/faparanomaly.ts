@@ -1,4 +1,4 @@
-import { generateSamplePoints, regularCorridor } from "./utils.ts";
+import { fromUrl, generateSamplePoints, regularCorridor } from "./utils.ts";
 import type { Dataset } from "../config.ts";
 import { fromFile, fromArrayBuffer } from "./utils.ts";
 import { bbox } from "@turf/bbox";
@@ -51,10 +51,7 @@ const cache = new Map<
 >();
 
 for (const k of Object.keys(refs)) {
-  cache.set(
-    k,
-    await (await fromFile(path.resolve(process.cwd(), refs[k]))).getImage()
-  );
+  cache.set(k, await (await fromFile(path.resolve(refs[k]))).getImage());
 }
 const [resX, resY] = [5, 5];
 const viParameter = {
