@@ -1,11 +1,11 @@
 import type { ExegesisContext } from "exegesis";
 import config, { type Dataset } from "../config.ts";
-import type { Collection, Link } from "@template/utils/types";
+import type { Collection, Link } from "@template/utils";
 import { parseFormat, Links } from "@template/utils";
 
 export default {
   getCollectionsPage: (ctx: ExegesisContext) => {
-    const { f, contenttypeHeader,output_formats } = parseFormat(ctx, "JSON", ["JSON", "HTML"]);
+    const { format,output_formats } = parseFormat(ctx, "JSON", ["JSON", "HTML"]);
     const doc: { collections: Collection[]; links: Link[] } = {
       collections: config.datasets.map((c) => {
         const extent = c.extent();
@@ -33,19 +33,18 @@ export default {
       links: new Links(ctx).self().alternates(output_formats).links,
     };
     let data;
-    switch (f) {
+    switch (format) {
       case "HTML":
       default:
         data = doc;
     }
     ctx.res
       .status(200)
-      .set(...contenttypeHeader)
       .setBody(data);
   },
   getCollectionPage: (ctx: ExegesisContext) => {
     const dataset: Dataset = ctx["ectx"].dataset;
-    const { f, contenttypeHeader, output_formats } = parseFormat(ctx, "JSON", [
+    const { format, output_formats } = parseFormat(ctx, "JSON", [
       "JSON",
       "HTML",
     ]);
@@ -65,14 +64,13 @@ export default {
       ),
     };
     let data;
-    switch (f) {
+    switch (format) {
       case "HTML":
       default:
         data = doc;
     }
     ctx.res
       .status(200)
-      .set(...contenttypeHeader)
       .setBody(data);
   },
 };

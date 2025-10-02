@@ -1,116 +1,65 @@
 import type { ExegesisContext } from "exegesis-express";
-import {
-  parseFormat,
-  type Datetime,
-  type Elevation,
-} from "@template/utils";
+import { parseFormat, type Datetime, type Elevation } from "@template/utils";
 import type { Dataset } from "../config.ts";
+import { Links } from "../links.ts";
 
 // These endpoints are expected to serve GeoJSON data
-function getLocationsAtCollection(ctx: ExegesisContext) {
+async function getLocationsAtCollection(ctx: ExegesisContext) {
   const dataset: Dataset = ctx["ectx"].dataset;
-  const locations = dataset.data_queries.locations!;
+  const options = dataset.data_queries.locations!;
 
-  const { f, contenttypeHeader } = parseFormat(
-    ctx,
-    locations.default_output_format,
-    locations.output_formats
-  );
-  const doc = locations.handler({
+  const { output_formats } = parseFormat(ctx, "GEOJSON", ["GEOJSON", "JSON"]);
+  const doc =await options.handleAll({
     ...ctx["ectx"],
   });
-  let data;
-  switch (f) {
-    case "HTML":
-    case "GEOJSON":
-    default:
-      data = doc;
-  }
-  ctx.res
-    .status(200)
-    .set(...contenttypeHeader)
-    .setBody(data);
+  const { links } = new Links(ctx).self().alternates(output_formats);
+  ctx.res.status(200).setBody({ ...doc, links });
 }
 
-function getLocationAtCollection(ctx: ExegesisContext) {
+async function getLocationAtCollection(ctx: ExegesisContext) {
   const dataset: Dataset = ctx["ectx"].dataset;
   const locations = dataset.data_queries.locations!;
 
-  const { f, contenttypeHeader } = parseFormat(
+  const { output_formats } = parseFormat(
     ctx,
     locations.default_output_format,
-    locations.output_formats
+    locations.output_formats || dataset.output_formats
   );
-  const doc = locations.handler({ ...ctx["ectx"] });
-  let data;
-  switch (f) {
-    case "HTML":
-    case "GEOJSON":
-    // ctx.res.set(...contenttypeHeader)
-    default:
-      data = doc;
-  }
-  ctx.res
-    .status(200)
-    .set(...contenttypeHeader)
-    .setBody(data);
+  const doc = await locations.handlerOne({
+    ...ctx["ectx"],
+    locationId: ctx.params.path.locId,
+  });
+  const { links } = new Links(ctx).self().alternates(output_formats);
+  ctx.res.status(200).setBody({ ...doc, links });
 }
 
 async function getLocationsAtInstance(ctx: ExegesisContext): Promise<void> {
   const dataset: Dataset = ctx["ectx"].dataset;
-  const locations = dataset.data_queries.locations!;
+  const options = dataset.data_queries.locations!;
 
-  const { f, contenttypeHeader } = parseFormat(
-    ctx,
-    locations.default_output_format,
-    locations.output_formats
-  );
-  const doc = await locations.handler({
-    server: ctx.api.serverObject?.url!,
+  const { output_formats } = parseFormat(ctx, "GEOJSON", ["GEOJSON", "JSON"]);
+  const doc = await options.handleAll({
     ...ctx["ectx"],
-    instanceId: ctx.params.path.instanceId,
   });
-  let data;
-  switch (f) {
-    case "HTML":
-    case "GEOJSON":
-    // ctx.res.set(...contenttypeHeader)
-    default:
-      data = doc;
-  }
-  ctx.res
-    .status(200)
-    .set(...contenttypeHeader)
-    .setBody(data);
+  const { links } = new Links(ctx).self().alternates(output_formats);
+  ctx.res.status(200).setBody({ ...doc, links });
 }
 
 async function getLocationAtInstance(ctx: ExegesisContext): Promise<void> {
-  const dataset = ctx["ectx"].dataset;
+  const dataset: Dataset = ctx["ectx"].dataset;
   const locations = dataset.data_queries.locations!;
 
-  const { f, contenttypeHeader } = parseFormat(
+  const { output_formats } = parseFormat(
     ctx,
     locations.default_output_format,
-    locations.output_formats
+    locations.output_formats || dataset.output_formats
   );
-  const doc = await locations.handler({
+  const doc = await locations.handlerOne({
     ...ctx["ectx"],
-    server: ctx.api.serverObject?.url!,
-    instanceId: ctx.params.path.instanceId,
-    locationId: ctx.params.path.locationId,
+    locationId: ctx.params.path.locId,
   });
-  let data;
-  switch (f) {
-    case "HTML":
-    case "GEOJSON":
-    // ctx.res.set(...contenttypeHeader)
-    default:
-      data = doc;
-  }
-  ctx.res
-    .status(200)
-    .set(...contenttypeHeader)
-    .setBody(data);
+  const { links } = new Links(ctx).self().alternates(output_formats);
+  ctx.res.status(200).setBody({ ...doc, links });
 }
 
 export default {

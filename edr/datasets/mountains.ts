@@ -6,55 +6,41 @@ import {
   intersects,
   elevationFilter,
   datetimeFilter,
+  type Feature,
 } from "@template/utils";
 import type { Dataset } from "../config.ts";
-import type { EdrFeature, FeatureCollection } from "../types.d.ts";
 import { mountains as mts } from "@template/data";
 import { bbox } from "@turf/bbox";
 import { HttpError } from "exegesis";
 import { corridorFilter, radiusFilter } from "./filters.ts";
-const mountains = {
-  ...mts,
-  features: mts.features
-    .map((p) => ({
-      ...p,
-      id: p.properties.name,
-      properties: { ...p.properties, countries: p.properties.countries || [] },
-    }))
-    .sort((a, b) => a.properties.name.localeCompare(b.properties.name)),
-};
+
+const mountains = mts.features
+  .map((p) => ({
+    ...p,
+    properties: { ...p.properties, countries: p.properties.countries || [] },
+  }))
+  .sort((a, b) =>
+    a.properties.name.localeCompare(b.properties.name)
+  ) satisfies Array<Feature>;
 
 export default {
-  id: "world-mountains",
+  id: "mountains",
   crs: ["OGC:CRS84", "EPSG:4326"],
   output_formats: ["JSON", "GEOJSON", "HTML"],
   storageCrs: "OGC:CRS84",
   description: "Mountains",
   keywords: ["mountains"],
-  parameters: [
-    {
-      id: "height",
-      dataType: "float",
-      unit: { label: { en: "Height in Metres", symbol: "m" } },
-      observedProperty: {
-        description: {
-          en: "Height of Mountain in metres",
-        },
-        label: { en: "Height" },
-        id: "http://codes.wmo.int/grib2/codeflag/4.2/0-3-6",
-      },
-    },
-  ],
+  parameters: [],
   getExtent() {
     return {
-      id: "world-mountains",
+      id: this.id,
       spatial: {
-        bbox: [bbox(mountains)],
+        bbox: [bbox({ type: "FeatureCollection", features: mountains })],
         crs: "OGC:CRS84",
       },
       vertical: {
         vrs: CRS84,
-        values: mountains.features.map((f) => f.properties.meters),
+        values: mountains.map((f) => f.properties.meters),
       },
       temporal: null,
     };
@@ -66,108 +52,72 @@ export default {
       output_formats: ["GEOJSON", "JSON"],
       default_output_format: "GEOJSON",
       allowAt: ["collection", "instance"],
-      handler(opts) {
-        const locationIds = Array.from(
-          new Set(mountains.features.flatMap((p) => p.properties.countries))
-        );
-        if (opts.locationId) {
-          const activeLocationIds = opts.locationId.split(",");
-          const invalidLocationIds = activeLocationIds.filter(
-            (p) => !locationIds.includes(p)
-          );
-          if (invalidLocationIds.length > 0) {
-            throw new HttpError(404, invalidLocationIds.join(","));
-          }
-          const matched = mountains.features
-
+      handleAll(opts) {
+        const matched = Object.groupBy(
+          mountains
             .filter(instanceIdChecker(opts.instanceId))
-            .filter(elevationFilter(opts.z, "meters"))
+            .filter(elevationFilter(opts?.z, "meters"))
             .filter(intersects(opts.bbox))
-            .filter((feat) =>
-              activeLocationIds.every((v) =>
-                feat.properties.countries.includes(v)
-              )
-            );
-
-          const limit = opts.limit || matched.length;
-          const offset = opts.offset || 0;
-          return {
-            timeStamp: new Date().toJSON(),
-            numberMatched: matched.length,
-            numberReturned: numberReturned(matched.length, limit, offset),
-            features: matched.slice(offset, offset + limit).map((feat) =>
-              reproject(
-                "OGC:CRS84",
-                opts.crs
-              )({
-                ...feat,
-                properties: {
-                  ...feat.properties,
-                  edrqueryendpoint: new URL(
-                    `${opts.server}/collections/world-mountains${
-                      opts.instanceId ? `/instances/${opts.instanceId}` : ""
-                    }/locations/${feat.properties.continent}`
-                  ).toJSON(),
-                  datetime: "",
-                  "parameter-name": [],
-                  label: {
-                    en: feat.properties.name,
-                  },
-                },
-              })
+            .flatMap((primary) =>
+              primary.properties.countries.map((p) => ({
+                ...primary,
+                properties: { ...primary.properties, country: p },
+              }))
             ),
-            type: "FeatureCollection",
-          };
-        }
-        const matched = Object.entries(
-          Object.groupBy(
-            mountains.features
-              .filter(instanceIdChecker(opts.instanceId))
-              .filter(intersects(opts.bbox))
-              .flatMap((feat) =>
-                (feat.properties?.countries).map((co) => ({
-                  ...feat,
-                  properties: {
-                    ...feat.properties,
-                    country: co,
-                    elevations: feat.properties.meters,
-                  },
-                }))
-              )
-              .filter(elevationFilter(opts.z, "elevations")),
-            ({ properties }) => properties.country
-          )
-        ).map(
-          ([continent, features]): EdrFeature => ({
+          ({ properties }) => properties.country
+        );
+        const length = Object.keys(matched).length;
+        return Promise.resolve({
+          type: "FeatureCollection",
+          timeStamp: new Date().toISOString(),
+          numberMatched: length,
+          numberReturned: numberReturned(length, length, 0),
+          features: Object.entries(matched).map(([id, features]) => ({
             type: "Feature",
             geometry: bbox2polygon(
               bbox({ type: "FeatureCollection", features: features! })
             ),
-            id: continent,
-            properties: {
-              "parameter-name": [],
-              datetime: "",
-              label: { en: continent },
-              edrqueryendpoint: new URL(
-                `${opts.server}/collections/world-mountains${
-                  opts.instanceId ? "/instances/" + opts.instanceId : ""
-                }/locations/${encodeURI(continent)}`
-              ).toString(),
-            },
-          })
+            id,
+            properties: {},
+          })),
+        });
+      },
+      handlerOne(opts) {
+        const allIds = Array.from(
+          new Set(mountains.flatMap((p) => p.properties.countries))
         );
-        const limit = opts.limit || matched.length;
-        const offset = opts.offset || 0;
-        return {
+        const activeIds = opts.locationId.split(",");
+        const invalidIds = activeIds.filter((id) => !allIds.includes(id));
+        if (invalidIds.length > 0) throw new HttpError(404, "Invalid locId");
+        const matched = mountains
+          .filter(instanceIdChecker(opts.instanceId))
+          .filter((feature) =>
+            allIds.some((id) => feature.properties.countries.includes(id))
+          );
+
+        let str = "/collections/mountains";
+        if (opts.instanceId) str += `/instances/${opts.instanceId}`;
+        str += `/locations`;
+        return Promise.resolve({
           type: "FeatureCollection",
-          timeStamp: new Date().toJSON(),
-          features: matched
-            .slice(offset, limit + offset)
-            .map(reproject("OGC:CRS84", opts.crs)),
           numberMatched: matched.length,
-          numberReturned: numberReturned(matched.length, limit, offset),
-        };
-        // Multi
+          numberReturned: numberReturned(matched.length, matched.length, 0),
+          timeStamp: new Date().toISOString(),
+          features: matched.map(reproject("OGC:CRS84", opts.crs)).map((p) => ({
+            ...p,
+            properties: {
+              ...p.properties,
+              edrqueryendpoint: new URL(
+                `${opts.server}${str}/${p.properties.countries[0]}`
+              ).toJSON(),
+              datetime: "",
+              parameters: [],
+              label: {
+                en: p.properties.name,
+              },
+            },
+          })),
+        });
       },
     },
     instances: {
@@ -179,21 +129,21 @@ export default {
       handler(opts) {
         return Object.entries(
           Object.groupBy(
-            mountains.features
+            mountains
               .filter((c) => c.properties.continent !== null)
               .filter(instanceIdChecker(opts.instanceId)),
             ({ properties: { continent } }) => continent!
           )
-        ).map(([continent, features]) => ({
+        ).map(([continent, catValues]) => ({
           id: continent,
           temporal: null,
           spatial: {
-            bbox: [bbox({ type: "FeatureCollection", features: features! })],
+            bbox: [bbox({ type: "FeatureCollection", features: catValues! })],
             crs: "OGC:CRS84",
           },
           vertical: {
             vrs: CRS84,
-            values: features!.map((f) => f.properties.meters),
+            values: catValues!.map((f) => f.properties.meters),
           },
         }));
       },
@@ -201,22 +151,26 @@ export default {
     items: {
       allowAt: ["collection", "instance"],
       default_output_format: "GEOJSON",
-      handler(opts) {
-        const matched = mountains.features
-          .filter((feat) =>
-            !opts.itemId ? true : opts.itemId === feat.properties.name
-          )
-          .filter(intersects(opts.bbox))
-          .filter(instanceIdChecker(opts.instanceId));
-        const limit = opts.limit || matched.length,
-          offset = opts.offset || 0;
-        return {
+      handleOne(opts) {
+        const item = mountains
+          .filter(instanceIdChecker(opts.instanceId))
+          .find((c) => c.properties.name === opts.instanceId);
+        if (!item) throw new HttpError(404, "no such item");
+        return Promise.resolve(reproject("OGC:CRS84", opts.crs)(item));
+      },
+      handleAll(opts) {
+        const matched = mountains
+          .filter(instanceIdChecker(opts.instanceId))
+          .filter(intersects(opts.bbox));
+        const limit = opts.limit || matched.length;
+        const offset = opts.offset || 0;
+        return Promise.resolve({
           timeStamp: new Date().toJSON(),
           numberMatched: matched.length,
           numberReturned: numberReturned(matched.length, limit, offset),
           features: matched.slice(limit, offset + limit),
           type: "FeatureCollection",
-        };
+        });
       },
       output_formats: ["JSON", "HTML"],
     },
@@ -228,37 +182,37 @@ export default {
       output_formats: ["GEOJSON", "JSON"],
       handler(opts) {
         // return this.output_formats
-        const matched = mountains.features
+        const matched = mountains
           .filter((feat) => feat.properties.meters <= opts["corridor-height"])
           .filter(instanceIdChecker(opts.instanceId))
           .filter(corridorFilter(opts.coords, opts["corridor-width"]));
 
-        return {
+        return Promise.resolve({
           type: "FeatureCollection",
           numberMatched: matched.length,
           numberReturned: numberReturned(matched.length, matched.length, 0),
           timeStamp: new Date().toJSON(),
           features: matched.map(reproject("OGC:CRS84", opts.crs)),
-        } satisfies FeatureCollection;
+        });
       },
     },
     trajectory: {
       default_output_format: "GEOJSON",
       allowAt: ["collection", "instance"],
       handler(opts) {
-        const matched = mountains.features
+        const matched = mountains
           .filter(instanceIdChecker(opts.instanceId))
           .filter(datetimeFilter(opts.datetime))
           .filter(elevationFilter(opts.z, "meters"))
           .filter(intersects(opts.coords));
 
-        return {
+        return Promise.resolve({
           timeStamp: new Date().toISOString(),
           type: "FeatureCollection",
           numberMatched: matched.length,
           numberReturned: numberReturned(matched.length, matched.length, 0),
           features: matched.map(reproject("OGC:CRS84", opts.crs)),
-        };
+        });
       },
     },
     radius: {
@@ -267,25 +221,25 @@ export default {
       output_formats: ["GEOJSON", "JSON"],
       within_units: ["meters"],
       handler(opts) {
-        const matched = mountains.features
+        const matched = mountains
           .filter(instanceIdChecker(opts.instanceId))
           .filter(datetimeFilter(opts.datetime))
           .filter(elevationFilter(opts.z, "meters"))
           .filter(radiusFilter(opts.coords, opts.within));
-        return {
+        return Promise.resolve({
           type: "FeatureCollection",
           timeStamp: new Date().toISOString(),
           numberMatched: matched.length,
           numberReturned: numberReturned(matched.length, matched.length, 0),
           features: matched.map(reproject("OGC:CRS84", opts.crs)),
-        };
+        });
       },
     },
   },
 } satisfies Dataset;
 
 function instanceIdChecker(instanceId: string | undefined) {
-  return (feature: (typeof mountains)["features"][0]) => {
+  return (feature: (typeof mountains)[0]) => {
     if (!instanceId) return true;
     return feature.properties.continent === instanceId;
   };

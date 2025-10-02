@@ -70,17 +70,17 @@ Content-Type: application/json
 }
 
 ###
-GET {{SERVER}}/collections/nighttimelight/corridor
+GET {{SERVER}}/collections/fapar-anomaly/corridor
     ?coords=LINESTRING(36 -1, 37 -2)
-    &parameter-name=nightimelight
+    &parameter-name=vegetationindex
     &corridor-height=10
     &height-units=meters
     &corridor-width=80
     &width-units=meters
-    &crs=EPSG:4326
+    &crs=OGC:CRS84
     &resolution-x=5
     &resolution-y=5
-    &f=coveragejson
+    &f=geojson
 
 ###
 POST {{SERVER}}/collections/{{collectionId}}/corridor
@@ -189,6 +189,7 @@ GET {{SERVER}}/collections/fapar-anomaly/instances/2025-01-01/corridor
     &width-units=meters
     &crs=OGC:CRS84
     &f=coveragejson
+    &parameter-name=vegetationindex
     #&crs
 
 

@@ -1,65 +1,53 @@
-import { expect } from "@std/expect";
-import { MAX_COLLECTIONS_INSTANCES, TEST_URL_BASE,  } from "../index.test.ts";
+import { expect, describe, it } from "vitest";
+import { MAX_COLLECTIONS_INSTANCES, TEST_URL_BASE } from "../index.test.ts";
 
-let res = await fetch(TEST_URL_BASE + '/edr/collections')
-const { collections }= await res.json();
-const colls = [...collections];
-for (const { data_queries: { instances } } of collections) {
-  if (instances) {
-    res = await fetch(instances.link.href);
-    const { instances: i } = await res.json();
-    colls.push(...i.slice(0, MAX_COLLECTIONS_INSTANCES))
+const collections: {
+  [x: string]: any;
+  data_queries: { position: { [x: string]: any } };
+}[] = [];
+let res = await fetch(`${TEST_URL_BASE}/edr/collections`);
+const data = await res.json();
+collections.push(...data.collections.slice(0, MAX_COLLECTIONS_INSTANCES));
+
+for (const collection of data.collections) {
+  if (collection.data_queries?.instances) {
+    res = await fetch(collection.data_queries.instances.link.href);
+    collections.push(
+      ...(await res.json()).instances.slice(0, MAX_COLLECTIONS_INSTANCES)
+    );
   }
 }
 
-Deno.test({
-  name: `:root/collections/:collectionId/[:instances/:instanceId]/position`,
-  async fn(t) {
-    for (const { id, data_queries: { position } } of colls) {
-      if (!position) continue;
-      const { link: { href } } = position!;
-      const url = new URL(href)
-      await t.step({
-        name: `Collection: ${id} `,
-        async fn(t) {
-          await t.step({
-            name: "Missing coords", async fn() {
-              res = await fetch(url);
-              expect(res.status).toBe(400)
-              await res.body?.cancel()
-            },
-          });
-          await t.step({
-            name: "Multipoint and POINT",
-            async fn() {
-              url.searchParams.set("coords", "MULTIPOINT(40 1,36 1)");
-              res = await fetch(url);
-              expect(res.status).toBe(200);
-              await res.body?.cancel();
+describe.each(collections)("$id /position tests", {}, (c) => {
+  const [pos, skip] = [c.data_queries.position, !c.data_queries.position];
 
-              url.searchParams.set("coords", "POINT(36 1)");
-              res = await fetch(url);
-              expect(res.status).toBe(200);
-              await res.body?.cancel();
-            }
-          })
+  it("throws 400 on missing coords", { skip }, async () => {
+    res = await fetch(pos.link.href);
+    expect(res.status).toBe(400);
+    await res.body?.cancel();
+  });
+  it("returns 200 on MultiPoint or Point", { skip }, async () => {
+    const uri = new URL(pos.link.href);
+    uri.searchParams.set("coords", "POINT(36 1)");
+    uri.searchParams.set("crs", c.crs[0]);
 
-          await t.step({
-            name: "Incorrect coords", async fn() {
-              url.searchParams.set("coords", "LINESTRING(36 1, 37 1)");
-              res = await fetch(url);
-              expect(res.status).toBe(400);
-              await res.body?.cancel();
+    res = await fetch(uri);
+    expect(res.status).toBe(200);
+    await res.body?.cancel();
 
-              url.searchParams.set("coords", "POINT(37, 1)");
-              res = await fetch(url);
-              expect(res.status).toBe(200);
-              await res.body?.cancel();
-            }
-          })
-
-        },
-      })
+    uri.searchParams.set("coords", "MULTIPOINT(36 1,37 -1)");
+    expect(res.status).toBe(200);
+    await res.body?.cancel();
+  });
+  it.each(["POINT(36,1)", "LINESTRING(36 1,27 1)"])(
+    "%s throws error on invalid coords",
+    { skip },
+    async (coords) => {
+      const uri = new URL(pos.link.href);
+      uri.searchParams.set("coords", coords);
+      res = await fetch(uri);
+      expect(res.status).toBe(400);
+      await res.body?.cancel();
     }
-  }
+  );
 });

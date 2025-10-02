@@ -3,10 +3,7 @@ import { parseFormat, Links } from "@template/utils";
 import type { LandingPage } from "../types.d.ts";
 
 function getLandingPage(ctx: ExegesisContext): void {
-  const { f, output_formats, contenttypeHeader } = parseFormat(ctx, "JSON", [
-    "JSON",
-    "HTML",
-  ]);
+  const { output_formats, format } = parseFormat(ctx, "JSON", ["JSON", "HTML"]);
 
   const { links } = new Links(ctx)
     .self()
@@ -34,8 +31,8 @@ function getLandingPage(ctx: ExegesisContext): void {
     },
     links,
   };
-  ctx.res.status(200).set(...contenttypeHeader);
-  switch (f) {
+  ctx.res.status(200); //.set(...contenttypeHeader);
+  switch (format) {
     // case "JSON":
     case "HTML":
     default:

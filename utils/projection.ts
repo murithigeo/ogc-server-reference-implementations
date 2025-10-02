@@ -4,6 +4,7 @@ import type { EdrFeature, EdrGeoJsonProperties } from "@template/edr";
 import type { Position } from "geojson";
 
 proj4.defs("OGC:CRS84", proj4.defs("EPSG:4326"));
+// proj4.defs("http://www.opengis.net/def/OGC/1.3/CRS84",proj4.defs("EPSG:4326"))
 export const crs = {
   "OGC:CRS84": {
     type: "GeographicCRS",
@@ -20,24 +21,30 @@ export const crs = {
     flipCoords: true,
     uri: "http://www.opengis.net/def/crs/EPSG/0/4326",
   },
+  get "http://www.opengis.net/def/crs/OGC/1.3/CRS84"() {
+    return this["OGC:CRS84"];
+  },
+  get "http://www.opengis.net/def/crs/EPSG/0/4326"() {
+    return this["EPSG:4326"];
+  },
 } satisfies { [x: string]: Crs };
 export const CRS84 = Object.keys(crs)[0];
 // const cache = new Map<string, string | ProjectionDefinition | unknown>([
 //   ,
 // ]);
 
-// const uriPrefix = "http://www.opengis.net/def/crs/";
-// function toAuthCode(uri: string): string {
-//   let authority: string;
-//   let code: string;
-//   if (!uri.startsWith(uriPrefix)) {
-//     //Assume its in form of <authority:code>
-//     [authority, code] = uri.split(":");
-//   }
-//   //http://www.opengis.net/def/crs/OGC/1.3/CRS84
-//   else [, , authority, , code] = new URL(uri).pathname.substring(1).split("/");
-//   return `${authority.toUpperCase()}:${code}`;
-// }
+ const uriPrefix = "http://www.opengis.net/def/crs/";
+ function toAuthCode(uri: string): keyof typeof crs {
+   let authority: string;
+   let code: string;
+  if (!uri.startsWith(uriPrefix)) {
+    //Assume its in form of <authority:code>
+    [authority, code] = uri.split(":");
+  }
+  //   //http://www.opengis.net/def/crs/OGC/1.3/CRS84
+  else [, , authority, , code] = new URL(uri).pathname.substring(1).split("/");
+  return `${authority.toUpperCase()}:${code}`;
+}
 
 // async function load(authcode: string) {
 //   const match = proj4.defs(authcode) || cache.get(authcode);
@@ -101,9 +108,11 @@ function positionReproject(
   to: keyof typeof crs | string
 ) {
   return (position: Position) => {
-    const fromcrs = crs[from];
-    const targetcrs = crs[to];
-    const projector = proj4(from, to);
+    // const fromcrs=
+    const fromcrs = crs[toAuthCode(from)];
+    const targetcrs = crs[toAuthCode(to)];
+
+    const projector = proj4(toAuthCode(from), toAuthCode(to));
     if (fromcrs.flipCoords)
       position = [position[1], position[0], ...position.slice(2)];
     position = projector.forward(position);

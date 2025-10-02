@@ -1,4 +1,5 @@
 import type {
+  Coverage,
   CoverageCollection,
   I18N,
   ObservedProperty,
@@ -7,13 +8,31 @@ import type {
 import type { Length } from "convert";
 import mountains from "./datasets/mountains.ts";
 import type { contenttypes } from "../utils/constants.ts";
-import type { Bbox, crs, Datetime, Link } from "@template/utils";
-import type { EdrFeatureCollection, FeatureCollection } from "./types.d.ts";
+import {
+  type Bbox,
+  crs,
+  type Datetime,
+  type Feature,
+  type Link,
+} from "@template/utils";
+import type {
+  EdrFeature,
+  EdrFeatureCollection,
+  FeatureCollection,
+} from "./types.d.ts";
 import faparanomaly from "./datasets/faparanomaly.ts";
 
 // //@external https://www.ncei.noaa.gov/support/access-data-service-api-user-documentation
 export default {
-  datasets: [mountains, faparanomaly],
+  datasets: [mountains, faparanomaly].map((d) => ({
+    ...d,
+    crs: Array.from<keyof typeof crs>(
+      new Set(["http://www.opengis.net/def/crs/OGC/1.3/CRS84", ...d.crs])
+    ),
+    // crs: Array.from(
+    //   new Set([...d.crs, ...d.crs.map((p) => crs[p].uri as keyof typeof crs)])
+    // ).sort((a, b) => a.localeCompare(b)),
+  })),
 } as Config;
 
 export type Dataset = {
@@ -63,9 +82,23 @@ export type DataQueryProps = {
 export type DataQueryConfig = {
   locations?: DataQueryProps & {
     multi?: boolean;
-    handler: (
-      opts: LocationsQueryOptions
-    ) => EdrFeatureCollection | FeatureCollection;
+    handleAll: (
+      opts: Pick<BaseQueryOptions, "datetime" | "instanceId" | "z"> & {
+        bbox?: GeoJSON.Polygon;
+      }
+    ) => Promise<EdrFeatureCollection | FeatureCollection>;
+    handlerOne: (
+      opts: Pick<
+        LocationsQueryOptions,
+        | "format"
+        | "datetime"
+        | "crs"
+        | "parameters"
+        | "server"
+        | "instanceId"
+        | "locationId"
+      >
+    ) => Promise<CoverageCollection | FeatureCollection | EdrFeatureCollection>;
   };
   instances?: DataQueryProps & {
     default_instanceid: string;
@@ -75,7 +108,7 @@ export type DataQueryConfig = {
     within_units: Array<Length>;
     handler: (
       opts: RadiusQueryOptions
-    ) => FeatureCollection | EdrFeatureCollection | CoverageCollection;
+    ) => Promise<FeatureCollection | EdrFeatureCollection | CoverageCollection>;
   };
   corridor?: DataQueryProps & {
     handler: (
@@ -85,25 +118,42 @@ export type DataQueryConfig = {
     height_units: Array<Length>;
   };
   cube?: DataQueryProps & {
-    handler: <T>(opts: CubeQueryOptions) => Promise<T> | T;
+    handler: (
+      opts: CubeQueryOptions
+    ) => Promise<CoverageCollection | EdrFeatureCollection | FeatureCollection>;
   };
   area?: DataQueryProps & {
-    handler: <T>(opts: AreaQueryOptions) => Promise<T> | T;
+    handler: (
+      opts: AreaQueryOptions
+    ) => Promise<FeatureCollection | EdrFeatureCollection | CoverageCollection>;
   };
   trajectory?: DataQueryProps & {
     handler: (
       opts: TrajectoryQueryOptions
-    ) => CoverageCollection | EdrFeatureCollection | FeatureCollection;
+    ) => Promise<CoverageCollection | EdrFeatureCollection | FeatureCollection>;
   };
   position?: DataQueryProps & {
-    handler: <T>(
+    handler: (
       opts: PositionQueryOptions
     ) => Promise<FeatureCollection | EdrFeatureCollection | CoverageCollection>;
   };
   items?: DataQueryProps & {
-    handler: (
+    handleAll: (
       opts: ItemsQueryOptions
-    ) => CoverageCollection | EdrFeatureCollection | FeatureCollection;
+    ) => Promise<
+      | CoverageCollection
+      | EdrFeatureCollection
+      | FeatureCollection
+      | Feature
+      | EdrFeature
+      | Coverage
+    >;
+    handleOne: (opts: {
+      itemId: string;
+      instanceId?: string;
+      crs: keyof typeof crs;
+      format: keyof typeof contenttypes;
+    }) => Promise<Feature | EdrFeature | Coverage>;
   };
 };
 
@@ -118,7 +168,6 @@ type BaseQueryOptions = {
 };
 type ItemsQueryOptions = BaseQueryOptions & {
   bbox?: GeoJSON.Polygon;
-  itemId?: string;
   limit?: number;
   offset?: number;
 };
@@ -156,7 +205,7 @@ type PositionQueryOptions = BaseQueryOptions & {
 };
 type LocationsQueryOptions = BaseQueryOptions & {
   bbox?: GeoJSON.Polygon;
-  locationId?: string;
+  locationId: string;
   limit?: number;
   offset?: number;
 };

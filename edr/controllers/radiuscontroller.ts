@@ -1,36 +1,31 @@
 import type { ExegesisContext } from "exegesis-express";
 import type { Dataset } from "../config.ts";
 import { parseFormat } from "@template/utils";
+import { Links } from "../links.ts";
 
-function getRadiusAtCollection(ctx: ExegesisContext) {
+async function getRadiusAtCollection(ctx: ExegesisContext) {
   const dataset: Dataset = ctx["ectx"].dataset;
-  const radius = dataset.data_queries.radius!;
-  const { contenttypeHeader } = parseFormat(
+  const options = dataset.data_queries.radius!;
+  const { output_formats } = parseFormat(
     ctx,
-    radius.default_output_format,
-    radius.output_formats
+    options.default_output_format,
+    options.output_formats || dataset.output_formats
   );
-  const res = radius.handler({ ...ctx["ectx"] });
-
-  ctx.res
-    .status(200)
-    .set(...contenttypeHeader)
-    .setBody(res);
+  const doc = await options.handler({ ...ctx["ectx"] });
+  const { links } = new Links(ctx).self().alternates(output_formats);
+  ctx.res.status(200).setBody({ ...doc, links });
 }
- function getRadiusAtInstance(ctx: ExegesisContext) {
+async function getRadiusAtInstance(ctx: ExegesisContext) {
   const dataset: Dataset = ctx["ectx"].dataset;
-  const radius = dataset.data_queries.radius!;
-  const { contenttypeHeader } = parseFormat(
+  const options = dataset.data_queries.radius!;
+  const { output_formats } = parseFormat(
     ctx,
-    radius.default_output_format,
-    radius.output_formats
+    options.default_output_format,
+    options.output_formats || dataset.output_formats
   );
-  const res = radius.handler({ ...ctx["ectx"] });
-
-  ctx.res
-    .status(200)
-    .set(...contenttypeHeader)
-    .setBody(res);
+  const doc = await options.handler({ ...ctx["ectx"] });
+  const { links } = new Links(ctx).self().alternates(output_formats);
+  ctx.res.status(200).setBody({ ...doc, links });
 }
 export default {
   "all@radius@collection": getRadiusAtCollection,

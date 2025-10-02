@@ -644,7 +644,7 @@ paths:
         "200":
           $ref: "#/components/responses/covJson_edrGeoJson_yaml"
 
-  /collections/{collectionId}/locations/{locationId}:
+  /collections/{collectionId}/locations/{locId}:
     x-exegesis-controller: locationscontroller
     get:
       tags:
@@ -706,7 +706,7 @@ paths:
         "200":
           $ref: "#/components/responses/covJson_edrGeoJson_yaml"
 
-  /collections/{collectionId}/instances/{instanceId}/locations/{locationId}:
+  /collections/{collectionId}/instances/{instanceId}/locations/{locId}:
     x-exegesis-controller: locationscontroller
     get:
       tags:
@@ -2528,7 +2528,6 @@ components:
       schema:
         type: string
         description: https://regex101.com/r/NjdLnJ/1
-        format: datetimeRegex
       style: form
       explode: false
     areaCoords:
@@ -2724,7 +2723,6 @@ components:
       schema:
         type: string
         description: https://regex101.com/r/uSwgYh/1
-        format: zRegex
     parameter-name:
       in: query
       name: parameter-name
@@ -2875,7 +2873,7 @@ components:
         enum: [position, trajectory, items, corridor, cube, radius]
     locationId:
       in: path
-      name: locationId
+      name: locId
       required: true
       schema:
         type: string

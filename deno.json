@@ -8,7 +8,6 @@
     "verbatimModuleSyntax": true
   },
   "imports": {
-    "@std/expect": "jsr:@std/expect@^1.0.17",
     "@std/testing": "jsr:@std/testing@^1.0.15",
     "@types/node": "npm:@types/node",
     "@types/express": "npm:@types/express",

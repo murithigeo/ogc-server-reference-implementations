@@ -3,36 +3,30 @@ import type { Dataset } from "../config.ts";
 import { parseFormat } from "@template/utils";
 import { Links } from "../links.ts";
 
-function getTrajectoryAtCollection(ctx: ExegesisContext) {
+async function getTrajectoryAtCollection(ctx: ExegesisContext) {
   const dataset: Dataset = ctx["ectx"].dataset;
-  const trajectory = dataset.data_queries.trajectory!;
-  const { output_formats, contenttypeHeader } = parseFormat(
+  const options = dataset.data_queries.trajectory!;
+  const { output_formats } = parseFormat(
     ctx,
-    trajectory?.default_output_format,
-    trajectory.output_formats
+    options.default_output_format,
+    options.output_formats || dataset.output_formats
   );
-  const res = trajectory.handler({ ...ctx["ectx"] });
+  const doc = await options.handler({ ...ctx["ectx"] });
   const { links } = new Links(ctx).self().alternates(output_formats);
-  ctx.res
-    .status(200)
-    .set(...contenttypeHeader)
-    .setBody({ ...res, links });
+  ctx.res.status(200).setBody({ ...doc, links });
 }
 
-function getTrajectoryAtInstance(ctx: ExegesisContext) {
+async function getTrajectoryAtInstance(ctx: ExegesisContext) {
   const dataset: Dataset = ctx["ectx"].dataset;
-  const trajectory = dataset.data_queries.trajectory!;
-  const { output_formats, contenttypeHeader } = parseFormat(
+  const options = dataset.data_queries.trajectory!;
+  const { output_formats } = parseFormat(
     ctx,
-    trajectory?.default_output_format,
-    trajectory.output_formats
+    options.default_output_format,
+    options.output_formats || dataset.output_formats
   );
-  const res = trajectory.handler({ ...ctx["ectx"] });
+  const doc = await options.handler({ ...ctx["ectx"] });
   const { links } = new Links(ctx).self().alternates(output_formats);
-  ctx.res
-    .status(200)
-    .set(...contenttypeHeader)
-    .setBody({ ...res, links });
+  ctx.res.status(200).setBody({ ...doc, links });
 }
 
 export default {

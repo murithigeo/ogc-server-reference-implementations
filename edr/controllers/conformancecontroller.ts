@@ -1,10 +1,9 @@
 import type { ExegesisContext } from "exegesis-express";
 import type { ConformancePage } from "../types.d.ts";
 import { parseFormat, Links } from "@template/utils";
+
 function getConformance(ctx: ExegesisContext): void {
-  const {  contenttypeHeader, output_formats } = parseFormat(ctx, "JSON", [
-    "JSON",
-  ]);
+  const { output_formats } = parseFormat(ctx, "JSON", ["JSON"]);
   const conformanceDoc: ConformancePage = {
     conformsTo: [
       "http://www.opengis.net/spec/ogcapi-edr-1/1.1/conf/collections",
@@ -23,7 +22,6 @@ function getConformance(ctx: ExegesisContext): void {
   };
   ctx.res
     .status(200)
-    .set(...contenttypeHeader)
     .setBody(conformanceDoc);
 }
 

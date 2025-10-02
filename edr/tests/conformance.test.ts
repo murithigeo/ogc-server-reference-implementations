@@ -1,5 +1,4 @@
-import { expect } from "@std/expect";
-import { describe, it, beforeAll } from "@std/testing/bdd";
+import { describe, it, beforeAll,expect } from "vitest";
 import { TEST_URL_BASE } from "./index.test.ts";
 
 describe("/edr/conformance", () => {
@@ -15,12 +14,11 @@ describe("/edr/conformance", () => {
     expect(data.conformsTo).toBeDefined();
     expect(Array.isArray(data.conformsTo)).toBeTruthy();
   });
-  it("can have links which return 200 status code", async (t) => {
+  it("can have links which return 200 status code", async () => {
     for (const link of data?.links || []) {
       res = await fetch(link.href);
       expect(res.status).toBe(200);
       await res.body?.cancel();
-      // expect(res.headers.get("content-type")).toBeCloseTo()
     }
   });
 });

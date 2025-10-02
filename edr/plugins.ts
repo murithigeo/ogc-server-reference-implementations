@@ -5,6 +5,7 @@ import { Geometry } from "wkx";
 import { wktToGeoJSON } from "betterknown";
 import { reproject } from "@template/utils";
 import { ValidationError } from "exegesis";
+
 export function post2getPlugin(): ExegesisPlugin {
   return {
     info: { name: "post2getplugin" },
@@ -90,12 +91,12 @@ export function coordsPlugin(): ExegesisPlugin {
               );
             }
             const { hasM, hasZ } = Geometry.parse(coords);
-            if (hasM && ctx["ectx"]["datetime"])
+            if (hasM && params.query.datetime)
               throw ctx.makeValidationError(
                 `Cannot mix Z/ZM geometries with datetime parameter`,
                 { in: "query", name: "coords", docPath: ctx.api.pathItemPtr }
               );
-            if (hasZ && ctx["ectx"]["z"])
+            if (hasZ && params.query.z)
               throw ctx.makeValidationError(
                 `Cannot mix Z/ZM geometries with datetime parameter`,
                 { in: "query", name: "coords", docPath: ctx.api.pathItemPtr }
@@ -157,7 +158,6 @@ export function coordsPlugin(): ExegesisPlugin {
               properties: {},
             }).geometry;
           } catch (err) {
-            console.log(err);
             if (err instanceof ValidationError) {
               throw err;
             } else {
@@ -168,6 +168,7 @@ export function coordsPlugin(): ExegesisPlugin {
                 docPath: ctx.api.pathItemPtr,
               });
             }
+            
           }
         },
       };
@@ -358,7 +359,7 @@ export function instanceIdPlugin(): ExegesisPlugin {
         })[0];
         if (!matchedInstance)
           throw ctx.makeError(404, `dataset does not have such an instance`);
-        params.path.instanceid = instanceId;
+        params.path.instanceId = instanceId;
         ctx["ectx"]["instanceId"] = instanceId;
       },
     }),

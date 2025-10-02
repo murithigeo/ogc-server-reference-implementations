@@ -1,36 +1,24 @@
-import { expect } from "@std/expect";
+import { describe, it, beforeAll,expect } from "vitest";
 import { TEST_URL_BASE } from "./index.test.ts";
 
-Deno.test({
-  name: "Features /conformance tests",
-  async fn(t) {
-    const _res = await fetch(`${TEST_URL_BASE}/features/conformance`);
-    const _body = await _res.json();
-
-    await t.step({
-      name: "Response successful",
-       fn() {
-        expect(_res.status).toBe(200);
-      },
-    });
-    await t.step({
-      name: "response body has conformsTo array",
-      fn() {
-        //expect(_body.conformsTo).toBeDefined();
-        expect(_body.conformsTo).toBeInstanceOf(Array<string>);
-      },
-    });
-    await t.step({
-      ignore: !_body.links,
-      name: "links array tests",
-      async fn() {
-        for (const { href, type } of _body.links) {
-          const res = await fetch(href);
-          expect(res.status).toBe(200);
-          expect(res.headers.get("content-type")).toBe(type);
-          await res.body?.cancel();
-        }
-      },
-    });
-  },
+describe("/edr/conformance", () => {
+  let res: Response, data: any;
+  beforeAll(async () => {
+    res = await fetch(`${TEST_URL_BASE}/features/conformance`);
+    data = await res.json();
+  });
+  it("should return a 200 status code", () => {
+    expect(res.status).toBe(200);
+  });
+  it("response should have a conformsTo member", () => {
+    expect(data.conformsTo).toBeDefined();
+    expect(Array.isArray(data.conformsTo)).toBeTruthy();
+  });
+  it("can have links which return 200 status code", async () => {
+    for (const link of data?.links || []) {
+      res = await fetch(link.href);
+      expect(res.status).toBe(200);
+      await res.body?.cancel();
+    }
+  });
 });

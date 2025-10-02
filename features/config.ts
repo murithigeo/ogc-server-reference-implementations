@@ -55,7 +55,6 @@ export default {
       },
       handler: ({ ...props }) => {
         const matched = mountains.features
-
           .filter((feat) => {
             if (!props.featureId) return true;
             return feat.properties.name === props.featureId.toString();
@@ -85,7 +84,7 @@ export default {
       attribution: [
         {
           rel: "author",
-          href: "mailto:jason@waldrip.net",
+          href: "jason@waldrip.net",
           title: "Email Jason Waldrip",
         },
         {

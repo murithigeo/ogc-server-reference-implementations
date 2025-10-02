@@ -80,7 +80,6 @@ export function crsParamPlugin(): ExegesisPlugin {
           const params = await ctx.getParams();
           if (!("crs" in params.query)) return;
           const dataset: { id: string; crs: string[] } = ctx["ectx"].dataset;
-          console.log(params.query.crs)
           params.query.crs = params.query.crs || CRS84;
           const value = dataset.crs.find((c) => c === params.query.crs);
           if (!value) {

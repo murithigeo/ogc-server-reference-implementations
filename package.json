@@ -9,11 +9,11 @@
     "./movingfeatures",
     "./utils"
   ],
-  "imports":{"@template/edr":"./edr/index.ts"},
   "scripts": {
     "deno:dev": "deno run --watch-hmr -A server.ts",
     "build": "vite build",
-    "serve":"node api/index.js"
+    "serve":"node api/index.js",
+    "test":"vitest"
   },
   "dependencies": {
     "@scalar/core": "^0.3.17",
@@ -35,6 +35,7 @@
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "vite": "^7.1.7",
+    "vitest": "^3.2.4",
     "wkx": "^0.5.0",
     "yaml": "^2.8.1"
   },

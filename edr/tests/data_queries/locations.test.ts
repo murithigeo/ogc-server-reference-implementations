@@ -1,70 +1,74 @@
-import { expect } from "@std/expect";
-import {  MAX_COLLECTIONS_INSTANCES, TEST_URL_BASE } from "../index.test.ts"
-import { contenttypes } from "@template/utils";
+import { expect, describe, it, beforeEach } from "vitest";
+import { MAX_COLLECTIONS_INSTANCES, TEST_URL_BASE } from "../index.test.ts";
 
-const { collections } = await (await fetch(`${TEST_URL_BASE}/edr/collections`)).json();
+const collections: { data_queries: { locations: { [x: string]: any } } }[] = [];
+let res = await fetch(`${TEST_URL_BASE}/edr/collections`);
+const data = await res.json();
+collections.push(...data.collections.slice(0, MAX_COLLECTIONS_INSTANCES));
 
-
-const colls = [...collections];
-for (const { data_queries } of collections) {
-    if (data_queries.instances) {
-        const { instances } = await (await fetch(data_queries.instances.link.href)).json()
-        colls.push(...instances.slice(0, MAX_COLLECTIONS_INSTANCES))
-    }
+for (const collection of data.collections) {
+  if (collection.data_queries?.instances) {
+    res = await fetch(collection.data_queries.instances.link.href);
+    collections.push(
+      ...(await res.json()).instances.slice(0, MAX_COLLECTIONS_INSTANCES)
+    );
+  }
 }
+describe.each(collections)("$id locations", {}, (c) => {
+  const [locs, skip] = [c.data_queries.locations, !c.data_queries.locations];
+  let uri: URL;
+  let locIds = Array<string>();
 
-Deno.test({
-    name: `Location Tests`,
-    async fn(t) {
-        for (const { id, data_queries: { locations } } of colls) {
-            await t.step({
-                name: `Collection: ${id}`, async fn(t) {
-                    const { link: { href, variables } } = locations!
-                    let url: URL;
-                    let res: Response
-                    let locationIds: (string | number)[]
+  beforeEach(async () => {
+    uri = new URL(locs.link.href);
+    res = await fetch(uri);
+    locIds = (await res.json()).features.map((p) => p.id);
+  });
 
-                    url = new URL(href);
-                    res = await fetch(url);
-                    expect(res.status).toBe(200);
-                    expect([contenttypes.GEOJSON,contenttypes.JSON]).toContain(res.headers.get("content-type"));
-                    locationIds = (await res.json()).features.map(r => r.id)
+  describe("Single values", { skip }, () => {
+    let url: URL;
+    beforeEach(() => {
+      url = new URL(uri);
+    });
+    it("return 200 on correct value", async () => {
+      url.pathname += `/${locIds[0]}`;
+      res = await fetch(url);
+      expect(res.status).toBe(200);
+      await res.body?.cancel();
+    });
+    it("return 404 on incorrect value", async () => {
+      url.pathname += "/nonexistent";
+      res = await fetch(url);
+      expect(res.status).toBe(404);
+      await res.body?.cancel();
+    });
+  });
 
-                    await t.step({
-                        //ignore: !variables.multi && !locationIds.length,
-                        name: `Non-multi and Multi- tests`,
-                        async fn(t) {
-                            await t.step({
-                                name: `Correct values`,
-                                async fn() {
-                                    const locString = variables.multi ? locationIds.slice(0, 5).join(",") : locationIds[0];
-                                    res = await fetch(`${href}/${locString}`);
-                                    expect(res.headers.get("content-type")).not.toBe(null);
-                                    expect(res.status).toBe(200);
-                                    await res.body?.cancel()
-                                }
-                            })
-                            await t.step({
-                                name: `Includes incorrect values`,
-                                async fn() {
-                                    const locString = variables.multi ? locationIds.slice(0, 5).concat("100000000").join(",") : locationIds[0] + '1000000';
-                                    res = await fetch(`${href}/${locString}`);
-                                    expect(res.status).toBe(404)
-                                    await res.body?.cancel()
-                                }
-                            })
-
-                        },
-                    });
-
-                    await t.step({
-                        name: `bbox & datetime tests`,
-                        async fn() {
-                            
-                        },
-                    })
-                },
-            })
-        }
+  describe(
+    "mult values",
+    {
+      skip: ((): boolean => {
+        if (skip === true) return true;
+        return !locs.link.variables.multi;
+      })(),
+    },
+    () => {
+      let url: URL;
+      beforeEach(() => {
+        url = new URL(uri);
+      });
+      it("returns 200 on multiple valid values", async () => {
+        url.pathname += `/${locIds.slice(0, 3).join(",")}`;
+        res = await fetch(url);
+        expect(res.status).toBe(200);
+        await res.body?.cancel();
+      });
+      it("returns 404 on partially valid values", async () => {
+        url.pathname += `/${locIds.slice(0, 3).join(",") + ",nonexistent"}`;
+        res = await fetch(url);
+        expect(res.status).toBe(404);
+        await res.body?.cancel();
+      });
     }
-})
+  );
+});

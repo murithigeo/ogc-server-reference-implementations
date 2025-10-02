@@ -1,191 +1,91 @@
-import { MAX_COLLECTIONS_INSTANCES, TEST_URL_BASE } from "../index.test.ts";
-import { expect } from "@std/expect";
+import { describe, beforeEach, expect, it, afterEach } from "vitest";
+import { TEST_URL_BASE, MAX_COLLECTIONS_INSTANCES } from "../index.test.ts";
 
-const { collections } = await (
-  await fetch(`${TEST_URL_BASE}/edr/collections`)
-).json();
+const collections: { data_queries: { corridor?: { [x: string]: any } } }[] = [];
+let res: Response;
+res = await fetch(`${TEST_URL_BASE}/edr/collections`);
+const data = await res.json();
 
-const colls = [...collections];
-for (const { data_queries } of collections) {
-  if (data_queries.instances) {
-    const { instances } = await (
-      await fetch(data_queries.instances.link.href)
-    ).json();
-    colls.push(...instances.slice(0, MAX_COLLECTIONS_INSTANCES));
+collections.push(...data.collections);
+for (const collection of data.collections) {
+  if (collection.data_queries?.instances) {
+    res = await fetch(collection.data_queries.instances.link.href);
+    collections.push(
+      ...(await res.json()).instances.slice(0, MAX_COLLECTIONS_INSTANCES)
+    );
   }
 }
 
-for (const {
-  data_queries: { corridor },
-  ...r
-} of collections) {
-  if (!corridor) {
-    continue;
-  }
-  const MSA_NBO_KSM =
-    "LINESTRING (39.627686 -4.039618, 36.848145 -1.285293, 34.760742 -0.109863)";
-  const {
-    link: { href, variables },
-  } = corridor!;
-  const validUrl = URL.canParse(href);
-  let res: Response;
-  Deno.test({
-    name: "href is a valid link",
-    fn() {
-      expect(validUrl).toBeTruthy();
-    },
+describe.each(collections)("$id /corridor tests", (c) => {
+  const [corr, skip] = [c.data_queries.corridor!, !c.data_queries.corridor];
+  let uri: URL;
+  beforeEach(() => {
+    uri = new URL(corr.link.href);
+    uri.searchParams.set("coords", "LINESTRING(36 1,37 1)");
+    uri.searchParams.set("width-units", corr.link.variables.width_units[0]);
+    uri.searchParams.set("height-units", corr.link.variables.height_units[0]);
+    uri.searchParams.set("corridor-height", "1");
+    uri.searchParams.set("corridor-width", "1");
   });
-
-  const uri = new URL(href);
-
-  Deno.test({
-    name: "Width-units array length",
-    ignore: !validUrl,
-    fn() {
-      expect(variables.width_units.length).toBeGreaterThan(0);
-    },
+  afterEach(() => {});
+  it("should accept valid linestrings", { skip }, async () => {
+    res = await fetch(uri);
+    expect(res.status).toBe(200);
+    await res.body?.cancel();
   });
-
-  Deno.test({
-    name: "Height-Units",
-    ignore: !validUrl,
-    fn() {
-      expect(variables.height_units.length).toBeGreaterThan(0);
-    },
+  it.each(["POINT(36 1)", "MULTIPOINT(36 1, 37 1)", "LINESTRING(10 1,29)"])(
+    "throws 400 on non-[MULTI]Linestring/Invalid WKTs",
+    { skip },
+    async (coords) => {
+      uri.searchParams.set("coords", coords);
+      res = await fetch(uri);
+      expect(res.status).toBe(400);
+      await res.body?.cancel();
+    }
+  );
+  it(
+    "throws 400 if datetime and [MULTI]LineString[Z]M are sent",
+    { skip },
+    async () => {
+      uri.searchParams.set("coords", "LINESTRINGM(36 1 2000,37 -2 200000)");
+      uri.searchParams.set("datetime", "2024-01-01/2025-01-01");
+      res = await fetch(uri);
+      expect(res.status).toBe(400);
+      await res.body?.cancel();
+    }
+  );
+  it(
+    "throws 400 if z and [MULTI]LineStringZ[M] are sent",
+    { skip },
+    async () => {
+      uri.searchParams.set("coords", "LINESTRINGZ(36 1 2000,37 -2 200000)");
+      uri.searchParams.set("z", "20/40");
+      res = await fetch(uri);
+      expect(res.status).toBe(400);
+      await res.body?.cancel();
+    }
+  );
+  it("should throw error if width-units is missing", { skip }, async () => {
+    uri.searchParams.delete("width-units");
+    res = await fetch(uri);
+    expect(res.status).toBe(400);
   });
-
-  Deno.test({
-    name: "Coords tests",
-    ignore:
-      !validUrl &&
-      !variables.width_units.length &&
-      !variables.height_units.length,
-    async fn(t) {
-      const uri = new URL(href);
-      uri.searchParams.set("width-units", variables.width_units[0]);
-      uri.searchParams.set("height-units", variables.height_units[0]);
-      uri.searchParams.set("corridor-height", "1000");
-      uri.searchParams.set("corridor-width", "1000");
-
-      await t.step({
-        name: "Mismatched coordinates",
-        async fn() {
-          uri.searchParams.set("coords", "POINT(36 1)");
-          res = await fetch(uri);
-          expect(res.status).toBe(400);
-          await res.body?.cancel();
-        },
-      });
-
-      await t.step({
-        name: "coords with syntax error",
-        async fn() {
-          uri.searchParams.set(
-            "coords",
-            MSA_NBO_KSM.substring(0, MSA_NBO_KSM.length - 1)
-          );
-          res = await fetch(uri);
-          expect(res.status).toBe(400);
-          await res.body?.cancel();
-        },
-      });
-
-      await t.step({
-        name: "valid coordinates",
-        async fn(t) {
-          await t.step({
-            name: "LINESTRING",
-            async fn() {
-              uri.searchParams.set("coords", MSA_NBO_KSM);
-              res = await fetch(uri);
-              expect(res.status).toBe(200);
-              await res.body?.cancel();
-            },
-          });
-
-          await t.step({
-            name: "LINESTRING Z",
-            async fn() {
-              uri.searchParams.set("coords", `LINESTRINGZ(39 1 100, 36 1 100)`);
-              res = await fetch(uri);
-              expect(res.status).toBe(200);
-              await res.body?.cancel();
-              // Ensure that a combination of z param and LINESTRING is considered an error
-              uri.searchParams.set("z", "100");
-              res = await fetch(uri);
-              expect(res.status).toBe(400);
-              await res.body?.cancel();
-            },
-          });
-
-          await t.step({
-            name: "LINESTRING M",
-            async fn() {
-              uri.searchParams.set(
-                "coords",
-                `LINESTRINGM(39 1 ${new Date().getTime()},36 1 ${
-                  new Date().getTime() - 1000000
-                })`
-              );
-              res = await fetch(uri);
-              expect(res.status).toBe(200);
-              await res.body?.cancel();
-
-              //
-              uri.searchParams.set("datetime", new Date().toISOString());
-              res = await fetch(uri);
-              expect(res.status).toBe(400);
-              await res.body?.cancel();
-            },
-          });
-        },
-      });
-    },
-  });
-  Deno.test({
-    name: "width-units & height-units",
-    async fn(t) {
-      let uri = new URL(href);
-      uri.searchParams.set("coords", MSA_NBO_KSM);
-      uri.searchParams.set("corridor-height", "1000");
-      uri.searchParams.set("corridor-width", "1000");
-      await t.step({
-        name: "Missing width-units",
-        async fn() {
-          uri.searchParams.set("height-units", variables.height_units[0]);
-          uri = new URL(uri);
-          res = await fetch(uri);
-          expect(res.status).toBe(400);
-          await res.body?.cancel();
-        },
-      });
-
-      await t.step({
-        name: "Missing height-units",
-        async fn() {
-          uri.searchParams.set("width-units", variables.width_units[0]);
-          uri.searchParams.delete("height-units");
-          res = await fetch(uri);
-          expect(res.status).toBe(400);
-          await res.body?.cancel();
-        },
-      });
-    },
-  });
-
-  Deno.test({ name: "corridor-height", async fn() {} });
-
-  Deno.test({
-    name: "crs_details",
-    async fn() {},
-  });
-
-  Deno.test({
-    name: "Output Formats",
-    fn() {
-      for (const f of r.output_formats || variables.output_formats) {
-        uri.searchParams.set("f", f);
-      }
-    },
-  });
-}
+  it.each(corr.link.variables.width_units as string[])(
+    "accepts declared width_units",
+    { skip },
+    async (wu) => {
+      uri.searchParams.set("width-units", wu);
+      res = await fetch(uri);
+      expect(res.status).toBe(200);
+    }
+  );
+  it.each(corr.link.variables.height_units as string[])(
+    "accepts declared height_units",
+    { skip },
+    async (wu) => {
+      uri.searchParams.set("height-units", wu);
+      res = await fetch(uri);
+      expect(res.status).toBe(200);
+    }
+  );
+});

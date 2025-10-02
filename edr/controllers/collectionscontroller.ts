@@ -10,16 +10,16 @@ import { Links } from "../links.ts";
 import { stringify } from "yaml";
 
 function getCollections(ctx: ExegesisContext) {
-  const format = parseFormat(ctx, "JSON", ["JSON", "YAML"]);
+  const { format, output_formats } = parseFormat(ctx, "JSON", ["JSON", "YAML"]);
   const doc: { collections: Array<Collection>; links: Array<Link> } = {
     collections: config.datasets.map((p) => {
       ctx.params.path.collectionId = p.id;
       return asCollection(ctx, p, p.getExtent());
     }),
-    links: new Links(ctx).self().alternates(format.output_formats).links,
+    links: new Links(ctx).self().alternates(output_formats).links,
   };
   let data;
-  switch (format.f) {
+  switch (format) {
     case "JSON":
       data = doc;
       break;
@@ -27,59 +27,50 @@ function getCollections(ctx: ExegesisContext) {
       data = stringify(doc);
       break;
   }
-  ctx.res
-    .status(200)
-    .set(...format.contenttypeHeader)
-    .setBody(data).end()
+  ctx.res.status(200).setBody(data);
 }
 function getCollection(ctx: ExegesisContext) {
+  const { format, output_formats } = parseFormat(ctx, "JSON", ["JSON", "YAML"]);
   const dataset: Dataset = ctx["ectx"].dataset;
-  const format = parseFormat(ctx, "JSON", ["JSON", "YAML"]);
   let doc = asCollection(ctx, dataset, dataset.getExtent());
   doc = {
     ...doc,
     links: doc.links.concat(
-      new Links(ctx).self().alternates(format.output_formats).links
+      new Links(ctx).self().alternates(output_formats).links
     ),
   };
   let data;
-  switch (format.f) {
+  switch (format) {
     case "YAML":
       data = stringify(data);
       break;
     default:
       data = doc;
   }
-  ctx.res
-    .status(200)
-    .set(...format.contenttypeHeader)
-    .setBody(data);
+  ctx.res.status(200).setBody(data);
 }
 
 function getInstances(ctx: ExegesisContext) {
   const dataset: Dataset = ctx["ectx"].dataset;
   const options = dataset.data_queries.instances!;
-  const format = parseFormat(
+  const { format, output_formats } = parseFormat(
     ctx,
     options.default_output_format,
     options?.output_formats || dataset.output_formats
   );
-  const values = options.handler({
-    server: ctx.api.serverObject?.url!,
-    crs: "OGC:CRS84",
-  });
+  const values = options.handler({ ...ctx["ectx"], crs: "OGC:CRS84" });
   const instances = values.map((value) => {
     ctx.params.path.instanceId = value.id;
     return asCollection(ctx, { ...dataset, id: value.id }, value);
   });
-  const { links } = new Links(ctx).self().alternates(format.output_formats);
+  const { links } = new Links(ctx).self().alternates(output_formats);
   const doc = {
     instances,
     links,
   };
 
   let data;
-  switch (format.f) {
+  switch (format) {
     case "JSON":
       data = doc;
       break;
@@ -88,34 +79,28 @@ function getInstances(ctx: ExegesisContext) {
       break;
   }
 
-  ctx.res
-    .status(200)
-    .set(...format.contenttypeHeader)
-    .setBody(data);
+  ctx.res.status(200).setBody(data);
 }
 
 function getInstance(ctx: ExegesisContext) {
-  const instanceId = ctx.params.path.instanceId;
   const dataset: Dataset = ctx["ectx"].dataset;
-  const format = parseFormat(
+  const options = dataset.data_queries.instances!;
+  const { format, output_formats } = parseFormat(
     ctx,
-    dataset.data_queries.instances?.default_output_format!,
-    dataset.data_queries.instances?.output_formats!
+    options.default_output_format!,
+    options.output_formats!
   );
+  const res = options.handler({ ...ctx["ectx"], crs: "OGC:CRS84" })[0];
   const doc = asCollection(
     ctx,
-    { ...dataset, id: instanceId },
-    dataset.data_queries.instances!.handler({
-      instanceId,
-      server: ctx.api.serverObject?.url!,
-      crs: "OGC:CRS84",
-    })[0]
+    { ...dataset, id: ctx.params.path.instanceId },
+    res
   );
   doc.links = doc.links.concat(
-    new Links(ctx).self().alternates(format.output_formats).links
+    new Links(ctx).self().alternates(output_formats).links
   );
   let data;
-  switch (format.f) {
+  switch (format) {
     case "JSON":
       data = doc;
       break;
@@ -123,10 +108,7 @@ function getInstance(ctx: ExegesisContext) {
       data = stringify(doc);
       break;
   }
-  ctx.res
-    .status(200)
-    .set(...format.contenttypeHeader)
-    .setBody(data);
+  ctx.res.status(200).setBody(data);
 }
 
 export default {
@@ -137,7 +119,6 @@ export default {
 };
 
 function toExtent(props: ExtentProps): Extent {
-  
   if (props.temporal !== null) {
     props.temporal.sort(
       (a, b) => new Date(b).getTime() - new Date(a).getTime()

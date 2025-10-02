@@ -2,6 +2,8 @@ import path from "node:path";
 import { defineConfig } from "vite";
 import process from "node:process";
 const filename = "server.ts";
+
+/// <reference types="vitest/config" />
 export default defineConfig({
   resolve: {
     alias: {
@@ -23,5 +25,5 @@ export default defineConfig({
       input: filename,
       output: { entryFileNames: "app.js" },
     },
-  },
+  }
 });

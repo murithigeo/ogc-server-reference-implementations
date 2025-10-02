@@ -1,3 +1,4 @@
+import type {SpatialReferenceSystem} from "coveragejson"
 export type Link = {
   href: string;
   rel: string;
@@ -54,7 +55,7 @@ export interface ConformancePage {
 }
 
 type Crs = {
-  type: string;
+  type: SpatialReferenceSystem["type"];
   hasZ: boolean;
   srid: number;
   flipCoords: boolean;

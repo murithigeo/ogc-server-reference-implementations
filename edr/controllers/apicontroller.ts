@@ -12,7 +12,7 @@ function getServiceDoc(ctx: ExegesisContext): void {
 }
 
 function getServiceDesc(ctx: ExegesisContext): void {
-  const { f } = parseFormat(ctx, "JSON", ["JSON", "YAML", "HTML"]);
+  const { format } = parseFormat(ctx, "JSON", ["JSON", "YAML", "HTML"]);
 
   let { openApiDoc } = ctx.api;
   openApiDoc = {
@@ -20,7 +20,7 @@ function getServiceDesc(ctx: ExegesisContext): void {
     servers: [ctx.api.serverObject!, ...(openApiDoc.servers || [])],
   };
   ctx.res.status(200);
-  switch (f) {
+  switch (format) {
     case "YAML":
       ctx.res
         .set("content-type", contenttypes.OPENAPI_YAML)
