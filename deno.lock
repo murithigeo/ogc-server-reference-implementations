@@ -2086,7 +2086,6 @@
         "npm:react@^19.1.1",
         "npm:vite@^7.1.7",
         "npm:vitest@^3.2.4",
-        "npm:websocket-express@^4.0.1",
         "npm:wkx@0.5",
         "npm:yaml@^2.8.1"
       ]
@@ -2113,16 +2112,7 @@
             "npm:betterknown@^1.0.5",
             "npm:convert@^5.12.0",
             "npm:geotiff@^2.1.4-beta.0",
-            "npm:vitest@^3.2.4",
-            "npm:websocket-express@^4.0.1",
             "npm:wkx@0.5"
-          ]
-        }
-      },
-      "features": {
-        "packageJson": {
-          "dependencies": [
-            "npm:vitest@^3.2.4"
           ]
         }
       },

@@ -4,7 +4,7 @@ import edr, { asyncapiAddon } from "@template/edr";
 import features from "@template/features";
 import logger from "./logger.ts";
 import { getHtmlDocument } from "@scalar/core/libs/html-rendering";
-
+import "express";
 const app = new WebSocketExpress();
 // const router=aw
 app.use(cors());
