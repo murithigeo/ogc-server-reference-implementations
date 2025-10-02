@@ -3,8 +3,8 @@ import { defineConfig } from "vite";
 import process from "node:process";
 const filename = "server.ts";
 
-/// <reference types="vitest/config" />
 export default defineConfig({
+  assetsInclude:["./data/fapar/*.tif"],
   resolve: {
     alias: {
       "@template/utils": path.resolve(process.cwd(), "./utils"),
