@@ -4,19 +4,14 @@ import edr, { asyncapiAddon } from "@template/edr";
 import features from "@template/features";
 import logger from "./logger.ts";
 import { getHtmlDocument } from "@scalar/core/libs/html-rendering";
-import fs from "node:fs";
 import http from "node:http";
-import express from "express";
+import "express";
 
-fs.readdir("./data", (err, files) => {
-  if (err) console.error(err);
-  else console.log(files);
-});
-// const app = new WebSocketExpress();
-const app=express()
+
+const app = new WebSocketExpress();
 app.use(cors());
 
-app.use(logger);
+app.useHTTP(logger);
 app.get("/", (_, res) => {
   res.set("content-type", "text/html").send(
     getHtmlDocument({
@@ -27,11 +22,11 @@ app.get("/", (_, res) => {
     })
   );
 });
-app.use("/features", await features);
+app.useHTTP("/features", await features);
 
-// app.use("/edr", asyncapiAddon);
-app.use("/edr", await edr);
+app.use("/edr", asyncapiAddon);
+app.useHTTP("/edr", await edr);
 
-const server = http.createServer(app);
-// app.attach(server);
+const server = http.createServer();
+app.attach(server);
 export default server;
