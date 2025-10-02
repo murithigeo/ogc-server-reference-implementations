@@ -14,7 +14,7 @@ export default defineConfig({
   },
   build: {
     ssr: true,
-    outDir: "./api",
+    outDir: "./dist",
     target: "ESNext",
     lib: {
       entry: filename,
