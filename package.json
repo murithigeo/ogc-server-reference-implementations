@@ -11,8 +11,6 @@
   ],
   "scripts": {
     "deno:dev": "deno run --watch-hmr -A server.ts",
-    "build": "vite build",
-    "serve":"node api/index.js",
     "test":"vitest"
   },
   "dependencies": {
