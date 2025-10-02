@@ -1,6 +1,6 @@
 import { generateSamplePoints, regularCorridor } from "./utils.ts";
 import type { Dataset } from "../config.ts";
-import { fromFile } from "./utils.ts";
+import { fromFile, fromArrayBuffer } from "./utils.ts";
 import { bbox } from "@turf/bbox";
 import type { Coverage, ReferenceSystemConnection } from "coveragejson";
 import {
@@ -13,6 +13,7 @@ import {
   type Feature,
 } from "@template/utils";
 import path from "node:path";
+// import fs from "node:fs";
 import process from "node:process";
 import buffer from "@turf/buffer";
 
@@ -52,7 +53,7 @@ const cache = new Map<
 for (const k of Object.keys(refs)) {
   cache.set(
     k,
-    await (await fromFile(path.join(process.cwd(), refs[k]))).getImage()
+    await (await fromFile(path.resolve(process.cwd(), refs[k]))).getImage()
   );
 }
 const [resX, resY] = [5, 5];
