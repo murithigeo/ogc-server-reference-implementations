@@ -4,9 +4,14 @@ import edr, { asyncapiAddon } from "@template/edr";
 import features from "@template/features";
 import logger from "./logger.ts";
 import { getHtmlDocument } from "@scalar/core/libs/html-rendering";
+import fs from "node:fs"
 import "express";
+
+fs.readdir("./data", (err, files) => {
+  if (err) console.error(err);
+  else console.log(files)
+})
 const app = new WebSocketExpress();
-// const router=aw
 app.use(cors());
 
 app.useHTTP(logger);
