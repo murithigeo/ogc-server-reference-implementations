@@ -30,7 +30,11 @@ app.useHTTP("/edr", await edr);
 
 const server = http.createServer();
 app.attach(server);
-app.listen(PORT, () =>
-  console.log(`listening on port: ${PORT}`)
-);
+try {
+  server.listen(PORT, () => console.log(`listening on port: ${PORT}`));
+} catch (error) {
+  console.error(error)
+  process.exit(1);
+}
+
 export default server;
