@@ -8,7 +8,7 @@ import http from "node:http";
 import * as express from "express";
 import process from "node:process";
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8000;
 const app = new WebSocketExpress();
 app.use(cors());
 
