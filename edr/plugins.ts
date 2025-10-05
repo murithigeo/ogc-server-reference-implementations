@@ -28,8 +28,8 @@ export function post2getPlugin(): ExegesisPlugin {
                       docPath: ctx.api.pathItemPtr,
                       in: "query",
                     },
-                  })
-              )
+                  }),
+              ),
             );
           }
           const params = await ctx.getParams();
@@ -85,21 +85,21 @@ export function coordsPlugin(): ExegesisPlugin {
             if (!geometryTypes[query_type]!.includes(value.type)) {
               throw ctx.makeValidationError(
                 `This endpoint only supports ${geometryTypes[query_type]!.join(
-                  ","
+                  ",",
                 )} geometries`,
-                { in: "query", name: "coords", docPath: ctx.api.pathItemPtr }
+                { in: "query", name: "coords", docPath: ctx.api.pathItemPtr },
               );
             }
             const { hasM, hasZ } = Geometry.parse(coords);
             if (hasM && params.query.datetime)
               throw ctx.makeValidationError(
                 `Cannot mix Z/ZM geometries with datetime parameter`,
-                { in: "query", name: "coords", docPath: ctx.api.pathItemPtr }
+                { in: "query", name: "coords", docPath: ctx.api.pathItemPtr },
               );
             if (hasZ && params.query.z)
               throw ctx.makeValidationError(
                 `Cannot mix Z/ZM geometries with datetime parameter`,
-                { in: "query", name: "coords", docPath: ctx.api.pathItemPtr }
+                { in: "query", name: "coords", docPath: ctx.api.pathItemPtr },
               );
 
             const zIndex = 2;
@@ -132,14 +132,14 @@ export function coordsPlugin(): ExegesisPlugin {
                 if (hasM) {
                   ctx["ectx"]["datetime"] = {
                     values: value.coordinates.flatMap((outer) =>
-                      outer.map((p) => new Date(p[mIndex]).toISOString())
+                      outer.map((p) => new Date(p[mIndex]).toISOString()),
                     ),
                   };
                 }
                 if (hasZ) {
                   ctx["ectx"]["z"] = {
                     values: value.coordinates.flatMap((outer) =>
-                      outer.map((p) => p[zIndex])
+                      outer.map((p) => p[zIndex]),
                     ),
                   };
                 }
@@ -151,7 +151,7 @@ export function coordsPlugin(): ExegesisPlugin {
             const storageCrs = ctx["ectx"]["dataset"]["storageCrs"];
             ctx["ectx"]["coords"] = reproject(
               crs,
-              storageCrs
+              storageCrs,
             )({
               type: "Feature",
               geometry: value,
@@ -161,14 +161,12 @@ export function coordsPlugin(): ExegesisPlugin {
             if (err instanceof ValidationError) {
               throw err;
             } else {
-              //@ts-expect-error err is of type unknown
               throw ctx.makeValidationError(err.message, {
                 name: "coords",
                 in: "query",
                 docPath: ctx.api.pathItemPtr,
               });
             }
-            
           }
         },
       };
@@ -177,7 +175,7 @@ export function coordsPlugin(): ExegesisPlugin {
 }
 
 export function collectionIdPlugin(
-  datasets: Array<{ id: string }>
+  datasets: Array<{ id: string }>,
 ): ExegesisPlugin {
   return {
     info: { name: "collectionId-validate-plugin" },
@@ -187,7 +185,7 @@ export function collectionIdPlugin(
           const params = await ctx.getParams();
           if ("collectionId" in params.path) {
             const collection = datasets.find(
-              ({ id }) => params.path.collectionId === id
+              ({ id }) => params.path.collectionId === id,
             );
             if (!collection)
               throw ctx.makeError(404, "no such collection/dataset");
@@ -213,7 +211,7 @@ export function querytypePlugin(): ExegesisPlugin {
         const [, query_type, at]: [
           string,
           keyof DataQueryConfig,
-          "collection" | "instance"
+          "collection" | "instance",
         ] = operation.split("@");
         const dataset: Dataset = ctx["ectx"]["dataset"];
         const dataquery =
@@ -221,13 +219,13 @@ export function querytypePlugin(): ExegesisPlugin {
         if (at === "instance" && !dataset.data_queries.instances) {
           throw ctx.makeError(
             404,
-            `This dataset does not support instance based querying`
+            `This dataset does not support instance based querying`,
           );
         }
         if (!dataquery) {
           throw ctx.makeError(
             404,
-            `This dataset does not support ${query_type} queries`
+            `This dataset does not support ${query_type} queries`,
           );
         }
 
@@ -237,7 +235,7 @@ export function querytypePlugin(): ExegesisPlugin {
           str += `/${query_type}...`;
           throw ctx.makeError(
             404,
-            `This dataset only supports queries on ${str} paths `
+            `This dataset only supports queries on ${str} paths `,
           );
         }
       },
@@ -257,7 +255,7 @@ export function parameterNamePlugin(): ExegesisPlugin {
         const dataset: Dataset = ctx["ectx"]["dataset"];
         const activeParameterIds = param.split(",");
         const invalidNames = activeParameterIds.filter(
-          (p) => !dataset.parameters.map((p) => p.id).includes(p)
+          (p) => !dataset.parameters.map((p) => p.id).includes(p),
         );
         if (invalidNames.length > 0) {
           throw ctx.makeValidationError(
@@ -266,7 +264,7 @@ export function parameterNamePlugin(): ExegesisPlugin {
               in: "query",
               name: "parameter-name",
               docPath: ctx.api.pathItemPtr,
-            }
+            },
           );
         }
         ctx["ectx"]["parameters"] = activeParameterIds;
@@ -298,7 +296,7 @@ export function unitConverterPlugin(): ExegesisPlugin {
         if (query_type === "radius") {
           if (
             !dataset.data_queries.radius!.within_units.includes(
-              params.query["within-units"]
+              params.query["within-units"],
             )
           ) {
             throw ctx.makeValidationError("invalid within-units option", {
@@ -309,7 +307,7 @@ export function unitConverterPlugin(): ExegesisPlugin {
           }
           ctx["ectx"].within = convert(
             params.query.within,
-            params.query["within-units"]
+            params.query["within-units"],
           ).to("meters");
           return;
         }
@@ -330,11 +328,11 @@ export function unitConverterPlugin(): ExegesisPlugin {
         }
         ctx["ectx"]["corridor-height"] = convert(
           params.query["corridor-height"],
-          params.query["height-units"]
+          params.query["height-units"],
         ).to("meters");
         ctx["ectx"]["corridor-width"] = convert(
           params.query["corridor-width"],
-          params.query["width-units"]
+          params.query["width-units"],
         ).to("meters");
       },
     }),

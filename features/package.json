@@ -3,9 +3,7 @@
   "exports": {
     "default": "./index.ts"
   },
-  "imports":{
-    "@template/utils":"../utils/index.ts"
-  },
+  "type": "module",
   "dependencies": {
     "vitest": "^3.2.4"
   }
