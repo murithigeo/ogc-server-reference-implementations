@@ -8,6 +8,7 @@ import http from "node:http";
 import * as express from "express";
 import process from "node:process";
 
+const PORT = process.env.PORT || 3000;
 const app = new WebSocketExpress();
 app.use(cors());
 
@@ -29,7 +30,7 @@ app.useHTTP("/edr", await edr);
 
 const server = http.createServer();
 app.attach(server);
-app.listen(process.env.PORT, () =>
-  console.log(`listening on port: ${process.env.PORT}`)
+app.listen(PORT, () =>
+  console.log(`listening on port: ${PORT}`)
 );
-// export default server;
+export default server;
