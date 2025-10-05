@@ -5,14 +5,15 @@ import features from "@template/features";
 import logger from "../logger.ts";
 import { getHtmlDocument } from "@scalar/core/libs/html-rendering";
 import http from "node:http";
-import * as express from "express";
+import express from "express";
 import process from "node:process";
 
 const PORT = process.env.PORT || 8000;
-const app = new WebSocketExpress();
+const app=express()
+// const app = new WebSocketExpress();
 app.use(cors());
 
-app.useHTTP(logger);
+app.use(logger);
 app.get("/", (_, res) => {
   res.set("content-type", "text/html").send(
     getHtmlDocument({
@@ -23,13 +24,13 @@ app.get("/", (_, res) => {
     })
   );
 });
-app.useHTTP("/features", await features);
+app.use("/features", await features);
 
-app.use("/edr", asyncapiAddon);
-app.useHTTP("/edr", await edr);
+// app.use("/edr", asyncapiAddon);
+app.use("/edr", await edr);
 
-const server = http.createServer();
-app.attach(server);
+const server = http.createServer(app);
+// app.attach(server);
 try {
   server.listen(PORT, () => console.log(`listening on port: ${PORT}`));
 } catch (error) {
