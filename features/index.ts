@@ -41,15 +41,15 @@ export default middleware(path.join(process.cwd(), "./features/openapi.yaml"), {
                 ...Object.keys((await ctx.getParams()).query),
                 ...allowList,
               ];
-              const unexpectedParams = url.searchParams
-                .keys()
+              const unexpectedParams = Array.from(url.searchParams
+                .keys())
                 .filter((key) => !validParams.includes(key));
-              if (unexpectedParams.toArray().length > 0) {
+              if (unexpectedParams.length > 0) {
                 throw ctx.makeValidationError(
                   "unexpected query parameters requested",
                   {
                     docPath: ctx.api.pathItemPtr,
-                    name: unexpectedParams.toArray().join(","),
+                    name: unexpectedParams.join(","),
                     in: "query",
                   }
                 );

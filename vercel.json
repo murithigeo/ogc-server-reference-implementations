@@ -2,9 +2,9 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
   "functions": {
-    "api/*.js": {
+    "dist/index.js":{
       "runtime": "vercel-deno@3.1.1",
-      "includeFiles": "data/**/*.tif"
+      "includeFiles": "./data/**/*.tif"
     }
   }
 }

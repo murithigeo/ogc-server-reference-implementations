@@ -1,7 +1,7 @@
 import path from "node:path";
 import { defineConfig } from "vite";
 import process from "node:process";
-const filename = "server.ts";
+const filename = "api/index.ts";
 
 export default defineConfig({
   resolve: {
@@ -19,6 +19,7 @@ export default defineConfig({
     lib: {
       entry: filename,
       formats: ["es"],
+      fileName: "index.js",
     },
     rollupOptions: {
       input: filename,

@@ -5,6 +5,5 @@ node_modules
 build
 dist
 logs.http
-api/
 app.js
 .vercel

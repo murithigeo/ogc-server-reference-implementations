@@ -2,11 +2,11 @@ import { WebSocketExpress } from "websocket-express";
 import cors from "cors";
 import edr, { asyncapiAddon } from "@template/edr";
 import features from "@template/features";
-import logger from "./logger.ts";
+import logger from "../logger.ts";
 import { getHtmlDocument } from "@scalar/core/libs/html-rendering";
 import http from "node:http";
-import "express";
-
+import * as express from "express";
+import process from "node:process";
 
 const app = new WebSocketExpress();
 app.use(cors());
@@ -29,4 +29,7 @@ app.useHTTP("/edr", await edr);
 
 const server = http.createServer();
 app.attach(server);
-export default server;
+app.listen(process.env.PORT, () =>
+  console.log(`listening on port: ${process.env.PORT}`)
+);
+// export default server;
